@@ -43,8 +43,8 @@ test("parses the manager's movement ledger using merged article cells and signed
   assert.equal(feed.maxOrderable.name["графитовый"].M, 2);
 });
 
-test("maps one-size cap ledger articles to stock-controlled OS variants", () => {
-  const csv = ",статус,Артикул_размера,Тип,Кол-во,Остаток,Примечание\nПереучет,,Кепка_песочная,Приход,6,6,\n,,Кепка_черная,Приход,9,9,\n,,Кепка_бордовая,Приход,7,7,\n,,Кепка_рыжая,Приход,7,7,\n,,Горы_сливовый_L,Заказ (с минусом),-1,-1,\n";
+test("maps one-size caps and the latest arrival from stock-ledger articles", () => {
+  const csv = ",статус,Артикул_размера,Тип,Кол-во,Остаток,Примечание\nПереучет,,Кепка_песочная,Приход,6,6,\n,,Кепка_черная,Приход,9,9,\n,,Кепка_бордовая,Приход,7,7,\n,,Кепка_рыжая,Приход,7,7,\n,,Горы_сливовый_XS,Приход,3,3,\n,,Горы_сливовый_S,Приход,6,6,\n,,Горы_сливовый_M,Приход,8,8,\n,,Горы_сливовый_L,Приход,4,4,\n,,Горы_сливовый_XL,Приход,3,3,\n,,Горы_серый_XS,Приход,4,4,\n,,Горы_серый_S,Приход,10,10,\n,,Горы_серый_M,Приход,9,9,\n,,Горы_серый_L,Приход,7,7,\n,,Горы_серый_XL,Приход,2,2,\n";
   const feed = parseGodderobStock(csv);
 
   assert.deepEqual(feed.availableSizes["godderob-caps"]["песочный"], ["OS"]);
@@ -52,8 +52,10 @@ test("maps one-size cap ledger articles to stock-controlled OS variants", () => 
   assert.deepEqual(feed.availableSizes["godderob-caps"]["чёрный"], ["OS"]);
   assert.equal(feed.maxOrderable["godderob-caps"]["бордовый"].OS, 3);
   assert.equal(feed.maxOrderable["godderob-caps"]["рыжий"].OS, 3);
-  assert.ok(feed.managedVariants.includes("sweatshirt-17-20|сливовый"));
-  assert.equal(feed.availableSizes["sweatshirt-17-20"]?.["сливовый"], undefined);
+  assert.deepEqual(feed.availableSizes["sweatshirt-17-20"]["сливовый"], ["XS", "S", "M", "L", "XL"]);
+  assert.deepEqual(feed.availableSizes["sweatshirt-17-20"]["меланж"], ["XS", "S", "M", "L", "XL"]);
+  assert.equal(feed.maxOrderable["sweatshirt-17-20"]["сливовый"].L, 3);
+  assert.equal(feed.maxOrderable["sweatshirt-17-20"]["меланж"].XL, 2);
 });
 
 test("rejects malformed, unmapped, and empty stock CSVs rather than publishing empty availability", () => {
