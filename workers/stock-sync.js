@@ -54,7 +54,8 @@ const sheetPrefixes = {
   "кепкапесочная": ["godderob-caps", "песочный"],
   "кепкачерная": ["godderob-caps", "чёрный"],
   "кепкабордовая": ["godderob-caps", "бордовый"],
-  "кепкарыжая": ["godderob-caps", "рыжий"]
+  "кепкарыжая": ["godderob-caps", "рыжий"],
+  "горысливовый": ["sweatshirt-17-20", "сливовый"]
 };
 
 const alwaysManagedVariants = [

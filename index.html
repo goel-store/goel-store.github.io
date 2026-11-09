@@ -3064,23 +3064,20 @@
     }
 
     function itemMatchesBrandFilters(item, categories = brandCategoryFilters, colors = brandColorFilters) {
-      if (!itemInStock(item)) return false;
       if (categories.length && !categories.includes(itemCategory(item))) return false;
-      if (colors.length && !item.variants.some((variant) => variantInStock(variant) && colors.includes(variant.tone))) return false;
+      if (colors.length && !item.variants.some((variant) => colors.includes(variant.tone))) return false;
       return true;
     }
 
     function countItemsForCategory(data, category, colors = brandColorFilters) {
-      return data.items.filter((item) => itemInStock(item)
-        && itemCategory(item) === category
-        && (!colors.length || item.variants.some((variant) => variantInStock(variant) && colors.includes(variant.tone)))
+      return data.items.filter((item) => itemCategory(item) === category
+        && (!colors.length || item.variants.some((variant) => colors.includes(variant.tone)))
       ).length;
     }
 
     function countItemsForColor(data, tone, categories = brandCategoryFilters) {
-      return data.items.filter((item) => itemInStock(item)
-        && (!categories.length || categories.includes(itemCategory(item)))
-        && item.variants.some((variant) => variantInStock(variant) && variant.tone === tone)
+      return data.items.filter((item) => (!categories.length || categories.includes(itemCategory(item)))
+        && item.variants.some((variant) => variant.tone === tone)
       ).length;
     }
 
@@ -3088,15 +3085,24 @@
       return list.filter((item) => itemMatchesBrandFilters(item, categories, colors));
     }
 
+    function itemAvailableForColors(item, colors = []) {
+      const variants = colors.length ? item.variants.filter((variant) => colors.includes(variant.tone)) : item.variants;
+      return variants.some(variantInStock);
+    }
+
+    function sortItemsByAvailability(list, colors = []) {
+      return [...list].sort((left, right) => Number(itemAvailableForColors(right, colors)) - Number(itemAvailableForColors(left, colors)));
+    }
+
     function filterItemsByGender(list, gender) {
-      return list.filter((item) => itemInStock(item) && itemMatchesGender(item, gender));
+      return list.filter((item) => itemMatchesGender(item, gender));
     }
 
     function catalogEntries() {
       return Object.entries(brands)
         .map(([id, data]) => {
           const filtered = data.items.filter((item) =>
-            item && item.slug && Array.isArray(item.variants) && itemInStock(item)
+            item && item.slug && Array.isArray(item.variants)
           );
           return filtered.length ? { id, data, items: filtered } : null;
         })
@@ -3510,10 +3516,11 @@
     function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, stackIndex = -1, stackCount = 0) {
       const matchingVariant = featuredVariant || (preferredColors.length
         ? item.variants.find((variant) => variantInStock(variant) && preferredColors.includes(variant.tone))
+          || item.variants.find((variant) => preferredColors.includes(variant.tone))
         : null);
       const first = matchingVariant || item.variants.find(variantInStock) || item.variants[0];
       const variantIndex = item.variants.indexOf(first);
-      const price = cardPrice(item, featuredVariant);
+      const price = cardPrice(item, matchingVariant);
       const photos = variantPhotos(first);
       const photo = photos[0] || first.photo || "";
       const cardPhotos = photos.length ? photos : photo ? [photo] : [];
@@ -3536,7 +3543,7 @@
       const colorLabel = featuredVariant && featuredVariant.tone
         ? `<span class="item-color-label"><i style="--variant-color:${featuredVariant.color}" aria-hidden="true"></i>${localizedTone(featuredVariant.tone)}</span>`
         : "";
-      const stockNote = featuredVariant && !variantInStock(featuredVariant)
+      const stockNote = !variantInStock(first)
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
         : "";
       const centeredIndex = stackCount ? stackIndex - (stackCount - 1) / 2 : 0;
@@ -3600,7 +3607,7 @@
     }
 
     function renderBrandItems(id, data) {
-      const list = filterItemsByBrandFilters(data.items, brandCategoryFilters, brandColorFilters);
+      const list = sortItemsByAvailability(filterItemsByBrandFilters(data.items, brandCategoryFilters, brandColorFilters), brandColorFilters);
       items.innerHTML = list.length
         ? list.map((item) => itemCard(id, item, brandColorFilters)).join("")
         : `<p class="blurb">${t("noFilterItems")}</p>`;
@@ -3684,9 +3691,8 @@
     }
 
     function itemMatchesCatalogFilters(item) {
-      if (!itemInStock(item)) return false;
       if (catalogCategoryFilters.length && !catalogCategoryFilters.includes(itemCategory(item))) return false;
-      if (catalogColorFilters.length && !item.variants.some((variant) => variantInStock(variant) && catalogColorFilters.includes(variant.tone))) return false;
+      if (catalogColorFilters.length && !item.variants.some((variant) => catalogColorFilters.includes(variant.tone))) return false;
       return true;
     }
 
@@ -3791,7 +3797,7 @@
 
     function renderCatalogBody() {
       const groups = catalogEntries()
-        .map(({ id, data, items: list }) => ({ id, data, items: list.filter(itemMatchesCatalogFilters) }))
+        .map(({ id, data, items: list }) => ({ id, data, items: sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters) }))
         .filter(({ items: list }) => list.length);
       catalogBody.innerHTML = groups.length
         ? groups.map(({ id, data, items: list }) =>
