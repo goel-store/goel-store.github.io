@@ -1107,18 +1107,18 @@
     .home-arrival-card:first-child { margin-left: 0; }
     .home-arrival-card:hover { z-index: 20; box-shadow: 0 14px 28px rgba(0, 0, 0, .24); }
     .home-arrival-card .cloth { position: relative; z-index: 1; border-radius: 15px 15px 0 0; }
-    .home-arrival-card .cloth.has-photo { background-color: #7a675a; }
-    .home-arrival-card .cloth > img { mix-blend-mode: multiply; filter: contrast(1.08) saturate(1.05); }
+    .home-arrival-card .cloth.has-photo { background-color: #c9b8a8; }
+    .home-arrival-card .cloth > img { mix-blend-mode: multiply; filter: contrast(1.02) saturate(1.02) brightness(1.08); }
     .home-arrival-card .cloth::after {
       content: "";
       position: absolute;
       inset: 0;
       z-index: 1;
       border-radius: inherit;
-      background: linear-gradient(180deg, rgba(42, 33, 29, .05), rgba(57, 46, 40, .35));
+      background: linear-gradient(180deg, rgba(42, 33, 29, .02), rgba(57, 46, 40, .12));
       pointer-events: none;
     }
-    .home-arrival-card .item-badge { z-index: 2; background: rgba(42, 33, 29, .72); color: #f4e9dc !important; }
+    .home-arrival-card .item-badge { z-index: 2; background: rgba(42, 33, 29, .58); color: #f4e9dc !important; }
     .home-arrival-card .body { position: relative; z-index: 1; border: 1px solid rgba(244, 233, 220, .1); border-top: 0; border-radius: 0 0 15px 15px; background: var(--paper); }
     .item .item-stock-note { margin-top: 7px; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
     @media (prefers-reduced-motion: reduce) { .home-arrival-card { transition: none; } }
