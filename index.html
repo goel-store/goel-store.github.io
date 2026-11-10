@@ -1100,13 +1100,25 @@
       width: min(300px, 38vw);
       margin-left: -76px;
       background: var(--paper);
-      box-shadow: 0 12px 34px rgba(0, 0, 0, .28);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
       transform: translateY(var(--stack-lift, 0px)) rotate(var(--stack-rotation, 0deg));
       transition: transform 320ms cubic-bezier(.2,.75,.25,1), box-shadow 240ms ease;
     }
     .home-arrival-card:first-child { margin-left: 0; }
-    .home-arrival-card:hover { z-index: 20; box-shadow: 0 22px 42px rgba(0, 0, 0, .38); }
+    .home-arrival-card:hover { z-index: 20; box-shadow: 0 14px 28px rgba(0, 0, 0, .24); }
     .home-arrival-card .cloth { position: relative; z-index: 1; border-radius: 15px 15px 0 0; }
+    .home-arrival-card .cloth.has-photo { background-color: #7a675a; }
+    .home-arrival-card .cloth > img { mix-blend-mode: multiply; filter: contrast(1.08) saturate(1.05); }
+    .home-arrival-card .cloth::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: inherit;
+      background: linear-gradient(180deg, rgba(42, 33, 29, .05), rgba(57, 46, 40, .35));
+      pointer-events: none;
+    }
+    .home-arrival-card .item-badge { z-index: 2; background: rgba(42, 33, 29, .72); color: #f4e9dc !important; }
     .home-arrival-card .body { position: relative; z-index: 1; border: 1px solid rgba(244, 233, 220, .1); border-top: 0; border-radius: 0 0 15px 15px; background: var(--paper); }
     .item .item-stock-note { margin-top: 7px; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
     @media (prefers-reduced-motion: reduce) { .home-arrival-card { transition: none; } }
