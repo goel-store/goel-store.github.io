@@ -2685,22 +2685,40 @@
       }
       return orderTurnstileLoadPromise;
     }
+    function turnstileLanguage() {
+      // Turnstile has no Belarusian locale; Russian is the closest match for this shop.
+      if (currentLanguage === "be") return "ru";
+      return currentLanguage;
+    }
     function resetOrderTurnstile() {
       orderTurnstileToken = "";
       if (window.turnstile && orderTurnstileWidgetId !== null) window.turnstile.reset(orderTurnstileWidgetId);
       updateOrderSubmitState();
     }
-    async function activateOrderTurnstile() {
+    function destroyOrderTurnstile() {
+      orderTurnstileToken = "";
+      if (window.turnstile && orderTurnstileWidgetId !== null) {
+        window.turnstile.remove(orderTurnstileWidgetId);
+        orderTurnstileWidgetId = null;
+      }
+      if (orderTurnstileContainer) orderTurnstileContainer.innerHTML = "";
+      updateOrderSubmitState();
+    }
+    async function activateOrderTurnstile({ remount = false } = {}) {
       try {
         const turnstile = await loadTurnstileApi();
         if (orderTurnstileWidgetId !== null) {
-          resetOrderTurnstile();
-          return;
+          if (!remount) {
+            resetOrderTurnstile();
+            return;
+          }
+          destroyOrderTurnstile();
         }
         orderTurnstileWidgetId = turnstile.render(orderTurnstileContainer, {
           sitekey: TURNSTILE_SITE_KEY,
           action: "order",
           theme: "light",
+          language: turnstileLanguage(),
           callback: (token) => {
             orderTurnstileToken = token;
             updateOrderSubmitState();
@@ -4130,6 +4148,7 @@
       brandCategoryLabel = { all: t("all"), tshirts: t("tshirts"), sweatshirts: t("sweatshirts"), longSleeves: t("longSleeves"), halfZips: t("halfZips"), caps: t("caps") };
       applyStaticTranslations();
       updateCartBadge();
+      if (orderTurnstileWidgetId !== null) void activateOrderTurnstile({ remount: true });
       if (!refresh) return;
       refreshActivePrices();
     }
