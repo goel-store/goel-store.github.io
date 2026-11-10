@@ -24,6 +24,8 @@
     header { min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid rgba(244,233,220,.12); }
     .wordmark { color: var(--ink); font-size: 20px; font-weight: 700; letter-spacing: .08em; text-decoration: none; }
     .header-actions { display: flex; align-items: center; gap: 18px; }
+    .back-link { display: inline-flex; align-items: center; gap: 9px; color: var(--muted); font-size: 14px; text-decoration: none; transition: color .2s ease, transform .2s ease; }
+    .back-link:hover { color: var(--accent); transform: translateX(-3px); }
     .language { border: 0; background: transparent; color: var(--muted); font: inherit; cursor: pointer; }
     main { padding: 42px 0 58px; }
     h1, h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 400; line-height: 1.2; }
@@ -43,7 +45,7 @@
   <header class="wrap">
     <a class="wordmark" href="./" aria-label="GO’EL — главная">GO’EL</a>
     <div class="header-actions">
-      <a href="./" data-i18n="back">В каталог</a>
+      <a class="back-link" href="./"><span aria-hidden="true">←</span><span data-i18n="back">В каталог</span></a>
       <select class="language" id="language-select" aria-label="Язык">
         <option value="ru">RUS</option><option value="be">BEL</option><option value="uk">UKR</option><option value="en">ENG</option>
       </select>
