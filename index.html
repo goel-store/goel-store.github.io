@@ -1248,6 +1248,7 @@
           <div class="submenu-list currency-submenu-list" id="currency-submenu" role="radiogroup" aria-label="Валюта" data-i18n-aria="currencyLabel" hidden>
             <button type="button" role="radio" data-currency="BYN" aria-checked="true" aria-label="BYN"><span aria-hidden="true">🇧🇾</span><span class="currency-code">BYN</span></button>
             <button type="button" role="radio" data-currency="RUB" aria-checked="false" aria-label="RUB"><span aria-hidden="true">🇷🇺</span><span class="currency-code">RUB</span></button>
+            <button type="button" role="radio" data-currency="UAH" aria-checked="false" aria-label="UAH"><span aria-hidden="true">🇺🇦</span><span class="currency-code">UAH</span></button>
             <button type="button" role="radio" data-currency="EUR" aria-checked="false" aria-label="EUR"><span aria-hidden="true">🇪🇺</span><span class="currency-code">EUR</span></button>
             <button type="button" role="radio" data-currency="USD" aria-checked="false" aria-label="USD"><span aria-hidden="true">🇺🇸</span><span class="currency-code">USD</span></button>
           </div>
@@ -1658,8 +1659,8 @@
     function localizedPrice(price) { return price === "Уточняется" ? t("pricePending") : price; }
 
     // Editable display FX: USD value of 1 unit. Orientation only — checkout is a request, not payment.
-    const CURRENCY_RATES = { USD: 1, EUR: 1.08, BYN: 0.307, RUB: 0.011 };
-    const CURRENCY_LABELS = { BYN: "BYN", RUB: "RUB", EUR: "EUR", USD: "USD" };
+    const CURRENCY_RATES = { USD: 1, EUR: 1.08, BYN: 0.307, RUB: 0.011, UAH: 0.024 };
+    const CURRENCY_LABELS = { BYN: "BYN", RUB: "RUB", UAH: "UAH", EUR: "EUR", USD: "USD" };
     const CURRENCY_CODES = Object.keys(CURRENCY_RATES);
     let currentCurrency = "BYN";
     try {
@@ -1672,6 +1673,7 @@
       if (!token) return "";
       if (token === "byn" || token === "бр" || token === "br") return "BYN";
       if (token === "rub" || token === "rur" || token === "₽" || token === "руб" || token === "руб." || token.includes("руб")) return "RUB";
+      if (token === "uah" || token === "грн" || token === "грн." || token === "₴" || token.includes("грн")) return "UAH";
       if (token === "eur" || token === "€" || token === "euro") return "EUR";
       if (token === "usd" || token === "$" || token === "us$") return "USD";
       return "";
