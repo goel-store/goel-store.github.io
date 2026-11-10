@@ -1228,6 +1228,7 @@
           <button type="button" class="submenu-toggle" id="countries-toggle" aria-expanded="false" aria-controls="countries-submenu"><span data-i18n="countries">Страны</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list" id="countries-submenu" hidden>
             <button type="button" data-slug="belarus" data-i18n="belarus">Беларусь</button>
+            <button type="button" data-slug="russia" data-i18n="russia">Россия</button>
           </div>
           <button type="button" class="submenu-toggle" id="catalog-toggle" aria-expanded="false" aria-controls="catalog-submenu"><span data-i18n="catalogMenu">Каталог</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list" id="catalog-submenu" hidden>
@@ -1302,6 +1303,14 @@
         <a class="brand" href="?godderob" data-brand="godderob">
           <img class="swatch" src="img/godderob/avatar.jpg" alt="" width="64" height="64">
           <span><b>godderob</b></span>
+          <span class="go" data-i18n="view">Смотреть</span>
+        </a>
+      </div>
+      <div data-country-group="Россия">
+        <h2 data-i18n="russia">Россия</h2>
+        <a class="brand" href="?art" data-brand="art">
+          <img class="swatch" src="img/art/avatar.jpg" alt="" width="64" height="64">
+          <span><b>art.brand.jesus.saves</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
         </a>
       </div>
@@ -1442,7 +1451,7 @@
   <script>
     const translations = {
       ru: {
-        pageTitle: "GO'EL — христианские бренды одежды", countries: "Страны", countriesTitle: "Страны", mobileMenu: "Меню", belarus: "Беларусь", catalogMenu: "Каталог",
+        pageTitle: "GO'EL — христианские бренды одежды", countries: "Страны", countriesTitle: "Страны", mobileMenu: "Меню", belarus: "Беларусь", russia: "Россия", catalogMenu: "Каталог",
         all: "Всё", unisex: "Унисекс", women: "Женское", men: "Мужское", tshirts: "Футболки", sweatshirts: "Свитшоты", longSleeves: "Лонгсливы", halfZips: "Полузипы", caps: "Кепки", categoryFilter: "Категория одежды", filters: "Фильтры", clearFilters: "Сбросить", selectedCount: "Выбрано: {{count}}", removeFilter: "Убрать фильтр «{{category}}»", languageLabel: "Язык", socialNetworks: "Социальные сети",
         heroKicker: "Независимые бренды · одна витрина", heroLine1: "Носи то,", heroLine2: "во что веришь.", exploreCatalog: "Исследовать каталог", trackOrder: "Отследить заказ", trackOrderCode: "Проверить статус заказа · {{code}}", verseLine1: "Искупитель наш — Господь Саваоф", verseLine2: "имя Ему, Святый Израилев.", verseReference: "Ис. 47:4",
         allBrands: "Все бренды", view: "Смотреть", chooseItemHint: "Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.", cart: "Корзина", cartTitle: "Корзина", cartCount: "Корзина, товаров: {{count}}", cartEmpty: "Корзина пока пуста. Добавьте товары из каталога.", continueShopping: "Продолжить покупки", addToCart: "В корзину", addedToCart: "Добавлено в корзину.", cartCheckout: "Оформить заявку", cartTotal: "Итого: {{total}}", cartTotalOnRequest: "Итого: стоимость уточняется", cartUnavailable: "Этот вариант больше недоступен. Удалите его из корзины, чтобы продолжить.", removeCartItem: "Удалить товар", decreaseQuantity: "Уменьшить количество", increaseQuantity: "Увеличить количество", checkoutTitle: "Контактные данные",
@@ -1470,7 +1479,7 @@
         beige: "бежевый", red: "красный", coffee: "кофе", emerald: "изумруд", milk: "молочный", sand: "песочный", ginger: "рыжий", darkGreen: "тёмно-зелёный", melange: "меланж", plum: "сливовый"
       },
       be: {
-        pageTitle: "GO'EL — хрысціянскія брэнды адзення", countries: "Краіны", countriesTitle: "Краіны", mobileMenu: "Меню", belarus: "Беларусь", catalogMenu: "Каталог",
+        pageTitle: "GO'EL — хрысціянскія брэнды адзення", countries: "Краіны", countriesTitle: "Краіны", mobileMenu: "Меню", belarus: "Беларусь", russia: "Расія", catalogMenu: "Каталог",
         all: "Усё", unisex: "Унісекс", women: "Жаночае", men: "Мужчынскае", tshirts: "Футболкі", sweatshirts: "Світшоты", longSleeves: "Лонгслівы", halfZips: "Паўзіпы", caps: "Кепкі", categoryFilter: "Катэгорыя адзення", filters: "Фільтры", clearFilters: "Скінуць", selectedCount: "Выбрана: {{count}}", removeFilter: "Выдаліць фільтр «{{category}}»", languageLabel: "Мова", socialNetworks: "Сацыяльныя сеткі",
         heroKicker: "Незалежныя брэнды · адна вітрына", heroLine1: "Насі тое,", heroLine2: "у што верыш.", exploreCatalog: "Даследаваць каталог", trackOrder: "Адсачыць замову", trackOrderCode: "Праверыць статус замовы · {{code}}", verseLine1: "Збаўца наш — Гасподзь Саваоф", verseLine2: "імя Яму — Святы Ізраілеў.", verseReference: "Іс. 47:4",
         allBrands: "Усе брэнды", view: "Глядзець", chooseItemHint: "Выберыце рэч і варыянт — заяўку можна будзе пакінуць проста на сайце.", cart: "Кошык", cartTitle: "Кошык", cartCount: "Кошык, тавараў: {{count}}", cartEmpty: "Кошык пакуль пусты. Дадайце тавары з каталога.", continueShopping: "Працягнуць пакупкі", addToCart: "У кошык", addedToCart: "Дададзена ў кошык.", cartCheckout: "Аформіць заяўку", cartTotal: "Разам: {{total}}", cartTotalOnRequest: "Разам: кошт удакладняецца", cartUnavailable: "Гэты варыянт больш недаступны. Выдаліце яго з кошыка, каб працягнуць.", removeCartItem: "Выдаліць тавар", decreaseQuantity: "Паменшыць колькасць", increaseQuantity: "Павялічыць колькасць", checkoutTitle: "Кантактныя даныя",
@@ -1498,7 +1507,7 @@
         beige: "бэжавы", red: "чырвоны", coffee: "кававы", emerald: "смарагдавы", milk: "малочны", sand: "пясочны", ginger: "рыжы", darkGreen: "цёмна-зялёны", melange: "меланж", plum: "слівавы"
       },
       uk: {
-        pageTitle: "GO'EL — християнські бренди одягу", countries: "Країни", countriesTitle: "Країни", mobileMenu: "Меню", belarus: "Білорусь", catalogMenu: "Каталог",
+        pageTitle: "GO'EL — християнські бренди одягу", countries: "Країни", countriesTitle: "Країни", mobileMenu: "Меню", belarus: "Білорусь", russia: "Росія", catalogMenu: "Каталог",
         all: "Усе", unisex: "Унісекс", women: "Жіноче", men: "Чоловіче", tshirts: "Футболки", sweatshirts: "Світшоти", longSleeves: "Лонгсліви", halfZips: "Півзіпи", caps: "Кепки", categoryFilter: "Категорія одягу", filters: "Фільтри", clearFilters: "Скинути", selectedCount: "Обрано: {{count}}", removeFilter: "Видалити фільтр «{{category}}»", languageLabel: "Мова", socialNetworks: "Соціальні мережі",
         heroKicker: "Незалежні бренди · одна вітрина", heroLine1: "Носи те,", heroLine2: "у що віриш.", exploreCatalog: "Дослідити каталог", trackOrder: "Відстежити замовлення", trackOrderCode: "Перевірити статус замовлення · {{code}}", verseLine1: "Викупитель наш — Господь Саваот", verseLine2: "ім’я Йому — Святий Ізраїлів.", verseReference: "Іс. 47:4",
         allBrands: "Усі бренди", view: "Переглянути", chooseItemHint: "Оберіть річ і варіант — заявку можна буде залишити просто на сайті.", cart: "Кошик", cartTitle: "Кошик", cartCount: "Кошик, товарів: {{count}}", cartEmpty: "Кошик поки порожній. Додайте товари з каталогу.", continueShopping: "Продовжити покупки", addToCart: "До кошика", addedToCart: "Додано до кошика.", cartCheckout: "Оформити заявку", cartTotal: "Разом: {{total}}", cartTotalOnRequest: "Разом: вартість уточнюється", cartUnavailable: "Цей варіант більше недоступний. Видаліть його з кошика, щоб продовжити.", removeCartItem: "Видалити товар", decreaseQuantity: "Зменшити кількість", increaseQuantity: "Збільшити кількість", checkoutTitle: "Контактні дані",
@@ -1526,7 +1535,7 @@
         beige: "бежевий", red: "червоний", coffee: "кавовий", emerald: "смарагдовий", milk: "молочний", sand: "пісочний", ginger: "рудий", darkGreen: "темно-зелений", melange: "меланж", plum: "сливовий"
       },
       en: {
-        pageTitle: "GO'EL — Christian clothing brands", countries: "Countries", countriesTitle: "Countries", mobileMenu: "Menu", belarus: "Belarus", catalogMenu: "Catalog",
+        pageTitle: "GO'EL — Christian clothing brands", countries: "Countries", countriesTitle: "Countries", mobileMenu: "Menu", belarus: "Belarus", russia: "Russia", catalogMenu: "Catalog",
         all: "All", unisex: "Unisex", women: "Women", men: "Men", tshirts: "T-shirts", sweatshirts: "Sweatshirts", longSleeves: "Long sleeves", halfZips: "Half-zips", caps: "Caps", categoryFilter: "Clothing type", filters: "Filters", clearFilters: "Clear", selectedCount: "Selected: {{count}}", removeFilter: "Remove {{category}} filter", languageLabel: "Language", socialNetworks: "Social media",
         heroKicker: "Independent brands · one storefront", heroLine1: "Wear what", heroLine2: "you believe in.", exploreCatalog: "Explore the catalog", trackOrder: "Track your order", trackOrderCode: "Check order status · {{code}}", verseLine1: "Our Redeemer is the Lord of hosts", verseLine2: "is His name, the Holy One of Israel.", verseReference: "Isa 47:4",
         allBrands: "All brands", view: "Browse", chooseItemHint: "Choose an item and a variant — you can submit a request right here on the site.", cart: "Cart", cartTitle: "Your cart", cartCount: "Cart, items: {{count}}", cartEmpty: "Your cart is empty. Add items from the catalog.", continueShopping: "Continue shopping", addToCart: "Add to cart", addedToCart: "Added to cart.", cartCheckout: "Submit request", cartTotal: "Total: {{total}}", cartTotalOnRequest: "Total: price to be confirmed", cartUnavailable: "This option is no longer available. Remove it from your cart to continue.", removeCartItem: "Remove item", decreaseQuantity: "Decrease quantity", increaseQuantity: "Increase quantity", checkoutTitle: "Contact details",
@@ -1631,7 +1640,11 @@
       const model = englishItemTitle[rawModel.toLocaleLowerCase("ru")] || rawModel;
       return match ? `${localizedGarmentType(match[1])}${model ? ` ${model}` : ""}` : model;
     }
-    function localizedCountry(country) { return country === "Беларусь" ? t("belarus") : country; }
+    function localizedCountry(country) {
+      if (country === "Беларусь") return t("belarus");
+      if (country === "Россия") return t("russia");
+      return country;
+    }
     function localizedPrice(price) { return price === "Уточняется" ? t("pricePending") : price; }
     function applyStaticTranslations() {
       document.documentElement.lang = currentLanguage;
@@ -1650,8 +1663,8 @@
       const setupNote = document.getElementById("order-setup-note");
       if (setupNote) setupNote.textContent = t(orderApiConfigured ? "orderSetupConnected" : "orderSetupDisabled");
     }
-    const countryName = { belarus: "Беларусь" };
-    const countrySlug = { "Беларусь": "belarus" };
+    const countryName = { belarus: "Беларусь", russia: "Россия" };
+    const countrySlug = { "Беларусь": "belarus", "Россия": "russia" };
     // Set newArrival: true on a catalog item to feature it in "New arrivals"; remove the flag when it is no longer new.
     const brands = {
   godderob: {
@@ -2548,7 +2561,7 @@
 };
 
     Object.keys(brands).forEach((id) => {
-      if (id !== "godderob") delete brands[id];
+      if (id !== "godderob" && id !== "art") delete brands[id];
     });
 
     const home = document.getElementById("home");
