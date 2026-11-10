@@ -113,9 +113,11 @@
     .submenu-toggle[aria-expanded="true"] { color: var(--accent); }
     .submenu-list { margin: 0 12px 6px; padding-left: 8px; border-left: 1px solid var(--line); }
     .submenu-list button { padding: 9px 12px; }
-    .language-submenu-list button { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-    .language-submenu-list button[aria-checked="true"] { color: var(--accent); }
-    .language-code { min-width: 32px; font-weight: 600; }
+    .language-submenu-list button,
+    .currency-submenu-list button { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .language-submenu-list button[aria-checked="true"],
+    .currency-submenu-list button[aria-checked="true"] { color: var(--accent); }
+    .language-code, .currency-code { min-width: 32px; font-weight: 600; }
     nav.links a {
       display: inline-flex;
       align-items: center;
@@ -1242,6 +1244,13 @@
             <button type="button" role="radio" data-language="uk" aria-checked="false" aria-label="UKR"><span aria-hidden="true">🇺🇦</span><span class="language-code">UKR</span></button>
             <button type="button" role="radio" data-language="en" aria-checked="false" aria-label="ENG"><span aria-hidden="true">🇬🇧</span><span class="language-code">ENG</span></button>
           </div>
+          <button type="button" class="submenu-toggle" id="currency-toggle" aria-expanded="false" aria-controls="currency-submenu"><span data-i18n="currencyLabel">Валюта</span><span aria-hidden="true">▾</span></button>
+          <div class="submenu-list currency-submenu-list" id="currency-submenu" role="radiogroup" aria-label="Валюта" data-i18n-aria="currencyLabel" hidden>
+            <button type="button" role="radio" data-currency="BYN" aria-checked="true" aria-label="BYN"><span class="currency-code">BYN</span></button>
+            <button type="button" role="radio" data-currency="RUB" aria-checked="false" aria-label="RUB"><span class="currency-code">₽</span></button>
+            <button type="button" role="radio" data-currency="EUR" aria-checked="false" aria-label="EUR"><span class="currency-code">€</span></button>
+            <button type="button" role="radio" data-currency="USD" aria-checked="false" aria-label="USD"><span class="currency-code">$</span></button>
+          </div>
         </div>
       </div>
       <button type="button" class="cart-toggle cart-focus" id="cart-toggle" aria-label="Корзина">
@@ -1453,7 +1462,7 @@
     const translations = {
       ru: {
         pageTitle: "GO'EL — христианские бренды одежды", countries: "Страны", countriesTitle: "Страны", mobileMenu: "Меню", belarus: "Беларусь", russia: "Россия", catalogMenu: "Каталог",
-        all: "Всё", unisex: "Унисекс", women: "Женское", men: "Мужское", tshirts: "Футболки", sweatshirts: "Свитшоты", longSleeves: "Лонгсливы", halfZips: "Полузипы", caps: "Кепки", categoryFilter: "Категория одежды", filters: "Фильтры", clearFilters: "Сбросить", selectedCount: "Выбрано: {{count}}", removeFilter: "Убрать фильтр «{{category}}»", languageLabel: "Язык", socialNetworks: "Социальные сети",
+        all: "Всё", unisex: "Унисекс", women: "Женское", men: "Мужское", tshirts: "Футболки", sweatshirts: "Свитшоты", longSleeves: "Лонгсливы", halfZips: "Полузипы", caps: "Кепки", categoryFilter: "Категория одежды", filters: "Фильтры", clearFilters: "Сбросить", selectedCount: "Выбрано: {{count}}", removeFilter: "Убрать фильтр «{{category}}»", languageLabel: "Язык", currencyLabel: "Валюта", socialNetworks: "Социальные сети",
         heroKicker: "Независимые бренды · одна витрина", heroLine1: "Носи то,", heroLine2: "во что веришь.", exploreCatalog: "Исследовать каталог", trackOrder: "Отследить заказ", trackOrderCode: "Проверить статус заказа · {{code}}", verseLine1: "Искупитель наш — Господь Саваоф", verseLine2: "имя Ему, Святый Израилев.", verseReference: "Ис. 47:4",
         allBrands: "Все бренды", view: "Смотреть", chooseItemHint: "Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.", cart: "Корзина", cartTitle: "Корзина", cartCount: "Корзина, товаров: {{count}}", cartEmpty: "Корзина пока пуста. Добавьте товары из каталога.", continueShopping: "Продолжить покупки", addToCart: "В корзину", addedToCart: "Добавлено в корзину.", cartCheckout: "Оформить заявку", cartTotal: "Итого: {{total}}", cartTotalOnRequest: "Итого: стоимость уточняется", cartUnavailable: "Этот вариант больше недоступен. Удалите его из корзины, чтобы продолжить.", removeCartItem: "Удалить товар", decreaseQuantity: "Уменьшить количество", increaseQuantity: "Увеличить количество", checkoutTitle: "Контактные данные",
         cartLimit: "В корзине может быть не больше 25 разных товаров.",
@@ -1481,7 +1490,7 @@
       },
       be: {
         pageTitle: "GO'EL — хрысціянскія брэнды адзення", countries: "Краіны", countriesTitle: "Краіны", mobileMenu: "Меню", belarus: "Беларусь", russia: "Расія", catalogMenu: "Каталог",
-        all: "Усё", unisex: "Унісекс", women: "Жаночае", men: "Мужчынскае", tshirts: "Футболкі", sweatshirts: "Світшоты", longSleeves: "Лонгслівы", halfZips: "Паўзіпы", caps: "Кепкі", categoryFilter: "Катэгорыя адзення", filters: "Фільтры", clearFilters: "Скінуць", selectedCount: "Выбрана: {{count}}", removeFilter: "Выдаліць фільтр «{{category}}»", languageLabel: "Мова", socialNetworks: "Сацыяльныя сеткі",
+        all: "Усё", unisex: "Унісекс", women: "Жаночае", men: "Мужчынскае", tshirts: "Футболкі", sweatshirts: "Світшоты", longSleeves: "Лонгслівы", halfZips: "Паўзіпы", caps: "Кепкі", categoryFilter: "Катэгорыя адзення", filters: "Фільтры", clearFilters: "Скінуць", selectedCount: "Выбрана: {{count}}", removeFilter: "Выдаліць фільтр «{{category}}»", languageLabel: "Мова", currencyLabel: "Валюта", socialNetworks: "Сацыяльныя сеткі",
         heroKicker: "Незалежныя брэнды · адна вітрына", heroLine1: "Насі тое,", heroLine2: "у што верыш.", exploreCatalog: "Даследаваць каталог", trackOrder: "Адсачыць замову", trackOrderCode: "Праверыць статус замовы · {{code}}", verseLine1: "Збаўца наш — Гасподзь Саваоф", verseLine2: "імя Яму — Святы Ізраілеў.", verseReference: "Іс. 47:4",
         allBrands: "Усе брэнды", view: "Глядзець", chooseItemHint: "Выберыце рэч і варыянт — заяўку можна будзе пакінуць проста на сайце.", cart: "Кошык", cartTitle: "Кошык", cartCount: "Кошык, тавараў: {{count}}", cartEmpty: "Кошык пакуль пусты. Дадайце тавары з каталога.", continueShopping: "Працягнуць пакупкі", addToCart: "У кошык", addedToCart: "Дададзена ў кошык.", cartCheckout: "Аформіць заяўку", cartTotal: "Разам: {{total}}", cartTotalOnRequest: "Разам: кошт удакладняецца", cartUnavailable: "Гэты варыянт больш недаступны. Выдаліце яго з кошыка, каб працягнуць.", removeCartItem: "Выдаліць тавар", decreaseQuantity: "Паменшыць колькасць", increaseQuantity: "Павялічыць колькасць", checkoutTitle: "Кантактныя даныя",
         cartLimit: "У кошыку можа быць не больш за 25 розных тавараў.",
@@ -1509,7 +1518,7 @@
       },
       uk: {
         pageTitle: "GO'EL — християнські бренди одягу", countries: "Країни", countriesTitle: "Країни", mobileMenu: "Меню", belarus: "Білорусь", russia: "Росія", catalogMenu: "Каталог",
-        all: "Усе", unisex: "Унісекс", women: "Жіноче", men: "Чоловіче", tshirts: "Футболки", sweatshirts: "Світшоти", longSleeves: "Лонгсліви", halfZips: "Півзіпи", caps: "Кепки", categoryFilter: "Категорія одягу", filters: "Фільтри", clearFilters: "Скинути", selectedCount: "Обрано: {{count}}", removeFilter: "Видалити фільтр «{{category}}»", languageLabel: "Мова", socialNetworks: "Соціальні мережі",
+        all: "Усе", unisex: "Унісекс", women: "Жіноче", men: "Чоловіче", tshirts: "Футболки", sweatshirts: "Світшоти", longSleeves: "Лонгсліви", halfZips: "Півзіпи", caps: "Кепки", categoryFilter: "Категорія одягу", filters: "Фільтри", clearFilters: "Скинути", selectedCount: "Обрано: {{count}}", removeFilter: "Видалити фільтр «{{category}}»", languageLabel: "Мова", currencyLabel: "Валюта", socialNetworks: "Соціальні мережі",
         heroKicker: "Незалежні бренди · одна вітрина", heroLine1: "Носи те,", heroLine2: "у що віриш.", exploreCatalog: "Дослідити каталог", trackOrder: "Відстежити замовлення", trackOrderCode: "Перевірити статус замовлення · {{code}}", verseLine1: "Викупитель наш — Господь Саваот", verseLine2: "ім’я Йому — Святий Ізраїлів.", verseReference: "Іс. 47:4",
         allBrands: "Усі бренди", view: "Переглянути", chooseItemHint: "Оберіть річ і варіант — заявку можна буде залишити просто на сайті.", cart: "Кошик", cartTitle: "Кошик", cartCount: "Кошик, товарів: {{count}}", cartEmpty: "Кошик поки порожній. Додайте товари з каталогу.", continueShopping: "Продовжити покупки", addToCart: "До кошика", addedToCart: "Додано до кошика.", cartCheckout: "Оформити заявку", cartTotal: "Разом: {{total}}", cartTotalOnRequest: "Разом: вартість уточнюється", cartUnavailable: "Цей варіант більше недоступний. Видаліть його з кошика, щоб продовжити.", removeCartItem: "Видалити товар", decreaseQuantity: "Зменшити кількість", increaseQuantity: "Збільшити кількість", checkoutTitle: "Контактні дані",
         cartLimit: "У кошику може бути не більше 25 різних товарів.",
@@ -1537,7 +1546,7 @@
       },
       en: {
         pageTitle: "GO'EL — Christian clothing brands", countries: "Countries", countriesTitle: "Countries", mobileMenu: "Menu", belarus: "Belarus", russia: "Russia", catalogMenu: "Catalog",
-        all: "All", unisex: "Unisex", women: "Women", men: "Men", tshirts: "T-shirts", sweatshirts: "Sweatshirts", longSleeves: "Long sleeves", halfZips: "Half-zips", caps: "Caps", categoryFilter: "Clothing type", filters: "Filters", clearFilters: "Clear", selectedCount: "Selected: {{count}}", removeFilter: "Remove {{category}} filter", languageLabel: "Language", socialNetworks: "Social media",
+        all: "All", unisex: "Unisex", women: "Women", men: "Men", tshirts: "T-shirts", sweatshirts: "Sweatshirts", longSleeves: "Long sleeves", halfZips: "Half-zips", caps: "Caps", categoryFilter: "Clothing type", filters: "Filters", clearFilters: "Clear", selectedCount: "Selected: {{count}}", removeFilter: "Remove {{category}} filter", languageLabel: "Language", currencyLabel: "Currency", socialNetworks: "Social media",
         heroKicker: "Independent brands · one storefront", heroLine1: "Wear what", heroLine2: "you believe in.", exploreCatalog: "Explore the catalog", trackOrder: "Track your order", trackOrderCode: "Check order status · {{code}}", verseLine1: "Our Redeemer is the Lord of hosts", verseLine2: "is His name, the Holy One of Israel.", verseReference: "Isa 47:4",
         allBrands: "All brands", view: "Browse", chooseItemHint: "Choose an item and a variant — you can submit a request right here on the site.", cart: "Cart", cartTitle: "Your cart", cartCount: "Cart, items: {{count}}", cartEmpty: "Your cart is empty. Add items from the catalog.", continueShopping: "Continue shopping", addToCart: "Add to cart", addedToCart: "Added to cart.", cartCheckout: "Submit request", cartTotal: "Total: {{total}}", cartTotalOnRequest: "Total: price to be confirmed", cartUnavailable: "This option is no longer available. Remove it from your cart to continue.", removeCartItem: "Remove item", decreaseQuantity: "Decrease quantity", increaseQuantity: "Increase quantity", checkoutTitle: "Contact details",
         cartLimit: "Your cart can contain up to 25 different items.",
@@ -1647,6 +1656,62 @@
       return country;
     }
     function localizedPrice(price) { return price === "Уточняется" ? t("pricePending") : price; }
+
+    // Editable display FX: USD value of 1 unit. Orientation only — checkout is a request, not payment.
+    const CURRENCY_RATES = { USD: 1, EUR: 1.08, BYN: 0.307, RUB: 0.011 };
+    const CURRENCY_LABELS = { BYN: "BYN", RUB: "₽", EUR: "€", USD: "$" };
+    const CURRENCY_CODES = Object.keys(CURRENCY_RATES);
+    let currentCurrency = "BYN";
+    try {
+      const savedCurrency = localStorage.getItem("goel-currency");
+      if (savedCurrency && CURRENCY_RATES[savedCurrency]) currentCurrency = savedCurrency;
+    } catch (error) {}
+
+    function normalizeCurrency(raw) {
+      const token = String(raw || "").trim().toLowerCase().replace(/\s+/g, "");
+      if (!token) return "";
+      if (token === "byn" || token === "бр" || token === "br") return "BYN";
+      if (token === "rub" || token === "rur" || token === "₽" || token === "руб" || token === "руб." || token.includes("руб")) return "RUB";
+      if (token === "eur" || token === "€" || token === "euro") return "EUR";
+      if (token === "usd" || token === "$" || token === "us$") return "USD";
+      return "";
+    }
+
+    function priceParts(price) {
+      const match = String(price || "").trim().match(/^(\d+(?:[.,]\d+)?)\s*(.*)$/);
+      if (!match) return null;
+      const currency = normalizeCurrency(match[2]);
+      if (!currency || !CURRENCY_RATES[currency]) return null;
+      return { amount: Number(match[1].replace(",", ".")), currency };
+    }
+
+    function convertAmount(amount, fromCurrency, toCurrency) {
+      if (!CURRENCY_RATES[fromCurrency] || !CURRENCY_RATES[toCurrency]) return null;
+      return amount * (CURRENCY_RATES[fromCurrency] / CURRENCY_RATES[toCurrency]);
+    }
+
+    function formatMoney(amount, currency) {
+      if (!Number.isFinite(amount)) return "";
+      const rounded = (currency === "EUR" || currency === "USD")
+        ? Math.round(amount * 100) / 100
+        : Math.round(amount * 100) / 100;
+      const formatted = Number.isInteger(rounded)
+        ? String(rounded)
+        : rounded.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+      return `${formatted} ${CURRENCY_LABELS[currency] || currency}`.trim();
+    }
+
+    function displayPrice(rawPrice) {
+      const source = String(rawPrice || "").trim();
+      if (!source) return "";
+      if (source === "Уточняется") return t("pricePending");
+      const parts = priceParts(source);
+      if (!parts) return localizedPrice(source);
+      if (parts.currency === currentCurrency) return formatMoney(parts.amount, currentCurrency);
+      const converted = convertAmount(parts.amount, parts.currency, currentCurrency);
+      return converted == null ? localizedPrice(source) : formatMoney(converted, currentCurrency);
+    }
+
     function applyStaticTranslations() {
       document.documentElement.lang = currentLanguage;
       document.title = t("pageTitle");
@@ -1658,6 +1723,9 @@
       document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => { element.placeholder = t(element.dataset.i18nPlaceholder); });
       document.querySelectorAll("#language-submenu [data-language]").forEach((option) => {
         option.setAttribute("aria-checked", String(option.dataset.language === currentLanguage));
+      });
+      document.querySelectorAll("#currency-submenu [data-currency]").forEach((option) => {
+        option.setAttribute("aria-checked", String(option.dataset.currency === currentCurrency));
       });
       const productCloth = document.getElementById("product-cloth");
       if (productCloth) productCloth.dataset.zoomLabel = t("enlargePhoto");
@@ -2807,7 +2875,9 @@
     const catalogSubmenu = document.getElementById("catalog-submenu");
     const languageToggle = document.getElementById("language-toggle");
     const languageSubmenu = document.getElementById("language-submenu");
-    const menuSubmenus = [[countriesToggle, countriesSubmenu], [catalogToggle, catalogSubmenu], [languageToggle, languageSubmenu]];
+    const currencyToggle = document.getElementById("currency-toggle");
+    const currencySubmenu = document.getElementById("currency-submenu");
+    const menuSubmenus = [[countriesToggle, countriesSubmenu], [catalogToggle, catalogSubmenu], [languageToggle, languageSubmenu], [currencyToggle, currencySubmenu]];
     let genderLabel = { all: t("all"), unisex: t("unisex"), women: t("women"), men: t("men") };
     function stockToken(value) {
       return String(value || "")
@@ -3228,7 +3298,7 @@
         tone: variant.tone || "",
         color: variant.tone ? localizedTone(variant.tone) : t("colorUnknown"),
         size: displaySize,
-        price: variant.price ? localizedPrice(variant.price) : t("priceUnknown"),
+        price: variant.price ? displayPrice(variant.price) : t("priceUnknown"),
         quantity: line.quantity,
         maxOrderQuantity,
         photo: variantPhotos(variant)[0] || variant.photo || "",
@@ -3253,17 +3323,16 @@
       document.getElementById("cart-toggle").setAttribute("aria-label", count ? t("cartCount", { count }) : t("cart"));
     }
 
-    function priceParts(price) {
-      const match = String(price).match(/(\d+(?:[.,]\d+)?)\s*(.*)/);
-      return match ? { amount: Number(match[1].replace(",", ".")), currency: match[2].trim() } : null;
-    }
-
     function cartTotal(details) {
-      const parts = details.map((detail) => priceParts(detail.rawPrice));
-      if (!parts.length || parts.some((part) => !part) || new Set(parts.map((part) => part.currency)).size !== 1) return t("cartTotalOnRequest");
-      const amount = details.reduce((sum, detail, index) => sum + parts[index].amount * detail.quantity, 0);
-      const formatted = Number.isInteger(amount) ? String(amount) : amount.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
-      return t("cartTotal", { total: `${formatted} ${parts[0].currency}`.trim() });
+      const converted = details.map((detail) => {
+        const parts = priceParts(detail.rawPrice);
+        if (!parts) return null;
+        const amount = convertAmount(parts.amount, parts.currency, currentCurrency);
+        return amount == null ? null : amount * detail.quantity;
+      });
+      if (!converted.length || converted.some((amount) => amount == null)) return t("cartTotalOnRequest");
+      const amount = converted.reduce((sum, value) => sum + value, 0);
+      return t("cartTotal", { total: formatMoney(amount, currentCurrency) });
     }
 
     function renderCartContents() {
@@ -3469,15 +3538,20 @@
     });
 
     function cardPrice(item, selectedVariant = null) {
-      const prices = (selectedVariant ? [selectedVariant] : item.variants).filter(variantInStock).map((variant) => localizedPrice(variant.price || "")).filter(Boolean);
-      if (!prices.length) return "";
-      const unique = [...new Set(prices)];
-      if (unique.length === 1) return unique[0];
-      const numbers = unique.map((price) => parseFloat(price)).filter((n) => !Number.isNaN(n));
-      if (!numbers.length) return unique[0];
-      const min = Math.min(...numbers);
-      const unit = unique[0].replace(/[\d.,\s]+/, "").trim();
-      return `${t("from")} ${min} ${unit}`.trim();
+      const variants = (selectedVariant ? [selectedVariant] : item.variants).filter(variantInStock);
+      const amounts = variants.map((variant) => {
+        const parts = priceParts(variant.price || "");
+        if (!parts) return null;
+        return convertAmount(parts.amount, parts.currency, currentCurrency);
+      }).filter((amount) => amount != null);
+      if (!amounts.length) {
+        const fallback = variants.map((variant) => displayPrice(variant.price || "")).filter(Boolean);
+        return fallback.length === 1 ? fallback[0] : (fallback[0] || "");
+      }
+      const min = Math.min(...amounts);
+      const max = Math.max(...amounts);
+      if (min === max) return formatMoney(min, currentCurrency);
+      return `${t("from")} ${formatMoney(min, currentCurrency)}`.trim();
     }
 
     function renderHomeCollections(country = "all") {
@@ -3913,7 +3987,7 @@
       ).join("");
       const priceEl = document.getElementById("product-price");
       priceEl.hidden = !variant.price;
-      priceEl.textContent = localizedPrice(variant.price || "");
+      priceEl.textContent = displayPrice(variant.price || "");
       const buyButton = document.getElementById("add-to-cart");
       buyButton.disabled = unavailable;
       buyButton.textContent = unavailable ? t("unavailable") : t("addToCart");
@@ -3996,15 +4070,7 @@
       paintCountry("all", animate);
     }
 
-    function setLanguage(language, refresh = true) {
-      currentLanguage = translations[language] ? language : "ru";
-      try { localStorage.setItem("goel-language", currentLanguage); } catch (error) {}
-      genderLabel = { all: t("all"), unisex: t("unisex"), women: t("women"), men: t("men") };
-      brandCategoryLabel = { all: t("all"), tshirts: t("tshirts"), sweatshirts: t("sweatshirts"), longSleeves: t("longSleeves"), halfZips: t("halfZips"), caps: t("caps") };
-      applyStaticTranslations();
-      updateCartBadge();
-      if (!refresh) return;
-
+    function refreshActivePrices() {
       const [routeBrand, routeProduct] = currentRoute().split("/").filter(Boolean);
       const isProductRoute = Boolean(routeProduct && brands[routeBrand]);
       const savedItemSlug = currentItem?.slug;
@@ -4024,6 +4090,28 @@
           }
         }
       }
+      if (cartPage.classList.contains("on")) renderCartContents();
+    }
+
+    function setLanguage(language, refresh = true) {
+      currentLanguage = translations[language] ? language : "ru";
+      try { localStorage.setItem("goel-language", currentLanguage); } catch (error) {}
+      genderLabel = { all: t("all"), unisex: t("unisex"), women: t("women"), men: t("men") };
+      brandCategoryLabel = { all: t("all"), tshirts: t("tshirts"), sweatshirts: t("sweatshirts"), longSleeves: t("longSleeves"), halfZips: t("halfZips"), caps: t("caps") };
+      applyStaticTranslations();
+      updateCartBadge();
+      if (!refresh) return;
+      refreshActivePrices();
+    }
+
+    function setCurrency(currency, refresh = true) {
+      currentCurrency = CURRENCY_RATES[currency] ? currency : "BYN";
+      try { localStorage.setItem("goel-currency", currentCurrency); } catch (error) {}
+      document.querySelectorAll("#currency-submenu [data-currency]").forEach((option) => {
+        option.setAttribute("aria-checked", String(option.dataset.currency === currentCurrency));
+      });
+      if (!refresh) return;
+      refreshActivePrices();
     }
 
     function navigate(route) {
@@ -4053,12 +4141,23 @@
       event.stopPropagation();
       toggleSubmenu(languageToggle, languageSubmenu);
     });
+    currencyToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleSubmenu(currencyToggle, currencySubmenu);
+    });
     menuList.addEventListener("click", (event) => event.stopPropagation());
     document.addEventListener("click", closeMenus);
 
     languageSubmenu.querySelectorAll("[data-language]").forEach((option) => {
       option.addEventListener("click", () => {
         setLanguage(option.dataset.language);
+        closeMenus();
+        menuBtn.focus();
+      });
+    });
+    currencySubmenu.querySelectorAll("[data-currency]").forEach((option) => {
+      option.addEventListener("click", () => {
+        setCurrency(option.dataset.currency);
         closeMenus();
         menuBtn.focus();
       });
@@ -4504,6 +4603,7 @@
     });
 
     setLanguage(currentLanguage, false);
+    setCurrency(currentCurrency, false);
     closeUnlistedGodderobStock();
     renderCartContents();
     loadAvailabilityFeed().finally(() => apply(false));
