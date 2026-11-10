@@ -1658,11 +1658,13 @@
     }
     function localizedPrice(price) { return price === "Уточняется" ? t("pricePending") : price; }
 
-    // Editable display FX: USD value of 1 unit. Orientation only — checkout is a request, not payment.
+    // Display FX: USD value of 1 unit. Defaults until /fx loads live rates. Checkout is a request, not payment.
+    const FX_API_URL = "https://goel-order-api.o-el.workers.dev/fx";
     const CURRENCY_RATES = { USD: 1, EUR: 1.08, BYN: 0.307, RUB: 0.011, UAH: 0.024 };
     const CURRENCY_LABELS = { BYN: "BYN", RUB: "RUB", UAH: "UAH", EUR: "EUR", USD: "USD" };
     const CURRENCY_CODES = Object.keys(CURRENCY_RATES);
     let currentCurrency = "BYN";
+    let fxRatesLoaded = false;
     try {
       const savedCurrency = localStorage.getItem("goel-currency");
       if (savedCurrency && CURRENCY_RATES[savedCurrency]) currentCurrency = savedCurrency;
@@ -2939,6 +2941,25 @@
         });
       } catch (error) {
         console.warn("Could not load live stock; Godderob variants remain unavailable.", error);
+      }
+    }
+
+    async function loadFxRates() {
+      try {
+        const response = await fetch(FX_API_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`FX feed returned ${response.status}`);
+        const feed = await response.json();
+        if (feed.schemaVersion !== 1 || !feed.rates || typeof feed.rates !== "object") {
+          throw new Error("Unsupported FX feed format");
+        }
+        for (const code of CURRENCY_CODES) {
+          const value = Number(feed.rates[code]);
+          if (!Number.isFinite(value) || value <= 0) throw new Error(`Invalid FX rate for ${code}`);
+          CURRENCY_RATES[code] = value;
+        }
+        fxRatesLoaded = true;
+      } catch (error) {
+        console.warn("Could not load live FX rates; using defaults.", error);
       }
     }
 
@@ -4608,7 +4629,7 @@
     setCurrency(currentCurrency, false);
     closeUnlistedGodderobStock();
     renderCartContents();
-    loadAvailabilityFeed().finally(() => apply(false));
+    Promise.all([loadAvailabilityFeed(), loadFxRates()]).finally(() => apply(false));
     window.addEventListener("popstate", () => {
       closeLightbox();
       apply(true);
