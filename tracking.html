@@ -43,7 +43,7 @@
     button, input { font: inherit; }
     button { cursor: pointer; }
     .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
-    .site-header { width: 100%; height: 66px; margin: 0; padding: 0 max(20px, calc((100% - 1120px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(244, 233, 220, .12); background: rgba(42, 33, 29, .93); }
+    .site-header { width: 100%; height: 66px; margin: 0; padding: 0 max(20px, calc((100% - 1120px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(244, 233, 220, .12); background: rgba(42, 33, 29, .93); box-sizing: border-box; }
     .wordmark { font-size: 19px; font-weight: 650; letter-spacing: .055em; }
     .back-link { display: inline-flex; align-items: center; gap: 9px; color: var(--muted); font-size: 14px; transition: color .2s ease, transform .2s ease; }
     .back-link:hover { color: var(--accent); transform: translateX(-3px); }
@@ -204,7 +204,7 @@
   </style>
 </head>
 <body>
-  <header class="wrap site-header">
+  <header class="site-header">
     <a class="wordmark" href="./" aria-label="GO’EL — главная">GO’EL</a>
     <div style="display:flex;align-items:center;gap:22px">
       <a class="back-link" href="./"><span aria-hidden="true">←</span><span data-i18n="back">В каталог</span></a>
