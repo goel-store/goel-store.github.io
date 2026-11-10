@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#2a211d">
+  <meta name="description" content="Проверьте текущий этап обработки заказа GO’EL по коду отслеживания.">
+  <link rel="canonical" href="https://goel-store.github.io/tracking.html">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GO’EL">
+  <meta property="og:url" content="https://goel-store.github.io/tracking.html">
+  <meta property="og:title" content="Статус заказа — GO’EL">
+  <meta property="og:description" content="Проверьте текущий этап обработки заказа GO’EL по коду отслеживания.">
+  <meta name="twitter:card" content="summary">
+  <title>Статус заказа — GO’EL</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #2a211d;
+      --paper: #40332c;
+      --ink: #f4e9dc;
+      --muted: #c8b6a6;
+      --line: #685344;
+      --accent: #e7a47c;
+      --accent-soft: #47332a;
+      --green: #f0cba5;
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.24);
+    }
+    * { box-sizing: border-box; }
+    html { min-width: 320px; background: var(--bg); }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(ellipse at 8% 14%, rgba(111, 72, 52, 0.28), transparent 38rem),
+        radial-gradient(ellipse at 92% 48%, rgba(76, 55, 43, 0.34), transparent 36rem),
+        var(--bg);
+      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+      line-height: 1.5;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+    .site-header { width: 100%; height: 66px; margin: 0; padding: 0 max(20px, calc((100% - 1120px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(244, 233, 220, .12); background: rgba(42, 33, 29, .93); }
+    .wordmark { font-size: 19px; font-weight: 650; letter-spacing: .055em; }
+    .back-link { display: inline-flex; align-items: center; gap: 9px; color: var(--muted); font-size: 14px; transition: color .2s ease, transform .2s ease; }
+    .back-link:hover { color: var(--accent); transform: translateX(-3px); }
+    .language-select { border: 0; background: transparent; color: var(--muted); font: inherit; cursor: pointer; }
+    .intro { max-width: 850px; margin: 25px auto 16px; text-align: center; animation: intro-in .7s cubic-bezier(.2,.75,.25,1) both; }
+    .eyebrow { margin: 0 0 13px; color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; }
+    h1 { max-width: 800px; margin: 0 auto; font-family: Georgia, "Times New Roman", serif; font-size: clamp(40px, 5.4vw, 64px); font-weight: 400; letter-spacing: -.055em; line-height: 1.03; }
+    .intro-copy { max-width: 650px; margin: 11px auto 0; color: var(--muted); font-size: 15px; }
+    .lookup-card { position: relative; z-index: 1; width: min(650px, 100%); margin: 18px auto 0; padding: 8px; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(244, 233, 220, .2); border-radius: 18px; background: rgba(57, 46, 40, .94); box-shadow: 0 14px 45px rgba(0, 0, 0, .16); backdrop-filter: blur(12px); transition: box-shadow .25s ease, border-color .25s ease; }
+    .lookup-card:focus-within { border-color: rgba(231, 164, 124, .65); box-shadow: 0 17px 52px rgba(0, 0, 0, .2), 0 0 0 4px rgba(231, 164, 124, .08); }
+    .lookup-icon { width: 42px; height: 42px; flex: 0 0 auto; display: grid; place-items: center; color: var(--accent); }
+    .lookup-icon svg { width: 21px; height: 21px; }
+    .lookup-field { min-width: 0; flex: 1; display: grid; gap: 1px; text-align: left; }
+    .lookup-field label { color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+    .lookup-field input { width: 100%; border: 0; outline: 0; padding: 3px 0; color: var(--ink); background: transparent; font-size: 17px; letter-spacing: .09em; }
+    .lookup-field input::placeholder { color: #927e70; letter-spacing: .025em; }
+    .lookup-button { min-height: 49px; padding: 0 21px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; color: #211c19; background: #fffaf4; font-size: 14px; font-weight: 650; transition: background .2s ease, transform .2s ease; }
+    .lookup-button:hover { background: #f2b494; transform: translateY(-1px); }
+    .lookup-button:disabled { opacity: .65; cursor: wait; transform: none; }
+    .lookup-button svg { width: 16px; height: 16px; }
+    .lookup-hint { margin: 8px 0 0; color: #ad9887; font-size: 12px; }
+    .lookup-message { min-height: 22px; margin: 12px auto 0; color: var(--accent); font-size: 13px; }
+    .lookup-message:empty { min-height: 0; margin-top: 0; }
+    .lookup-message.success { color: var(--green); }
+    .result { width: min(1000px, 100%); margin: 12px auto 64px; animation: result-in .7s cubic-bezier(.2,.75,.25,1) both; }
+    .result[hidden] { display: none; }
+    .result-top { margin-bottom: 11px; padding: 0 4px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+    .result-top h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(24px, 3vw, 32px); font-weight: 400; letter-spacing: -.035em; }
+    .result-top p { display: none; }
+    .order-code { flex: 0 0 auto; padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--accent); background: rgba(57, 46, 40, .72); font-size: 12px; font-weight: 700; letter-spacing: .07em; }
+    .journey-card { overflow: hidden; border: 1px solid rgba(244, 233, 220, .16); border-radius: 22px; background: var(--paper); box-shadow: var(--shadow); }
+    .journey-head { min-height: 66px; padding: 13px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); }
+    .journey-head-label { display: flex; align-items: center; gap: 12px; }
+    .live-mark { width: 10px; height: 10px; flex: 0 0 auto; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(231, 164, 124, .12); }
+    .journey-head h3 { margin: 0; font-size: 15px; font-weight: 650; }
+    .journey-head p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .status-pill { padding: 8px 13px; border: 1px solid rgba(231, 164, 124, .28); border-radius: 999px; color: var(--accent); background: rgba(231, 164, 124, .09); font-size: 12px; font-weight: 650; text-align: center; }
+    .status-pill.preview-status { color: var(--muted); border-color: var(--line); background: rgba(42, 33, 29, .45); }
+    .journey-map { position: relative; height: 230px; margin: 2px 20px 0; overflow: hidden; }
+    .route-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .route-mobile { display: none; }
+    .journey-route { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .journey-route-base { stroke: #58453a; stroke-width: 3; }
+    .journey-route-progress { stroke: var(--accent); stroke-width: 4; filter: drop-shadow(0 2px 8px rgba(231, 164, 124, .3)); transition: stroke-dashoffset 1.85s cubic-bezier(.22,.75,.25,1); }
+    .route-desktop .journey-route-progress { stroke: url(#routeGradientDesktop); }
+    .route-mobile .journey-route-progress { stroke: url(#routeGradientMobile); }
+    .journey-map.is-cancelled .journey-route-progress { stroke: #bd8068; }
+    .route-stop { --arrival-opacity: .55; position: absolute; z-index: 1; width: 54px; height: 54px; padding: 6px; display: grid; place-items: center; border-radius: 50%; background: var(--paper); transform: translate(-50%, -50%) scale(.88); opacity: .55; transition: opacity .55s ease, transform .65s cubic-bezier(.2,.75,.25,1); }
+    .route-stop:nth-of-type(1) { left: 8.5%; top: 65%; --arrival-x: -26px; --arrival-y: 18px; }
+    .route-stop:nth-of-type(2) { left: 30%; top: 35%; --arrival-x: -22px; --arrival-y: 26px; }
+    .route-stop:nth-of-type(3) { left: 51%; top: 61%; --arrival-x: 24px; --arrival-y: -22px; }
+    .route-stop:nth-of-type(4) { left: 71%; top: 27%; --arrival-x: -25px; --arrival-y: -16px; }
+    .route-stop:nth-of-type(5) { left: 91%; top: 40%; --arrival-x: 28px; --arrival-y: -12px; }
+    .stop-dot { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #70594a; border-radius: 50%; color: #b9a391; background: #302722; transition: color .35s ease, border-color .35s ease, background .35s ease, box-shadow .35s ease; }
+    .stop-dot svg { width: 17px; height: 17px; }
+    .stop-copy { position: absolute; top: 44px; left: 50%; width: 145px; padding: 2px 4px; color: var(--muted); text-align: center; transform: translateX(-50%); }
+    .stop-copy b { display: block; color: #c3ad99; font-size: 14px; font-weight: 600; line-height: 1.35; transition: color .35s ease; }
+    .stop-copy span, .map-caption, .journey-card.is-preview .journey-head p { display: none; }
+    .route-stop.is-done, .route-stop.is-current { --arrival-opacity: 1; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .route-stop.is-done .stop-dot { border-color: var(--accent); color: white; background: var(--accent); }
+    .route-stop.is-done .stop-copy b, .route-stop.is-current .stop-copy b { color: var(--ink); }
+    .route-stop.is-current .stop-dot { border-color: var(--accent); color: #211c19; background: var(--accent); box-shadow: 0 0 0 7px rgba(231, 164, 124, .14), 0 7px 18px rgba(0, 0, 0, .24); animation: pin-pulse 2.4s ease-in-out infinite; }
+    .journey-map.is-preview .route-stop { --arrival-opacity: 1; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    .journey-map.is-preview .stop-dot { border-color: rgba(231, 164, 124, .48); color: var(--accent); background: #302722; }
+    .journey-map.is-preview .stop-copy b { color: var(--ink); }
+    .journey-map.is-preview .journey-route-progress { animation: route-glow 3.2s ease-in-out 1.8s infinite; }
+    .journey-map.is-arriving .route-stop { animation: stop-arrive 660ms cubic-bezier(.18,.8,.2,1) both; animation-delay: var(--arrival-delay, 0ms); }
+    .journey-map.is-cancelled .route-stop .stop-dot { border-color: #70594a; color: #bd8068; background: #302722; box-shadow: none; animation: none; }
+    .order-details { min-height: 72px; padding: 16px 24px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px 24px; border-top: 1px solid var(--line); background: rgba(42, 33, 29, .46); }
+    .order-details[hidden], .help-note[hidden] { display: none; }
+    .item-info { min-width: 0; }
+    .item-info b { display: block; overflow: hidden; font-size: 14px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+    .item-info span { display: block; margin-top: 3px; color: var(--muted); font-size: 12px; }
+    .order-updated { color: var(--muted); font-size: 11px; text-align: right; }
+    .help-note { width: min(1000px, 100%); margin: 17px auto 0; padding: 17px 22px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border: 1px solid rgba(244, 233, 220, .12); border-radius: 16px; background: rgba(57, 46, 40, .55); }
+    .help-note p { margin: 0; color: var(--muted); font-size: 13px; }
+    .help-note a { flex: 0 0 auto; color: var(--accent); font-size: 13px; font-weight: 650; }
+    .help-note a:hover { text-decoration: underline; text-underline-offset: 4px; }
+    footer { padding: 20px 0 25px; border-top: 1px solid rgba(244, 233, 220, .12); color: #ad9887; font-size: 12px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; }
+    .loading .lookup-button svg { animation: spin .9s linear infinite; }
+    @keyframes intro-in { from { opacity: 0; translate: 0 22px; } to { opacity: 1; translate: 0 0; } }
+    @keyframes result-in { from { opacity: 0; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
+    @keyframes pin-pulse { 0%, 100% { box-shadow: 0 0 0 6px rgba(231, 164, 124, .13), 0 7px 18px rgba(0, 0, 0, .22); } 50% { box-shadow: 0 0 0 11px rgba(231, 164, 124, .025), 0 7px 18px rgba(0, 0, 0, .18); } }
+    @keyframes route-glow { 0%, 100% { filter: drop-shadow(0 2px 6px rgba(231, 164, 124, .25)); } 50% { filter: drop-shadow(0 2px 13px rgba(231, 164, 124, .6)); } }
+    @keyframes stop-arrive {
+      from { opacity: 0; transform: translate(calc(-50% + var(--arrival-x, 0px)), calc(-50% + var(--arrival-y, 18px))) scale(.58); filter: blur(2px); }
+      to { opacity: var(--arrival-opacity, .55); transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 700px) {
+      .wrap { width: min(100% - 28px, 600px); }
+      .site-header { height: 62px; padding: 0 14px; }
+      .intro { margin: 32px auto 22px; }
+      h1 { max-width: 480px; font-size: clamp(38px, 10vw, 55px); }
+      .intro-copy { max-width: 380px; font-size: 14px; }
+      .lookup-card { gap: 4px; padding: 7px; border-radius: 15px; }
+      .lookup-icon { width: 34px; }
+      .lookup-field label { font-size: 10px; }
+      .lookup-field input { font-size: 15px; }
+      .lookup-button { min-height: 45px; padding: 0 13px; font-size: 13px; }
+      .result { margin: 18px auto 46px; }
+      .result-top { align-items: flex-start; }
+      .result-top p { max-width: 215px; }
+      .order-code { padding: 7px 9px; font-size: 10px; }
+      .journey-card { border-radius: 19px; }
+      .journey-head { min-height: 76px; padding: 16px 17px; }
+      .journey-head h3 { font-size: 14px; }
+      .journey-head p { max-width: 210px; font-size: 11px; }
+      .status-pill { max-width: 130px; padding: 7px 10px; font-size: 10px; }
+      .journey-map { height: 620px; margin: 0 7px; }
+      .route-desktop { display: none; }
+      .route-mobile { display: block; }
+      .route-stop:nth-of-type(1) { left: 31%; top: 9%; --arrival-x: -22px; --arrival-y: 18px; }
+      .route-stop:nth-of-type(2) { left: 70%; top: 29.5%; --arrival-x: -24px; --arrival-y: 20px; }
+      .route-stop:nth-of-type(3) { left: 31%; top: 50%; --arrival-x: 22px; --arrival-y: -20px; }
+      .route-stop:nth-of-type(4) { left: 70%; top: 70.5%; --arrival-x: -22px; --arrival-y: -16px; }
+      .route-stop:nth-of-type(5) { left: 31%; top: 91%; --arrival-x: 26px; --arrival-y: -10px; }
+      .route-stop { width: 48px; height: 48px; }
+      .stop-dot { width: 36px; height: 36px; }
+      .stop-copy { top: 50%; width: 130px; padding: 0; transform: translateY(-50%); }
+      .route-stop:nth-of-type(odd) .stop-copy { left: 42px; text-align: left; }
+      .route-stop:nth-of-type(even) .stop-copy { right: 42px; left: auto; text-align: right; }
+      .stop-copy b { font-size: 12px; }
+      .order-details { padding: 15px 17px; grid-template-columns: 1fr; gap: 8px; }
+      .order-updated { text-align: left; }
+      .help-note { align-items: flex-start; flex-direction: column; gap: 10px; padding: 17px; }
+      footer .wrap { flex-direction: column; gap: 3px; }
+    }
+    @media (min-width: 701px) and (max-width: 933px) {
+      .journey-map { height: 520px; margin: 0 12px; }
+      .route-desktop { display: none; }
+      .route-mobile { display: block; }
+      .route-stop:nth-of-type(1) { left: 31%; top: 9%; --arrival-x: -22px; --arrival-y: 18px; }
+      .route-stop:nth-of-type(2) { left: 70%; top: 29.5%; --arrival-x: -24px; --arrival-y: 20px; }
+      .route-stop:nth-of-type(3) { left: 31%; top: 50%; --arrival-x: 22px; --arrival-y: -20px; }
+      .route-stop:nth-of-type(4) { left: 70%; top: 70.5%; --arrival-x: -22px; --arrival-y: -16px; }
+      .route-stop:nth-of-type(5) { left: 31%; top: 91%; --arrival-x: 26px; --arrival-y: -10px; }
+      .route-stop { width: 48px; height: 48px; }
+      .stop-dot { width: 36px; height: 36px; }
+      .stop-copy { top: 50%; width: 145px; padding: 0; transform: translateY(-50%); }
+      .route-stop:nth-of-type(odd) .stop-copy { left: 42px; text-align: left; }
+      .route-stop:nth-of-type(even) .stop-copy { right: 42px; left: auto; text-align: right; }
+    }
+    @media (max-width: 390px) {
+      .wrap { width: calc(100% - 22px); }
+      .lookup-icon { display: none; }
+      .lookup-button { padding: 0 10px; }
+      .journey-head { align-items: flex-start; }
+      .status-pill { max-width: 112px; }
+      .stop-copy { width: 118px; }
+      .route-stop:nth-of-type(odd) .stop-copy { left: 39px; }
+      .route-stop:nth-of-type(even) .stop-copy { right: 39px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-delay: 0ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap site-header">
+    <a class="wordmark" href="./" aria-label="GO’EL — главная">GO’EL</a>
+    <div style="display:flex;align-items:center;gap:22px">
+      <a class="back-link" href="./"><span aria-hidden="true">←</span><span data-i18n="back">В каталог</span></a>
+      <select class="language-select" id="language-select" aria-label="Язык">
+        <option value="ru">RUS</option><option value="be">BEL</option><option value="uk">UKR</option><option value="en">ENG</option>
+      </select>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="intro" aria-labelledby="page-title">
+      <h1 id="page-title" data-i18n="title">Статус заказа</h1>
+      <p class="intro-copy" data-i18n="intro">Введите код и нажмите «Проверить».</p>
+      <form class="lookup-card" id="tracking-form">
+        <span class="lookup-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8.8 10.7V7.8a3.2 3.2 0 0 1 6.4 0v2.9M6.2 10.2h11.6l1 10H5.2l1-10Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M9.5 14.1h.01m5 0h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+        <div class="lookup-field">
+          <label for="tracking-code" data-i18n="codeLabel">Код отслеживания</label>
+          <input id="tracking-code" name="code" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" maxlength="14" placeholder="GOEL-ABCD-EFGH" aria-describedby="lookup-hint lookup-message" required>
+        </div>
+        <button class="lookup-button" id="lookup-button" type="submit"><span data-i18n="check">Проверить</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h11m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </form>
+      <p class="lookup-hint" id="lookup-hint" data-i18n="hint">Он указан в сообщении с подтверждением.</p>
+      <p class="lookup-message" id="lookup-message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section class="result" id="result" aria-live="polite">
+      <div class="result-top">
+        <div><h2 id="result-heading" data-i18n="previewTitle">Этапы обработки</h2><p id="result-intro" data-i18n="previewIntro">Введите код, чтобы увидеть статус и сведения о товаре.</p></div>
+        <span class="order-code" id="result-code" hidden></span>
+      </div>
+      <article class="journey-card is-preview" id="journey-card">
+        <div class="journey-head">
+          <div class="journey-head-label"><span class="live-mark" aria-hidden="true"></span><div><h3 data-i18n="journeyTitle">Текущий этап</h3><p id="status-description" data-i18n="previewStatusDescription">Текущий этап отобразится после проверки.</p></div></div>
+          <span class="status-pill preview-status" id="status-pill" data-i18n="previewStatus">Ожидает кода</span>
+        </div>
+        <div class="journey-map is-preview" id="journey-map" aria-label="Карта этапов заказа">
+          <svg class="route-svg route-desktop" viewBox="0 0 1000 260" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="routeGradientDesktop" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#ad7b60"/><stop offset=".55" stop-color="#e7a47c"/><stop offset="1" stop-color="#f0cba5"/></linearGradient></defs>
+            <path class="journey-route journey-route-base" d="M85 169 C130 195 160 146 204 164 C245 181 255 92 300 91 C348 90 365 130 407 139 C450 148 462 166 510 158 C554 151 564 175 606 150 C650 124 663 60 710 70 C753 80 768 119 811 108 C855 97 870 123 910 104"/>
+            <path class="journey-route journey-route-progress" id="route-progress-desktop" stroke="url(#routeGradientDesktop)" d="M85 169 C130 195 160 146 204 164 C245 181 255 92 300 91 C348 90 365 130 407 139 C450 148 462 166 510 158 C554 151 564 175 606 150 C650 124 663 60 710 70 C753 80 768 119 811 108 C855 97 870 123 910 104"/>
+          </svg>
+          <svg class="route-svg route-mobile" viewBox="0 0 360 620" preserveAspectRatio="none" aria-hidden="true">
+            <defs><linearGradient id="routeGradientMobile" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ad7b60"/><stop offset=".55" stop-color="#e7a47c"/><stop offset="1" stop-color="#f0cba5"/></linearGradient></defs>
+            <path class="journey-route journey-route-base" d="M112 56 C128 88 274 95 252 183 C238 229 151 214 112 310 C83 381 191 391 252 437 C312 482 178 502 112 564"/>
+            <path class="journey-route journey-route-progress" id="route-progress-mobile" stroke="url(#routeGradientMobile)" d="M112 56 C128 88 274 95 252 183 C238 229 151 214 112 310 C83 381 191 391 252 437 C312 482 178 502 112 564"/>
+          </svg>
+          <div class="route-stop" data-stage="0"><span class="stop-dot"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.3 8 14l8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="stop-copy"><b data-i18n="stageReceived">Заявка получена</b><span data-i18n="stageReceivedHint">Заявка зарегистрирована</span></span></div>
+          <div class="route-stop" data-stage="1"><span class="stop-dot"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.3 8 14l8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="stop-copy"><b data-i18n="stageConfirmed">Подтверждён</b><span data-i18n="stageConfirmedHint">Заказ подтверждён</span></span></div>
+          <div class="route-stop" data-stage="2"><span class="stop-dot"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.3 8 14l8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="stop-copy"><b data-i18n="stagePreparing">Комплектуется</b><span data-i18n="stagePreparingHint">Подготовка к отправке</span></span></div>
+          <div class="route-stop" data-stage="3"><span class="stop-dot"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.3 8 14l8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="stop-copy"><b data-i18n="stageShipped">Передан в доставку</b><span data-i18n="stageShippedHint">Передан службе доставки</span></span></div>
+          <div class="route-stop" data-stage="4"><span class="stop-dot"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10.3 8 14l8-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="stop-copy"><b data-i18n="stageDelivered">Доставлен</b><span data-i18n="stageDeliveredHint">Доставка завершена</span></span></div>
+          <div class="map-caption"><span data-i18n="mapStart">ЗАЯВКА ПОЛУЧЕНА</span><span data-i18n="mapEnd">ДОСТАВКА</span></div>
+        </div>
+        <div class="order-details" id="order-details" hidden>
+          <div class="item-info"><b id="item-title"></b><span id="item-variant"></span></div>
+          <div class="order-updated" id="updated-at"></div>
+        </div>
+      </article>
+      <aside class="help-note" id="help-note" hidden><p data-i18n="help">По вопросам о заказе свяжитесь со службой поддержки.</p><a href="https://t.me/JHVHGOeL" target="_blank" rel="noopener noreferrer" data-i18n="contact">Связаться с GO’EL ↗</a></aside>
+    </section>
+  </main>
+  <footer><div class="wrap"><span>GO’EL · <span data-i18n="footer">сервис</span></span><span data-i18n="footerLine">Данные обновляются после смены этапа.</span><a href="privacy.html" data-i18n="privacyLink">Политика обработки данных</a></div></footer>
+  <script>
+    const translations = {
+      ru: { back: "В каталог", eyebrow: "Путь твоего заказа", title: "Каждый шаг — уже ближе.", intro: "Введи код заказа, чтобы увидеть, где он сейчас и что будет дальше.", codeLabel: "Код заказа", check: "Проверить", hint: "Код появится после оформления заявки и придёт вместе с подтверждением.", yourOrder: "Твой заказ", mapIntro: "Мы покажем только актуальный этап — детали пути сложатся в одну историю.", journeyTitle: "Путешествие заказа", stageReceived: "Заявка получена", stageReceivedHint: "Начало пути", stageConfirmed: "Подтверждён", stageConfirmedHint: "Всё согласовано", stagePreparing: "Собираем", stagePreparingHint: "Готовим к отправке", stageShipped: "Уже в пути", stageShippedHint: "Передан в доставку", stageDelivered: "У тебя!", stageDeliveredHint: "Путешествие завершено", mapStart: "ТВОЙ ЗАКАЗ", mapEnd: "СКОРО У ТЕБЯ", help: "Если нужна помощь, напиши нам — подскажем, что происходит с заказом.", contact: "Написать GO’EL ↗", footer: "одежда со смыслом", footerLine: "Собрано с верой. Носится каждый день.", writeCode: "Введи код отслеживания заказа.", notFound: "Не нашли заказ с таким кодом. Проверь символы и попробуй ещё раз.", serverError: "Не удалось проверить статус. Попробуй ещё раз чуть позже.", loading: "Ищем заказ…", statusReceived: "Заявка получена", statusConfirmed: "Заказ подтверждён", statusPreparing: "Готовим к отправке", statusShipped: "Передан в доставку", statusDelivered: "Заказ доставлен", statusCancelled: "Заказ отменён", descReceived: "Мы получили твою заявку и скоро свяжемся для подтверждения.", descConfirmed: "Заказ подтверждён — скоро начнём его собирать.", descPreparing: "Мы готовим заказ к отправке.", descShipped: "Заказ передан в доставку.", descDelivered: "Заказ доставлен. Спасибо, что выбрал GO’EL!", descCancelled: "Напиши нам, если нужна помощь с этим заказом.", updated: "Обновлено", quantity: "Количество", unknownItem: "Заказ GO’EL", mapLabel: "Карта этапов заказа" },
+      be: { back: "У каталог", eyebrow: "Шлях тваёй замовы", title: "Кожны крок — бліжэй.", intro: "Увядзі код замовы, каб убачыць яе актуальны статус.", codeLabel: "Код замовы", check: "Праверыць", hint: "Код з’явіцца пасля афармлення заяўкі і прыйдзе разам з пацвярджэннем.", yourOrder: "Твая замова", mapIntro: "Пакажам актуальны этап тваёй замовы.", journeyTitle: "Шлях замовы", stageReceived: "Заяўку атрымалі", stageReceivedHint: "Пачатак шляху", stageConfirmed: "Пацверджана", stageConfirmedHint: "Усё ўзгоднена", stagePreparing: "Збіраем", stagePreparingHint: "Рыхтуем да адпраўкі", stageShipped: "У дарозе", stageShippedHint: "Перададзена ў дастаўку", stageDelivered: "У цябе!", stageDeliveredHint: "Шлях завершаны", mapStart: "ТВАЯ ЗАМОВА", mapEnd: "ХУТКА Ў ЦЯБЕ", help: "Калі патрэбна дапамога, напішы нам — падкажам пра замову.", contact: "Напісаць GO’EL ↗", footer: "адзенне са сэнсам", footerLine: "Створана з верай. Носіцца кожны дзень.", writeCode: "Увядзі код адсочвання замовы.", notFound: "Не знайшлі замову з такім кодам. Правер сімвалы і паспрабуй яшчэ раз.", serverError: "Не атрымалася праверыць статус. Паспрабуй пазней.", loading: "Шукаем замову…", statusReceived: "Заяўку атрымалі", statusConfirmed: "Замову пацвердзілі", statusPreparing: "Рыхтуем да адпраўкі", statusShipped: "Перададзена ў дастаўку", statusDelivered: "Замову даставілі", statusCancelled: "Замову скасавалі", descReceived: "Мы атрымалі заяўку і хутка звяжамся, каб пацвердзіць замову.", descConfirmed: "Замову пацвердзілі — хутка пачнём збіраць.", descPreparing: "Рыхтуем замову да адпраўкі.", descShipped: "Замову перадалі ў дастаўку.", descDelivered: "Замова дастаўлена. Дзякуй, што абраў GO’EL!", descCancelled: "Напішы нам, калі патрэбна дапамога.", updated: "Абноўлена", quantity: "Колькасць", unknownItem: "Замова GO’EL", mapLabel: "Карта этапаў замовы" },
+      uk: { back: "До каталогу", eyebrow: "Шлях твого замовлення", title: "Кожен крок — ближче.", intro: "Введи код замовлення, щоб побачити актуальний статус.", codeLabel: "Код замовлення", check: "Перевірити", hint: "Код з’явиться після оформлення заявки та надійде разом із підтвердженням.", yourOrder: "Твоє замовлення", mapIntro: "Покажемо актуальний етап твого замовлення.", journeyTitle: "Шлях замовлення", stageReceived: "Заявку отримано", stageReceivedHint: "Початок шляху", stageConfirmed: "Підтверджено", stageConfirmedHint: "Усе узгоджено", stagePreparing: "Збираємо", stagePreparingHint: "Готуємо до відправлення", stageShipped: "У дорозі", stageShippedHint: "Передано в доставку", stageDelivered: "У тебе!", stageDeliveredHint: "Шлях завершено", mapStart: "ТВОЄ ЗАМОВЛЕННЯ", mapEnd: "СКОРО В ТЕБЕ", help: "Якщо потрібна допомога, напиши нам — підкажемо щодо замовлення.", contact: "Написати GO’EL ↗", footer: "одяг зі змістом", footerLine: "Створено з вірою. Носиться щодня.", writeCode: "Введи код відстеження замовлення.", notFound: "Не знайшли замовлення з таким кодом. Перевір символи та спробуй ще раз.", serverError: "Не вдалося перевірити статус. Спробуй трохи пізніше.", loading: "Шукаємо замовлення…", statusReceived: "Заявку отримано", statusConfirmed: "Замовлення підтверджено", statusPreparing: "Готуємо до відправлення", statusShipped: "Передано в доставку", statusDelivered: "Замовлення доставлено", statusCancelled: "Замовлення скасовано", descReceived: "Ми отримали заявку і скоро зв’яжемося для підтвердження.", descConfirmed: "Замовлення підтверджено — скоро почнемо збирати.", descPreparing: "Готуємо замовлення до відправлення.", descShipped: "Замовлення передано в доставку.", descDelivered: "Замовлення доставлено. Дякуємо, що обрав GO’EL!", descCancelled: "Напиши нам, якщо потрібна допомога.", updated: "Оновлено", quantity: "Кількість", unknownItem: "Замовлення GO’EL", mapLabel: "Карта етапів замовлення" },
+      en: { back: "Catalog", eyebrow: "Your order journey", title: "Every step brings it closer.", intro: "Enter your order code to see where it is and what comes next.", codeLabel: "Order code", check: "Track order", hint: "Your code is shown after submitting an order request.", yourOrder: "Your order", mapIntro: "See the latest milestone on your order’s journey.", journeyTitle: "Order journey", stageReceived: "Request received", stageReceivedHint: "The journey begins", stageConfirmed: "Confirmed", stageConfirmedHint: "Everything agreed", stagePreparing: "Being prepared", stagePreparingHint: "Getting ready to ship", stageShipped: "On its way", stageShippedHint: "Handed to delivery", stageDelivered: "Delivered!", stageDeliveredHint: "Journey complete", mapStart: "YOUR ORDER", mapEnd: "ALMOST THERE", help: "Need help? Message us and we’ll share an update on your order.", contact: "Message GO’EL ↗", footer: "clothing with meaning", footerLine: "Made with faith. Worn every day.", writeCode: "Enter your order tracking code.", notFound: "We couldn’t find an order with that code. Check it and try again.", serverError: "Couldn’t check the status. Please try again shortly.", loading: "Finding your order…", statusReceived: "Request received", statusConfirmed: "Order confirmed", statusPreparing: "Preparing for dispatch", statusShipped: "Handed to delivery", statusDelivered: "Order delivered", statusCancelled: "Order cancelled", descReceived: "We received your request and will contact you soon to confirm it.", descConfirmed: "Your order is confirmed — we’ll start preparing it soon.", descPreparing: "We’re getting your order ready for dispatch.", descShipped: "Your order has been handed to the delivery service.", descDelivered: "Your order has arrived. Thank you for choosing GO’EL!", descCancelled: "Message us if you need help with this order.", updated: "Updated", quantity: "Quantity", unknownItem: "GO’EL order", mapLabel: "Order journey map" }
+    };
+    Object.assign(translations.ru, {
+      eyebrow: "Отслеживание заказа",
+      title: "Статус заказа",
+      intro: "Введите код заказа, чтобы узнать его текущий статус.",
+      hint: "Код отслеживания указан в подтверждении заказа.",
+      yourOrder: "Информация о заказе",
+      mapIntro: "Текущий статус и этап обработки заказа.",
+      journeyTitle: "Этапы обработки",
+      stageReceivedHint: "Заявка зарегистрирована",
+      stageConfirmed: "Подтверждён",
+      stageConfirmedHint: "Заказ подтверждён",
+      stagePreparing: "Комплектуется",
+      stagePreparingHint: "Подготовка к отправке",
+      stageShipped: "Передан в доставку",
+      stageShippedHint: "Передан службе доставки",
+      stageDelivered: "Доставлен",
+      stageDeliveredHint: "Доставка завершена",
+      mapStart: "ЗАЯВКА ПОЛУЧЕНА",
+      mapEnd: "ДОСТАВКА",
+      help: "По вопросам о заказе свяжитесь со службой поддержки.",
+      contact: "Связаться с GO’EL ↗",
+      footer: "статус заказов",
+      footerLine: "Статус заказа обновляется после каждого этапа обработки.",
+      writeCode: "Введите код отслеживания заказа.",
+      notFound: "Заказ с таким кодом не найден. Проверьте код и попробуйте ещё раз.",
+      serverError: "Не удалось проверить статус заказа. Попробуйте позже.",
+      loading: "Проверяем статус заказа…",
+      statusReceived: "Заявка получена",
+      statusConfirmed: "Заказ подтверждён",
+      statusPreparing: "Комплектуется",
+      statusShipped: "Передан в доставку",
+      statusDelivered: "Заказ доставлен",
+      statusCancelled: "Заказ отменён",
+      descReceived: "Заявка получена. Мы свяжемся с вами для подтверждения заказа.",
+      descConfirmed: "Заказ подтверждён и передан на комплектацию.",
+      descPreparing: "Заказ комплектуется. Статус обновится после передачи в доставку.",
+      descShipped: "Заказ передан службе доставки.",
+      descDelivered: "Заказ доставлен. Благодарим за покупку.",
+      descCancelled: "Заказ отменён. По вопросам свяжитесь со службой поддержки.",
+      updated: "Последнее обновление",
+      mapLabel: "Этапы обработки заказа",
+      previewTitle: "Статус заказа",
+      previewIntro: "Введите код отслеживания, чтобы проверить статус и этап обработки заказа.",
+      previewStatus: "Введите код заказа",
+      previewStatusDescription: "После ввода кода здесь отобразятся текущий статус и этап обработки."
+    });
+    Object.assign(translations.be, {
+      eyebrow: "Адсочванне замовы",
+      title: "Статус замовы",
+      intro: "Увядзіце код замовы, каб даведацца яе актуальны статус.",
+      hint: "Код адсочвання пазначаны ў пацвярджэнні замовы.",
+      yourOrder: "Інфармацыя пра замову",
+      mapIntro: "Актуальны статус і этап апрацоўкі замовы.",
+      journeyTitle: "Этапы апрацоўкі",
+      stageReceivedHint: "Заяўка зарэгістравана",
+      stageConfirmed: "Пацверджана",
+      stageConfirmedHint: "Замова пацверджана",
+      stagePreparing: "Камплектуецца",
+      stagePreparingHint: "Падрыхтоўка да адпраўкі",
+      stageShipped: "Перададзена ў дастаўку",
+      stageShippedHint: "Перададзена службе дастаўкі",
+      stageDelivered: "Дастаўлена",
+      stageDeliveredHint: "Дастаўка завершана",
+      mapStart: "ЗАЯЎКА АТРЫМАНА",
+      mapEnd: "ДАСТАЎКА",
+      help: "Па пытаннях пра замову звяжыцеся са службай падтрымкі.",
+      contact: "Звязацца з GO’EL ↗",
+      footer: "статус замоў",
+      footerLine: "Статус замовы абнаўляецца пасля кожнага этапу апрацоўкі.",
+      writeCode: "Увядзіце код адсочвання замовы.",
+      notFound: "Замова з такім кодам не знойдзена. Праверце код і паспрабуйце яшчэ раз.",
+      serverError: "Не атрымалася праверыць статус замовы. Паспрабуйце пазней.",
+      loading: "Правяраем статус замовы…",
+      statusReceived: "Заяўка атрымана",
+      statusConfirmed: "Замова пацверджана",
+      statusPreparing: "Камплектуецца",
+      statusShipped: "Перададзена ў дастаўку",
+      statusDelivered: "Замова дастаўлена",
+      statusCancelled: "Замова скасавана",
+      descReceived: "Заяўка атрымана. Мы звяжамся з вамі для пацвярджэння замовы.",
+      descConfirmed: "Замова пацверджана і перададзена на камплектаванне.",
+      descPreparing: "Замова камплектуецца. Статус абновіцца пасля перадачы ў дастаўку.",
+      descShipped: "Замова перададзена службе дастаўкі.",
+      descDelivered: "Замова дастаўлена. Дзякуй за пакупку.",
+      descCancelled: "Замова скасавана. Па пытаннях звяжыцеся са службай падтрымкі.",
+      updated: "Апошняе абнаўленне",
+      mapLabel: "Этапы апрацоўкі замовы",
+      previewTitle: "Статус замовы",
+      previewIntro: "Увядзіце код адсочвання, каб праверыць статус і этап апрацоўкі замовы.",
+      previewStatus: "Увядзіце код замовы",
+      previewStatusDescription: "Пасля ўводу кода тут з’явяцца актуальны статус і этап апрацоўкі."
+    });
+    Object.assign(translations.uk, {
+      eyebrow: "Відстеження замовлення",
+      title: "Статус замовлення",
+      intro: "Введіть код замовлення, щоб дізнатися його поточний статус.",
+      hint: "Код відстеження зазначений у підтвердженні замовлення.",
+      yourOrder: "Інформація про замовлення",
+      mapIntro: "Поточний статус та етап обробки замовлення.",
+      journeyTitle: "Етапи обробки",
+      stageReceivedHint: "Заявку зареєстровано",
+      stageConfirmed: "Підтверджено",
+      stageConfirmedHint: "Замовлення підтверджено",
+      stagePreparing: "Комплектується",
+      stagePreparingHint: "Підготовка до відправлення",
+      stageShipped: "Передано в доставку",
+      stageShippedHint: "Передано службі доставки",
+      stageDelivered: "Доставлено",
+      stageDeliveredHint: "Доставку завершено",
+      mapStart: "ЗАЯВКУ ОТРИМАНО",
+      mapEnd: "ДОСТАВКА",
+      help: "З питань щодо замовлення зверніться до служби підтримки.",
+      contact: "Зв’язатися з GO’EL ↗",
+      footer: "статус замовлень",
+      footerLine: "Статус замовлення оновлюється після кожного етапу обробки.",
+      writeCode: "Введіть код відстеження замовлення.",
+      notFound: "Замовлення з таким кодом не знайдено. Перевірте код і спробуйте ще раз.",
+      serverError: "Не вдалося перевірити статус замовлення. Спробуйте пізніше.",
+      loading: "Перевіряємо статус замовлення…",
+      statusReceived: "Заявку отримано",
+      statusConfirmed: "Замовлення підтверджено",
+      statusPreparing: "Комплектується",
+      statusShipped: "Передано в доставку",
+      statusDelivered: "Замовлення доставлено",
+      statusCancelled: "Замовлення скасовано",
+      descReceived: "Заявку отримано. Ми зв’яжемося з вами для підтвердження замовлення.",
+      descConfirmed: "Замовлення підтверджено та передано на комплектування.",
+      descPreparing: "Замовлення комплектується. Статус оновиться після передачі в доставку.",
+      descShipped: "Замовлення передано службі доставки.",
+      descDelivered: "Замовлення доставлено. Дякуємо за покупку.",
+      descCancelled: "Замовлення скасовано. З питань зверніться до служби підтримки.",
+      updated: "Останнє оновлення",
+      mapLabel: "Етапи обробки замовлення",
+      previewTitle: "Статус замовлення",
+      previewIntro: "Введіть код відстеження, щоб перевірити статус та етап обробки замовлення.",
+      previewStatus: "Введіть код замовлення",
+      previewStatusDescription: "Після введення коду тут відобразяться поточний статус та етап обробки."
+    });
+    Object.assign(translations.en, {
+      eyebrow: "Order tracking",
+      title: "Order status",
+      intro: "Enter your order code to check its current status.",
+      hint: "Your tracking code is included in the order confirmation.",
+      yourOrder: "Order details",
+      mapIntro: "Current status and processing stage.",
+      journeyTitle: "Order processing",
+      stageReceivedHint: "Request registered",
+      stageConfirmed: "Confirmed",
+      stageConfirmedHint: "Order confirmed",
+      stagePreparing: "Being prepared",
+      stagePreparingHint: "Preparing for dispatch",
+      stageShipped: "Handed to delivery",
+      stageShippedHint: "Received by the delivery service",
+      stageDelivered: "Delivered",
+      stageDeliveredHint: "Delivery completed",
+      mapStart: "REQUEST RECEIVED",
+      mapEnd: "DELIVERY",
+      help: "For questions about your order, contact customer support.",
+      contact: "Contact GO’EL ↗",
+      footer: "order status",
+      footerLine: "Order status updates as each processing stage is completed.",
+      writeCode: "Enter your order tracking code.",
+      notFound: "No order was found with that code. Check it and try again.",
+      serverError: "The order status could not be checked. Please try again later.",
+      loading: "Checking order status…",
+      statusReceived: "Request received",
+      statusConfirmed: "Order confirmed",
+      statusPreparing: "Being prepared",
+      statusShipped: "Handed to delivery",
+      statusDelivered: "Order delivered",
+      statusCancelled: "Order cancelled",
+      descReceived: "Your request was received. We will contact you to confirm the order.",
+      descConfirmed: "Your order is confirmed and has been sent for packing.",
+      descPreparing: "Your order is being prepared. The status will update when it is handed to delivery.",
+      descShipped: "Your order has been handed to the delivery service.",
+      descDelivered: "Your order has been delivered. Thank you for your purchase.",
+      descCancelled: "Your order was cancelled. Contact customer support if you have questions.",
+      updated: "Last updated",
+      mapLabel: "Order processing stages",
+      previewTitle: "Order status",
+      previewIntro: "Enter your tracking code to check the order status and processing stage.",
+      previewStatus: "Enter order code",
+      previewStatusDescription: "The current status and processing stage will appear here after you enter the code."
+    });
+    Object.assign(translations.ru, {
+      pageTitle: "Статус заказа",
+      orderDetailsTitle: "Детали",
+      eyebrow: "",
+      title: "Статус заказа",
+      intro: "Введите код и нажмите «Проверить».",
+      codeLabel: "Код отслеживания",
+      hint: "Он указан в сообщении с подтверждением.",
+      yourOrder: "Сведения",
+      mapIntro: "Текущий этап и информация о товаре.",
+      journeyTitle: "Текущий этап",
+      stageReceivedHint: "Заявка зарегистрирована",
+      stageConfirmed: "Подтверждён",
+      stageConfirmedHint: "Подтверждение получено",
+      stagePreparing: "Комплектуется",
+      stagePreparingHint: "Подготовка к отправке",
+      stageShipped: "Передан в доставку",
+      stageShippedHint: "Принят службой доставки",
+      stageDelivered: "Доставлен",
+      stageDeliveredHint: "Вручение завершено",
+      mapStart: "ПРИНЯТО В РАБОТУ",
+      mapEnd: "ДОСТАВКА",
+      help: "По вопросам свяжитесь со службой поддержки.",
+      contact: "Связаться с GO’EL ↗",
+      footer: "сервис",
+      footerLine: "Данные обновляются после смены этапа.",
+      writeCode: "Введите код отслеживания.",
+      notFound: "По этому коду данные не найдены. Проверьте его и повторите попытку.",
+      serverError: "Не удалось получить данные. Попробуйте позже.",
+      loading: "Проверяем статус…",
+      statusReceived: "Заявка получена",
+      statusConfirmed: "Подтверждён",
+      statusPreparing: "Комплектуется",
+      statusShipped: "Передан в доставку",
+      statusDelivered: "Доставлен",
+      statusCancelled: "Отменён",
+      descReceived: "Заявка зарегистрирована. Ожидается подтверждение.",
+      descConfirmed: "Подтверждение получено. Начинается комплектация.",
+      descPreparing: "Идёт комплектация. После передачи в доставку статус обновится.",
+      descShipped: "Принят службой доставки.",
+      descDelivered: "Вручение завершено. Благодарим за покупку.",
+      descCancelled: "Заявка отменена. По вопросам обратитесь в службу поддержки.",
+      updated: "Обновлено",
+      unknownItem: "Информация о товаре",
+      mapLabel: "Шкала этапов",
+      previewTitle: "Этапы обработки",
+      previewIntro: "После проверки здесь появятся сведения о товаре.",
+      previewStatus: "Ожидает кода",
+      previewStatusDescription: "Введите код, чтобы увидеть текущий этап."
+    });
+    Object.assign(translations.be, {
+      pageTitle: "Статус замовы",
+      orderDetailsTitle: "Падрабязнасці",
+      eyebrow: "",
+      title: "Статус замовы",
+      intro: "Увядзіце код і націсніце «Праверыць».",
+      codeLabel: "Код адсочвання",
+      hint: "Ён пазначаны ў паведамленні з пацвярджэннем.",
+      yourOrder: "Звесткі",
+      mapIntro: "Пасля праверкі тут з’явяцца звесткі пра тавар.",
+      journeyTitle: "Бягучы этап",
+      stageReceivedHint: "Заяўка зарэгістравана",
+      stageConfirmed: "Пацверджана",
+      stageConfirmedHint: "Пацвярджэнне атрымана",
+      stagePreparing: "Камплектуецца",
+      stagePreparingHint: "Падрыхтоўка да адпраўкі",
+      stageShipped: "Перададзена ў дастаўку",
+      stageShippedHint: "Прынята службай дастаўкі",
+      stageDelivered: "Дастаўлена",
+      stageDeliveredHint: "Уручэнне завершана",
+      mapStart: "ПРЫНЯТА Ў АПРАЦОЎКУ",
+      mapEnd: "ДАСТАЎКА",
+      help: "Па пытаннях звяжыцеся са службай падтрымкі.",
+      contact: "Звязацца з GO’EL ↗",
+      footer: "сэрвіс",
+      footerLine: "Даныя абнаўляюцца пасля змены этапу.",
+      writeCode: "Увядзіце код адсочвання.",
+      notFound: "Па гэтым кодзе даныя не знойдзены. Праверце яго і паспрабуйце яшчэ раз.",
+      serverError: "Не атрымалася атрымаць даныя. Паспрабуйце пазней.",
+      loading: "Правяраем статус…",
+      statusReceived: "Заяўка атрымана",
+      statusConfirmed: "Пацверджана",
+      statusPreparing: "Камплектуецца",
+      statusShipped: "Перададзена ў дастаўку",
+      statusDelivered: "Дастаўлена",
+      statusCancelled: "Скасавана",
+      descReceived: "Заяўка зарэгістравана. Чакаецца пацвярджэнне.",
+      descConfirmed: "Пацвярджэнне атрымана. Пачынаецца камплектаванне.",
+      descPreparing: "Ідзе камплектаванне. Статус абновіцца пасля перадачы ў дастаўку.",
+      descShipped: "Прынята службай дастаўкі.",
+      descDelivered: "Уручэнне завершана. Дзякуй за пакупку.",
+      descCancelled: "Заяўка скасавана. Па пытаннях звяжыцеся са службай падтрымкі.",
+      updated: "Абноўлена",
+      unknownItem: "Інфармацыя пра тавар",
+      mapLabel: "Шкала этапаў",
+      previewTitle: "Этапы апрацоўкі",
+      previewIntro: "Увядзіце код, каб убачыць актуальны статус.",
+      previewStatus: "Чакаецца код",
+      previewStatusDescription: "Бягучы этап адлюструецца пасля праверкі."
+    });
+    Object.assign(translations.uk, {
+      pageTitle: "Статус замовлення",
+      orderDetailsTitle: "Деталі",
+      eyebrow: "",
+      title: "Статус замовлення",
+      intro: "Введіть код і натисніть «Перевірити».",
+      codeLabel: "Код відстеження",
+      hint: "Він зазначений у повідомленні з підтвердженням.",
+      yourOrder: "Відомості",
+      mapIntro: "Після перевірки з’являться відомості про товар.",
+      journeyTitle: "Поточний етап",
+      stageReceivedHint: "Заявку зареєстровано",
+      stageConfirmed: "Підтверджено",
+      stageConfirmedHint: "Підтвердження отримано",
+      stagePreparing: "Комплектується",
+      stagePreparingHint: "Підготовка до відправлення",
+      stageShipped: "Передано в доставку",
+      stageShippedHint: "Прийнято службою доставки",
+      stageDelivered: "Доставлено",
+      stageDeliveredHint: "Вручення завершено",
+      mapStart: "ПРИЙНЯТО В РОБОТУ",
+      mapEnd: "ДОСТАВКА",
+      help: "З питань зверніться до служби підтримки.",
+      contact: "Зв’язатися з GO’EL ↗",
+      footer: "сервіс",
+      footerLine: "Дані оновлюються після зміни етапу.",
+      writeCode: "Введіть код відстеження.",
+      notFound: "За цим кодом дані не знайдено. Перевірте його та спробуйте ще раз.",
+      serverError: "Не вдалося отримати дані. Спробуйте пізніше.",
+      loading: "Перевіряємо статус…",
+      statusReceived: "Заявку отримано",
+      statusConfirmed: "Підтверджено",
+      statusPreparing: "Комплектується",
+      statusShipped: "Передано в доставку",
+      statusDelivered: "Доставлено",
+      statusCancelled: "Скасовано",
+      descReceived: "Заявку зареєстровано. Очікується підтвердження.",
+      descConfirmed: "Підтвердження отримано. Починається комплектування.",
+      descPreparing: "Триває комплектування. Статус оновиться після передачі в доставку.",
+      descShipped: "Прийнято службою доставки.",
+      descDelivered: "Вручення завершено. Дякуємо за покупку.",
+      descCancelled: "Заявку скасовано. З питань зверніться до служби підтримки.",
+      updated: "Оновлено",
+      unknownItem: "Інформація про товар",
+      mapLabel: "Шкала етапів",
+      previewTitle: "Етапи обробки",
+      previewIntro: "Введіть код, щоб побачити актуальний статус.",
+      previewStatus: "Очікується код",
+      previewStatusDescription: "Поточний етап відобразиться після перевірки."
+    });
+    Object.assign(translations.en, {
+      pageTitle: "Order status",
+      orderDetailsTitle: "Details",
+      eyebrow: "",
+      title: "Order status",
+      intro: "Enter the code and select “Check”.",
+      codeLabel: "Tracking code",
+      check: "Check",
+      hint: "It is included in the confirmation message.",
+      yourOrder: "Details",
+      mapIntro: "Product details will appear after verification.",
+      journeyTitle: "Current stage",
+      stageReceivedHint: "Request registered",
+      stageConfirmed: "Confirmed",
+      stageConfirmedHint: "Confirmation received",
+      stagePreparing: "Being prepared",
+      stagePreparingHint: "Preparing for dispatch",
+      stageShipped: "Handed to delivery",
+      stageShippedHint: "Accepted by the delivery service",
+      stageDelivered: "Delivered",
+      stageDeliveredHint: "Delivery completed",
+      mapStart: "RECEIVED",
+      mapEnd: "DELIVERY",
+      help: "For assistance, contact customer support.",
+      contact: "Contact GO’EL ↗",
+      footer: "service",
+      footerLine: "Details are updated when a stage changes.",
+      writeCode: "Enter your tracking code.",
+      notFound: "No information was found for this code. Check it and try again.",
+      serverError: "The information could not be retrieved. Please try again later.",
+      loading: "Checking status…",
+      statusReceived: "Request received",
+      statusConfirmed: "Confirmed",
+      statusPreparing: "Being prepared",
+      statusShipped: "Handed to delivery",
+      statusDelivered: "Delivered",
+      statusCancelled: "Cancelled",
+      descReceived: "The request has been registered. Confirmation is pending.",
+      descConfirmed: "Confirmation received. Packing is starting.",
+      descPreparing: "Packing is in progress. The status will update when it is handed to delivery.",
+      descShipped: "Accepted by the delivery service.",
+      descDelivered: "Delivery completed. Thank you for your purchase.",
+      descCancelled: "The request was cancelled. Contact customer support if you have questions.",
+      updated: "Updated",
+      unknownItem: "Product details",
+      mapLabel: "Stage indicator",
+      previewTitle: "Processing stages",
+      previewIntro: "Enter the code to see the current status.",
+      previewStatus: "Awaiting code",
+      previewStatusDescription: "The current stage will appear after verification."
+    });
+
+    Object.assign(translations.ru, { privacyLink: "Политика обработки данных", language: "Язык", pageDescription: "Проверьте текущий этап обработки заказа GO’EL по коду отслеживания." });
+    Object.assign(translations.be, { privacyLink: "Палітыка апрацоўкі даных", language: "Мова", pageDescription: "Праверце актуальны этап апрацоўкі замовы GO’EL паводле кода адсочвання." });
+    Object.assign(translations.uk, { privacyLink: "Політика обробки даних", language: "Мова", pageDescription: "Перевірте поточний етап обробки замовлення GO’EL за кодом відстеження." });
+    Object.assign(translations.en, { privacyLink: "Privacy notice", language: "Language", pageDescription: "Check the current processing stage of your GO’EL order using its tracking code." });
+    let language = "ru";
+    try {
+      const saved = localStorage.getItem("goel-language");
+      if (saved && translations[saved]) language = saved;
+    } catch (error) {}
+    const form = document.getElementById("tracking-form");
+    const input = document.getElementById("tracking-code");
+    const button = document.getElementById("lookup-button");
+    const message = document.getElementById("lookup-message");
+    const resultPanel = document.getElementById("result");
+    const API_URL = "https://goel-order-api.o-el.workers.dev/track";
+    const statusStages = ["received", "confirmed", "preparing", "shipped", "delivered"];
+    const statusLabels = { received: "statusReceived", confirmed: "statusConfirmed", preparing: "statusPreparing", shipped: "statusShipped", delivered: "statusDelivered", cancelled: "statusCancelled" };
+    const statusDescriptions = { received: "descReceived", confirmed: "descConfirmed", preparing: "descPreparing", shipped: "descShipped", delivered: "descDelivered", cancelled: "descCancelled" };
+    const stages = Array.from(document.querySelectorAll(".route-stop"));
+    let requestNumber = 0;
+    let currentOrder = null;
+
+    function tr(key) { return translations[language]?.[key] || translations.ru[key] || key; }
+    function applyLanguage() {
+      document.documentElement.lang = language;
+      document.title = `${tr("pageTitle")} — GO’EL`;
+      document.querySelector('meta[name="description"]')?.setAttribute("content", tr("pageDescription"));
+      document.querySelector('meta[property="og:title"]')?.setAttribute("content", document.title);
+      document.querySelector('meta[property="og:description"]')?.setAttribute("content", tr("pageDescription"));
+      document.querySelectorAll("[data-i18n]").forEach((element) => { element.textContent = tr(element.dataset.i18n); });
+      document.getElementById("journey-map").setAttribute("aria-label", tr("mapLabel"));
+      document.getElementById("language-select").value = language;
+      document.getElementById("language-select").setAttribute("aria-label", tr("language"));
+      if (currentOrder) showOrder(currentOrder);
+    }
+    function normalizeCode(value) {
+      const compact = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12);
+      if (compact.length <= 4) return compact;
+      if (compact.length <= 8) return `${compact.slice(0, 4)}-${compact.slice(4)}`;
+      return `${compact.slice(0, 4)}-${compact.slice(4, 8)}-${compact.slice(8)}`;
+    }
+    function updateRoute(step, preview = false) {
+      const map = document.getElementById("journey-map");
+      map.classList.toggle("is-preview", preview);
+      map.classList.toggle("is-cancelled", step < 0 && !preview);
+      stages.forEach((stop, index) => {
+        stop.classList.toggle("is-done", !preview && step >= 0 && index < step);
+        stop.classList.toggle("is-current", !preview && step >= 0 && index === step);
+        stop.style.setProperty("--arrival-delay", `${120 + index * 170}ms`);
+      });
+      map.classList.remove("is-arriving");
+      void map.offsetWidth;
+      map.classList.add("is-arriving");
+      ["route-progress-desktop", "route-progress-mobile"].forEach((id) => {
+        const path = document.getElementById(id);
+        const length = path.getTotalLength();
+        path.style.strokeDasharray = `${length}`;
+        path.style.strokeDashoffset = `${length}`;
+        requestAnimationFrame(() => {
+          path.style.strokeDashoffset = preview ? "0" : step < 0 ? `${length}` : `${length * (1 - step / (statusStages.length - 1))}`;
+        });
+      });
+    }
+    function showPreview() {
+      currentOrder = null;
+      resultPanel.hidden = false;
+      document.getElementById("journey-card").classList.add("is-preview");
+      document.getElementById("result-heading").textContent = tr("previewTitle");
+      document.getElementById("result-intro").textContent = tr("previewIntro");
+      document.getElementById("result-code").hidden = true;
+      document.getElementById("status-pill").textContent = tr("previewStatus");
+      document.getElementById("status-pill").classList.add("preview-status");
+      document.getElementById("status-description").textContent = tr("previewStatusDescription");
+      document.getElementById("order-details").hidden = true;
+      document.getElementById("help-note").hidden = true;
+      updateRoute(-1, true);
+    }
+    function formatDate(value) {
+      const date = new Date(value);
+      if (!Number.isFinite(date.getTime())) return "";
+      return new Intl.DateTimeFormat(language, { dateStyle: "medium", timeStyle: "short" }).format(date);
+    }
+    function showOrder(order) {
+      currentOrder = order;
+      const step = statusStages.indexOf(order.status);
+      const currentStep = order.status === "cancelled" ? -1 : Math.max(0, step);
+      document.getElementById("result-heading").textContent = tr("orderDetailsTitle");
+      document.getElementById("result-intro").textContent = tr("mapIntro");
+      document.getElementById("journey-card").classList.remove("is-preview");
+      document.getElementById("result-code").textContent = order.code;
+      document.getElementById("result-code").hidden = false;
+      document.getElementById("status-pill").textContent = tr(statusLabels[order.status] || "statusReceived");
+      document.getElementById("status-pill").classList.remove("preview-status");
+      document.getElementById("status-description").textContent = tr(statusDescriptions[order.status] || "descReceived");
+      document.getElementById("item-title").textContent = [order.brand, order.product].filter(Boolean).join(" · ") || tr("unknownItem");
+      const itemDetails = Array.isArray(order.items) ? order.items.map((item) => [item.product, item.model, item.color, item.size, item.quantity > 1 ? `×${item.quantity}` : ""].filter(Boolean).join(" · ")).join(" / ") : "";
+      document.getElementById("item-variant").textContent = itemDetails || [order.model, order.color, order.size, order.quantity > 1 ? `${tr("quantity")}: ${order.quantity}` : ""].filter(Boolean).join(" · ");
+      const updated = formatDate(order.updatedAt || order.createdAt);
+      document.getElementById("updated-at").textContent = updated ? `${tr("updated")}: ${updated}` : "";
+      resultPanel.hidden = false;
+      document.getElementById("order-details").hidden = false;
+      document.getElementById("help-note").hidden = false;
+      updateRoute(currentStep);
+    }
+    input.addEventListener("input", () => { input.value = normalizeCode(input.value); });
+    document.getElementById("language-select").addEventListener("change", (event) => {
+      language = event.target.value;
+      try { localStorage.setItem("goel-language", language); } catch (error) {}
+      applyLanguage();
+    });
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const code = normalizeCode(input.value);
+      input.value = code;
+      const compact = code.replace(/-/g, "");
+      if (compact.length !== 12 || !compact.startsWith("GOEL")) {
+        showPreview();
+        message.textContent = tr("writeCode");
+        message.className = "lookup-message";
+        input.focus();
+        return;
+      }
+      const currentRequest = ++requestNumber;
+      button.disabled = true;
+      form.classList.add("loading");
+      message.textContent = tr("loading");
+      message.className = "lookup-message";
+      try {
+        const response = await fetch(`${API_URL}?code=${encodeURIComponent(code)}`, { cache: "no-store" });
+        const data = await response.json().catch(() => null);
+        if (currentRequest !== requestNumber) return;
+        if (!response.ok) {
+          showPreview();
+          message.textContent = response.status === 404 || response.status === 400 ? tr("notFound") : tr("serverError");
+          message.className = "lookup-message";
+          return;
+        }
+        showOrder(data.order);
+        message.textContent = "";
+        message.className = "lookup-message success";
+        if (window.matchMedia("(max-width: 700px)").matches) resultPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (error) {
+        if (currentRequest !== requestNumber) return;
+        showPreview();
+        message.textContent = tr("serverError");
+        message.className = "lookup-message";
+      } finally {
+        if (currentRequest === requestNumber) {
+          button.disabled = false;
+          form.classList.remove("loading");
+        }
+      }
+    });
+    applyLanguage();
+    showPreview();
+    const initialCode = new URLSearchParams(location.search).get("code");
+    if (initialCode) {
+      input.value = normalizeCode(initialCode);
+      form.requestSubmit();
+    }
+  </script>
+</body>
+</html>
