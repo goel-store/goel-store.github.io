@@ -745,7 +745,7 @@
       --forest: #47332a;
       --lime: #f0cba5;
     }
-    html { color-scheme: dark; }
+    html { color-scheme: dark; scrollbar-gutter: stable; }
     body { background: var(--bg); color: var(--ink); }
     body::before { filter: blur(28px) saturate(.55); opacity: .22; }
     body::after { background: linear-gradient(180deg, rgba(42, 33, 29, .74), rgba(42, 33, 29, .94)); }
@@ -771,7 +771,7 @@
       backdrop-filter: blur(16px);
       box-sizing: border-box;
     }
-    .mark { color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: .09em; line-height: 1; }
+    .mark { display: inline-flex; align-items: center; color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: .09em; line-height: 1; }
     .site-menu-toggle, .cart-toggle {
       min-height: 38px;
       padding: 7px 12px;
