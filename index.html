@@ -1079,10 +1079,24 @@
     .cloth.has-photo, .product-cloth.has-photo { background-color: #d2c3b4; }
     .cloth > img, .product-cloth > img { mix-blend-mode: multiply; filter: contrast(1.02) saturate(1.03) brightness(1.04); }
     .cloth > .ph, .product-cloth > .ph { border-radius: 999px; background: rgba(42, 33, 29, .88); color: var(--muted); }
-    .item .body { padding: 16px 16px 19px; color: var(--ink); }
+    .item { height: 100%; }
+    .item .body {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 16px 16px 19px;
+      color: var(--ink);
+    }
     .item b { color: var(--ink); font-size: 14px; font-weight: 600; }
     .item span { color: var(--muted); }
-    .item .price { margin-top: 9px; color: var(--accent); font-weight: 600; }
+    .item .item-meta {
+      display: grid;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 12px;
+    }
+    .item .price { margin-top: 0; color: var(--accent); font-weight: 600; }
     #home-new-arrivals h2 { display: flex; align-items: center; gap: 16px; }
     #home-new-arrivals h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
     #home-new-arrivals .items {
@@ -1115,7 +1129,7 @@
     .home-arrival-card .cloth { position: relative; z-index: 1; border-radius: 15px 15px 0 0; }
     .home-arrival-card .item-badge { z-index: 2; background: rgba(42, 33, 29, .58); color: #f4e9dc !important; }
     .home-arrival-card .body { position: relative; z-index: 1; border: 1px solid rgba(244, 233, 220, .1); border-top: 0; border-radius: 0 0 15px 15px; background: var(--paper); }
-    .item .item-stock-note { margin-top: 7px; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    .item .item-stock-note { margin-top: 0; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
     @media (prefers-reduced-motion: reduce) { .home-arrival-card { transition: none; } }
     .item .item-color-label { display: flex; align-items: center; gap: 7px; width: fit-content; margin-top: 8px; color: var(--muted); font-size: 12px; }
     .item-color-label i { width: 12px; height: 12px; flex: none; border: 1px solid rgba(244, 233, 220, .3); border-radius: 50%; background: var(--variant-color, #eee); box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .08); }
@@ -2584,12 +2598,16 @@
         slug: "strength",
         gender: "unisex",
         variants: [
-          { cut: "Classic", tone: "белый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-01.jpg", "img/art/classic-strength-white-02.jpg", "img/art/classic-strength-white-03.jpg", "img/art/classic-strength-white-04.jpg", "img/art/classic-strength-white-05.jpg"], photo: "img/art/classic-strength-white-01.jpg" },
-          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-white-01.jpg", "img/art/classic-strength-grey-white-02.jpg"], photo: "img/art/classic-strength-grey-white-01.jpg" },
-          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-yellow-01.jpg", "img/art/classic-strength-grey-yellow-02.jpg"], photo: "img/art/classic-strength-grey-yellow-01.jpg" },
+          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-white-01.jpg", "img/art/classic-strength-grey-white-02.jpg", "img/art/classic-strength-grey-white-03.jpg", "img/art/classic-strength-grey-white-04.jpg", "img/art/classic-strength-grey-white-05.jpg", "img/art/classic-strength-grey-white-06.jpg", "img/art/classic-strength-grey-white-07.jpg", "img/art/classic-strength-grey-white-08.jpg"], photo: "img/art/classic-strength-grey-white-01.jpg" },
+          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-yellow-01.jpg", "img/art/classic-strength-grey-yellow-02.jpg", "img/art/classic-strength-grey-yellow-03.jpg", "img/art/classic-strength-grey-yellow-04.jpg"], photo: "img/art/classic-strength-grey-yellow-01.jpg" },
+          { cut: "Classic", tone: "белый-синий", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-blue-01.jpg", "img/art/classic-strength-white-blue-02.jpg"], photo: "img/art/classic-strength-white-blue-01.jpg" },
+          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-brown-01.jpg", "img/art/classic-strength-white-brown-02.jpg"], photo: "img/art/classic-strength-white-brown-01.jpg" },
           { cut: "Women", tone: "белый-голубой", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-blue-01.jpg", "img/art/women-strength-white-blue-02.jpg"], photo: "img/art/women-strength-white-blue-01.jpg" },
           { cut: "Women", tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-black-white-01.jpg", "img/art/women-strength-black-white-02.jpg"], photo: "img/art/women-strength-black-white-01.jpg" },
-          { cut: "Women", tone: "белый-песок", color: "#f3efe6", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-sand-01.jpg", "img/art/women-strength-white-sand-02.jpg"], photo: "img/art/women-strength-white-sand-01.jpg" }
+          { cut: "Women", tone: "белый-песок", color: "#f3efe6", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-sand-01.jpg", "img/art/women-strength-white-sand-02.jpg"], photo: "img/art/women-strength-white-sand-01.jpg" },
+          { cut: "Women", tone: "молоко-голубой", color: "#f0ebe3", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-blue-01.jpg", "img/art/women-strength-milk-blue-02.jpg"], photo: "img/art/women-strength-milk-blue-01.jpg" },
+          { cut: "Women", tone: "молоко-коричневый", color: "#efe6da", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-brown-01.jpg", "img/art/women-strength-milk-brown-02.jpg"], photo: "img/art/women-strength-milk-brown-01.jpg" },
+          { cut: "Women", tone: "молоко-синий", color: "#ebe4d8", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-navy-01.jpg", "img/art/women-strength-milk-navy-02.jpg"], photo: "img/art/women-strength-milk-navy-01.jpg" }
         ]
       },
       {
@@ -2597,9 +2615,11 @@
         slug: "victory",
         gender: "unisex",
         variants: [
-          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-grey-yellow-01.jpg", "img/art/classic-victory-grey-yellow-02.jpg"], photo: "img/art/classic-victory-grey-yellow-01.jpg" },
-          { cut: "Women", tone: "белый-бордо", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-white-bordo-01.jpg", "img/art/women-victory-white-bordo-02.jpg"], photo: "img/art/women-victory-white-bordo-01.jpg" },
-          { cut: "Women", tone: "молоко-коричневый", color: "#f0ebe3", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-milk-brown-01.jpg", "img/art/women-victory-milk-brown-02.jpg"], photo: "img/art/women-victory-milk-brown-01.jpg" },
+          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-grey-yellow-01.jpg", "img/art/classic-victory-grey-yellow-02.jpg", "img/art/classic-victory-grey-yellow-03.jpg", "img/art/classic-victory-grey-yellow-04.jpg", "img/art/classic-victory-grey-yellow-05.jpg", "img/art/classic-victory-grey-yellow-06.jpg", "img/art/classic-victory-grey-yellow-07.jpg"], photo: "img/art/classic-victory-grey-yellow-01.jpg" },
+          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-brown-01.jpg", "img/art/classic-victory-white-brown-02.jpg"], photo: "img/art/classic-victory-white-brown-01.jpg" },
+          { cut: "Classic", tone: "белый-красный", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-red-01.jpg", "img/art/classic-victory-white-red-02.jpg"], photo: "img/art/classic-victory-white-red-01.jpg" },
+          { cut: "Women", tone: "белый-бордо", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-white-bordo-01.jpg", "img/art/women-victory-white-bordo-02.jpg", "img/art/women-victory-white-bordo-03.jpg"], photo: "img/art/women-victory-white-bordo-01.jpg" },
+          { cut: "Women", tone: "молоко-коричневый", color: "#f0ebe3", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-milk-brown-01.jpg", "img/art/women-victory-milk-brown-02.jpg", "img/art/women-victory-milk-brown-03.jpg"], photo: "img/art/women-victory-milk-brown-01.jpg" },
           { cut: "Women", tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-black-white-01.jpg", "img/art/women-victory-black-white-02.jpg"], photo: "img/art/women-victory-black-white-01.jpg" }
         ]
       },
@@ -2608,8 +2628,9 @@
         slug: "skateboard",
         gender: "unisex",
         variants: [
-          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-white-01.jpg", "img/art/classic-skateboard-grey-white-02.jpg"], photo: "img/art/classic-skateboard-grey-white-01.jpg" },
-          { cut: "Classic", tone: "серый-розовый", color: "#433c40", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-pink-01.jpg", "img/art/classic-skateboard-grey-pink-02.jpg"], photo: "img/art/classic-skateboard-grey-pink-01.jpg" }
+          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-white-01.jpg", "img/art/classic-skateboard-grey-white-02.jpg", "img/art/classic-skateboard-grey-white-03.jpg", "img/art/classic-skateboard-grey-white-04.jpg"], photo: "img/art/classic-skateboard-grey-white-01.jpg" },
+          { cut: "Classic", tone: "серый-розовый", color: "#433c40", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-pink-01.jpg", "img/art/classic-skateboard-grey-pink-02.jpg", "img/art/classic-skateboard-grey-pink-03.jpg", "img/art/classic-skateboard-grey-pink-04.jpg"], photo: "img/art/classic-skateboard-grey-pink-01.jpg" },
+          { cut: "Classic", tone: "белый-розовый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-white-pink-01.jpg", "img/art/classic-skateboard-white-pink-02.jpg"], photo: "img/art/classic-skateboard-white-pink-01.jpg" }
         ]
       },
       {
@@ -2617,7 +2638,7 @@
         slug: "defender",
         gender: "unisex",
         variants: [
-          { tone: "белый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/defender-white-01.jpg", "img/art/defender-white-02.jpg", "img/art/defender-white-03.jpg", "img/art/defender-white-04.jpg"], photo: "img/art/defender-white-01.jpg" }
+          { cut: "Classic", tone: "белый-персик", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-defender-white-peach-01.jpg", "img/art/classic-defender-white-peach-02.jpg", "img/art/classic-defender-white-peach-03.jpg", "img/art/classic-defender-white-peach-04.jpg", "img/art/classic-defender-white-peach-05.jpg", "img/art/classic-defender-white-peach-06.jpg"], photo: "img/art/classic-defender-white-peach-01.jpg" }
         ]
       }
     ]
@@ -3168,7 +3189,8 @@
       "women-strength": "strength",
       "classic-victory": "victory",
       "women-victory": "victory",
-      "classic-skateboard": "skateboard"
+      "classic-skateboard": "skateboard",
+      "classic-defender": "defender"
     };
 
     const brandCategoryKeys = ["tshirts", "sweatshirts", "longSleeves", "halfZips", "caps"];
@@ -3698,7 +3720,10 @@
         ? `;--stack-layer:${stackIndex + 1};--stack-shift:${Math.round(centeredIndex * 56)}px;--stack-rotation:${Math.max(-6, Math.min(6, centeredIndex * 3))}deg;--stack-lift:${Math.round(Math.abs(centeredIndex) * 2)}px`
         : "";
       const variantRoute = matchingVariant ? `&variant=${variantIndex}` : "";
-      return `<a class="item${featuredVariant ? " home-arrival-card" : ""}" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}${stackStyle}"><div class="cloth${photoClass}${galleryClass}" style="${clothStyle}"${galleryData}>${photoTag}${galleryDots}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span></a>`;
+      const meta = (stockNote || price)
+        ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
+        : "";
+      return `<a class="item${featuredVariant ? " home-arrival-card" : ""}" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}${stackStyle}"><div class="cloth${photoClass}${galleryClass}" style="${clothStyle}"${galleryData}>${photoTag}${galleryDots}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
