@@ -861,25 +861,31 @@
       gap: 26px;
       margin-top: 28px;
       padding: 13px 15px 13px 20px;
+      border: 1px solid rgba(244, 233, 220, .12);
       border-radius: 999px;
-      background: #fffaf4;
-      color: #211c19;
+      background: rgba(57, 46, 40, .9);
+      color: var(--ink);
       font-size: 14px;
       font-weight: 600;
-      transition: transform 180ms ease, background-color 180ms ease;
+      transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
     }
-    #home .hero-cta:hover { transform: translateY(-2px); background: #f2b494; }
+    #home .hero-cta:hover {
+      transform: translateY(-2px);
+      border-color: rgba(244, 233, 220, .24);
+      background: #403229;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, .22);
+    }
     #home .hero-cta > span[aria-hidden="true"] {
       display: grid;
       width: 30px;
       height: 30px;
       place-items: center;
       border-radius: 50%;
-      background: #211c19;
-      color: #fffaf4;
+      background: rgba(231, 164, 124, .16);
+      color: var(--accent);
       font-size: 16px;
     }
-    #home .hero-cta:focus-visible { outline: 2px solid #f2b494; outline-offset: 4px; }
+    #home .hero-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
     #home .hero-slide {
       position: absolute;
       z-index: 0;
@@ -1129,14 +1135,20 @@
       justify-content: center;
       align-items: center;
       width: fit-content;
+      border: 1px solid rgba(244, 233, 220, .12);
       border-radius: 999px;
-      background: #fffaf4;
-      color: #211c19;
+      background: rgba(57, 46, 40, .9);
+      color: var(--ink);
       font-weight: 600;
-      transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+      transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
     }
-    .buy:hover:not(:disabled) { background: #ffffff; box-shadow: 0 8px 20px rgba(0, 0, 0, .2); transform: translateY(-1px); }
-    .buy:disabled { background: rgba(255, 250, 244, .42); color: rgba(33, 28, 25, .55); }
+    .buy:hover:not(:disabled) {
+      border-color: rgba(244, 233, 220, .24);
+      background: #403229;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, .22);
+      transform: translateY(-1px);
+    }
+    .buy:disabled { border-color: rgba(244, 233, 220, .06); background: rgba(57, 46, 40, .42); color: rgba(244, 233, 220, .45); }
     .buy:focus-visible, .cut:focus-visible, .size:focus-visible, .tone:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .cart-view > h1 { margin: 0; }
     .cart-line { border-color: rgba(244, 233, 220, .1); border-radius: 14px; background: var(--paper); }
