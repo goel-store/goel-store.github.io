@@ -631,6 +631,59 @@
       cursor: pointer;
       font-size: 13px;
     }
+    .cut {
+      position: relative;
+      padding-right: 22px;
+    }
+    .cut-info {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: #fffcf8;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: 0 1px 2px rgba(28, 24, 20, 0.08);
+    }
+    .cut.on .cut-info {
+      border-color: rgba(255,255,255,0.55);
+      background: rgba(255,255,255,0.92);
+      color: var(--ink);
+    }
+    .cut-info:hover, .cut-info:focus-visible {
+      color: var(--ink);
+      border-color: var(--ink);
+      outline: none;
+    }
+    .cut-info-pop {
+      position: absolute;
+      z-index: 40;
+      width: min(280px, calc(100vw - 32px));
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fffcf8;
+      color: var(--ink);
+      box-shadow: 0 10px 28px rgba(28, 24, 20, 0.14);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .cut-info-pop[hidden] { display: none; }
+    .cut-info-pop strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .cut-info-pop p { margin: 0; color: var(--muted); }
     .cut.on, .size.on { background: var(--ink); color: #fff; border-color: var(--ink); }
     .product-price { margin: 16px 0 0; font-size: 18px; }
     .buy {
@@ -1475,6 +1528,7 @@
     <button type="button" class="lightbox-nav next" id="lightbox-next" hidden aria-label="Следующее фото" data-i18n-aria="nextPhoto">›</button>
     <div class="lightbox-count" id="lightbox-count" hidden></div>
   </div>
+  <div class="cut-info-pop" id="cut-info-pop" hidden role="dialog" aria-modal="false"></div>
   <script>
     const translations = {
       ru: {
@@ -1596,28 +1650,40 @@
       footerNavigation: "Информация", privacyLink: "Политика обработки данных", deliveryPayment: "Оплата и доставка",
       orderProcessNote: "Это заявка, а не оплата. Мы свяжемся с вами, подтвердим наличие и согласуем дальнейшие условия заказа.",
       tshirtType: "Футболка", sweatshirtType: "Свитшот", longsleeveType: "Лонгслив", halfzipType: "Полузип", capType: "Кепка", hoodieType: "Худи",
-      light: "светлый", dark: "тёмный", green: "зелёный", sky: "голубой", gray: "серый", whiteBurgundy: "белый и бордовый", whiteSky: "белый и голубой", whiteSand: "белый и песочный", whiteBrown: "белый и коричневый", whiteRed: "белый и красный", whitePeach: "белый и персиковый", whitePink: "белый и розовый", whiteBlue: "белый и синий", milkBrown: "молочный и коричневый", milkBlue: "молочный и голубой", milkNavy: "молочный и синий", grayWhite: "серый и белый", grayYellow: "серый и жёлтый", grayPink: "серый и розовый", blackWhite: "чёрный и белый", blackYellow: "чёрный и жёлтый", coffee: "кофейный", emerald: "изумрудный"
+light: "светлый", dark: "тёмный", green: "зелёный", sky: "голубой", gray: "серый", whiteBurgundy: "белый и бордовый", whiteSky: "белый и голубой", whiteSand: "белый и песочный", whiteBrown: "белый и коричневый", whiteRed: "белый и красный", whitePeach: "белый и персиковый", whitePink: "белый и розовый", whiteBlue: "белый и синий", milkBrown: "молочный и коричневый", milkBlue: "молочный и голубой", milkNavy: "молочный и синий", grayWhite: "серый и белый", grayYellow: "серый и жёлтый", grayPink: "серый и розовый", blackWhite: "чёрный и белый", blackYellow: "чёрный и жёлтый", coffee: "кофейный", emerald: "изумрудный",
+      cutInfoLabel: "О модели {{cut}}",
+      classicFitInfo: "Универсальный вариант для мужчин и женщин. Единый размер — оверсайз.",
+      womenFitInfo: "Модель для женщин. Отличия от Classic: чуть длиннее рукав, необработанный край (низ и рукав), форма ближе к трапеции."
     });
     Object.assign(translations.be, {
       pageDescription: "Хрысціянскія брэнды адзення ў адной вітрыне. Выберыце рэч і адпраўце заяўку на заказ анлайн.",
       footerNavigation: "Інфармацыя", privacyLink: "Палітыка апрацоўкі даных", deliveryPayment: "Аплата і дастаўка",
       orderProcessNote: "Гэта заяўка, а не аплата. Мы звяжамся з вамі, пацвердзім наяўнасць і ўзгоднім далейшыя ўмовы замовы.",
       tshirtType: "Футболка", sweatshirtType: "Світашот", longsleeveType: "Лонгсліў", halfzipType: "Паўзіп", capType: "Кепка", hoodieType: "Худи",
-      light: "светлы", dark: "цёмны", green: "зялёны", sky: "блакітны", gray: "шэры", whiteBurgundy: "белы і бардовы", whiteSky: "белы і блакітны", whiteSand: "белы і пясочны", whiteBrown: "белы і карычневы", whiteRed: "белы і чырвоны", whitePeach: "белы і персікавы", whitePink: "белы і ружовы", whiteBlue: "белы і сіні", milkBrown: "малочны і карычневы", milkBlue: "малочны і блакітны", milkNavy: "малочны і сіні", grayWhite: "шэры і белы", grayYellow: "шэры і жоўты", grayPink: "шэры і ружовы", blackWhite: "чорны і белы", blackYellow: "чорны і жоўты", coffee: "кававы", emerald: "смарагдавы"
+      light: "светлы", dark: "цёмны", green: "зялёны", sky: "блакітны", gray: "шэры", whiteBurgundy: "белы і бардовы", whiteSky: "белы і блакітны", whiteSand: "белы і пясочны", whiteBrown: "белы і карычневы", whiteRed: "белы і чырвоны", whitePeach: "белы і персікавы", whitePink: "белы і ружовы", whiteBlue: "белы і сіні", milkBrown: "малочны і карычневы", milkBlue: "малочны і блакітны", milkNavy: "малочны і сіні", grayWhite: "шэры і белы", grayYellow: "шэры і жоўты", grayPink: "шэры і ружовы", blackWhite: "чорны і белы", blackYellow: "чорны і жоўты", coffee: "кававы", emerald: "смарагдавы",
+      cutInfoLabel: "Пра мадэль {{cut}}",
+      classicFitInfo: "Універсальны варыянт для мужчын і жанчын. Адзіны памер — оверсайз.",
+      womenFitInfo: "Мадэль для жанчын. Адрозненні ад Classic: трохі даўжэйшы рукаў, неапрацаваны край (ніз і рукаў), форма бліжэй да трапецыі."
     });
     Object.assign(translations.uk, {
       pageDescription: "Християнські бренди одягу в одній вітрині. Оберіть річ і надішліть заявку на замовлення онлайн.",
       footerNavigation: "Інформація", privacyLink: "Політика обробки даних", deliveryPayment: "Оплата й доставка",
       orderProcessNote: "Це заявка, а не оплата. Ми зв’яжемося з вами, підтвердимо наявність і погодимо подальші умови замовлення.",
       tshirtType: "Футболка", sweatshirtType: "Світшот", longsleeveType: "Лонгслів", halfzipType: "Напівзип", capType: "Кепка", hoodieType: "Худі",
-      light: "світлий", dark: "темний", green: "зелений", sky: "блакитний", gray: "сірий", whiteBurgundy: "білий і бордовий", whiteSky: "білий і блакитний", whiteSand: "білий і пісочний", whiteBrown: "білий і коричневий", whiteRed: "білий і червоний", whitePeach: "білий і персиковий", whitePink: "білий і рожевий", whiteBlue: "білий і синій", milkBrown: "молочний і коричневий", milkBlue: "молочний і блакитний", milkNavy: "молочний і синій", grayWhite: "сірий і білий", grayYellow: "сірий і жовтий", grayPink: "сірий і рожевий", blackWhite: "чорний і білий", blackYellow: "чорний і жовтий", coffee: "кавовий", emerald: "смарагдовий"
+      light: "світлий", dark: "темний", green: "зелений", sky: "блакитний", gray: "сірий", whiteBurgundy: "білий і бордовий", whiteSky: "білий і блакитний", whiteSand: "білий і пісочний", whiteBrown: "білий і коричневий", whiteRed: "білий і червоний", whitePeach: "білий і персиковий", whitePink: "білий і рожевий", whiteBlue: "білий і синій", milkBrown: "молочний і коричневий", milkBlue: "молочний і блакитний", milkNavy: "молочний і синій", grayWhite: "сірий і білий", grayYellow: "сірий і жовтий", grayPink: "сірий і рожевий", blackWhite: "чорний і білий", blackYellow: "чорний і жовтий", coffee: "кавовий", emerald: "смарагдовий",
+      cutInfoLabel: "Про модель {{cut}}",
+      classicFitInfo: "Універсальний варіант для чоловіків і жінок. Єдиний розмір — оверсайз.",
+      womenFitInfo: "Модель для жінок. Відмінності від Classic: трохи довший рукав, необроблений край (низ і рукав), форма ближче до трапеції."
     });
     Object.assign(translations.en, {
       pageDescription: "Christian clothing brands in one storefront. Browse the collection and send an order request online.",
       footerNavigation: "Information", privacyLink: "Privacy notice", deliveryPayment: "Payment & delivery",
       orderProcessNote: "This is an order request, not a payment. We’ll contact you to confirm availability and agree on the next steps.",
       tshirtType: "T-shirt", sweatshirtType: "Sweatshirt", longsleeveType: "Long-sleeve top", halfzipType: "Half-zip", capType: "Cap", hoodieType: "Hoodie",
-      light: "light", dark: "dark", green: "green", sky: "sky blue", gray: "gray", whiteBurgundy: "white / burgundy", whiteSky: "white / blue", whiteSand: "white / sand", whiteBrown: "white / brown", whiteRed: "white / red", whitePeach: "white / peach", whitePink: "white / pink", whiteBlue: "white / blue", milkBrown: "cream / brown", milkBlue: "cream / sky blue", milkNavy: "cream / navy", grayWhite: "gray / white", grayYellow: "gray / yellow", grayPink: "gray / pink", blackWhite: "black / white", blackYellow: "black / yellow", coffee: "coffee brown", emerald: "emerald", milk: "milky"
+      light: "light", dark: "dark", green: "green", sky: "sky blue", gray: "gray", whiteBurgundy: "white / burgundy", whiteSky: "white / blue", whiteSand: "white / sand", whiteBrown: "white / brown", whiteRed: "white / red", whitePeach: "white / peach", whitePink: "white / pink", whiteBlue: "white / blue", milkBrown: "cream / brown", milkBlue: "cream / sky blue", milkNavy: "cream / navy", grayWhite: "gray / white", grayYellow: "gray / yellow", grayPink: "gray / pink", blackWhite: "black / white", blackYellow: "black / yellow", coffee: "coffee brown", emerald: "emerald", milk: "milky",
+      cutInfoLabel: "About {{cut}}",
+      classicFitInfo: "A unisex option for men and women. One size — oversized.",
+      womenFitInfo: "A women’s cut. Unlike Classic: slightly longer sleeves, raw hem and cuffs, and a more trapezoid shape."
     });
     let currentLanguage = "ru";
     try {
@@ -1662,6 +1728,41 @@
       "божий цветочек": "GOD'S LITTLE FLOWER", "из божьего сада": "FROM GOD'S GARDEN", "сосуды": "VESSELS", "плоды духа": "FRUIT OF THE SPIRIT",
       "будьте как дети": "BE LIKE CHILDREN", "jesus (леопард)": "JESUS (LEOPARD)"
     };
+    function cutInfoKey(cut) {
+      const key = String(cut || "").trim().toLowerCase();
+      if (key === "classic") return "classicFitInfo";
+      if (key === "women") return "womenFitInfo";
+      return "";
+    }
+    function hideCutInfoPop() {
+      const pop = document.getElementById("cut-info-pop");
+      if (!pop) return;
+      pop.hidden = true;
+      pop.innerHTML = "";
+      pop.removeAttribute("style");
+    }
+    function showCutInfoPop(anchor, cut) {
+      const infoKey = cutInfoKey(cut);
+      const pop = document.getElementById("cut-info-pop");
+      if (!infoKey || !pop || !anchor) return;
+      const label = localizedGarmentType(cut);
+      pop.innerHTML = `<strong>${label}</strong><p>${t(infoKey)}</p>`;
+      pop.hidden = false;
+      const rect = anchor.getBoundingClientRect();
+      const width = Math.min(280, window.innerWidth - 32);
+      let left = rect.right - width;
+      left = Math.max(16, Math.min(left, window.innerWidth - width - 16));
+      let top = rect.bottom + 8;
+      pop.style.position = "fixed";
+      pop.style.width = `${width}px`;
+      pop.style.left = `${left}px`;
+      pop.style.top = `${top}px`;
+      const popRect = pop.getBoundingClientRect();
+      if (popRect.bottom > window.innerHeight - 12) {
+        top = Math.max(12, rect.top - popRect.height - 8);
+        pop.style.top = `${top}px`;
+      }
+    }
     function localizedGarmentType(type) {
       const key = String(type || "").trim().toLocaleLowerCase("ru");
       return garmentTypeTranslation[key] ? t(garmentTypeTranslation[key]) : type;
@@ -4031,10 +4132,16 @@
       const cutsEl = document.getElementById("product-cuts");
       cutsEl.hidden = cuts.length < 2;
       document.getElementById("cut-options").innerHTML = cuts.length > 1
-        ? cuts.map((cut) =>
-            `<button type="button" class="cut${cut === variant.cut ? " on" : ""}" data-cut="${cut}">${localizedGarmentType(cut)}</button>`
-          ).join("")
+        ? cuts.map((cut) => {
+            const label = localizedGarmentType(cut);
+            const infoKey = cutInfoKey(cut);
+            const info = infoKey
+              ? `<span class="cut-info" data-cut-info="${cut}" role="button" tabindex="0" aria-label="${t("cutInfoLabel", { cut: label })}">i</span>`
+              : "";
+            return `<button type="button" class="cut${cut === variant.cut ? " on" : ""}" data-cut="${cut}">${label}${info}</button>`;
+          }).join("")
         : "";
+      hideCutInfoPop();
       const colorPool = variantsForCut(item, variant.cut);
       const colors = document.getElementById("product-colors");
       const many = colorPool.length > 1;
@@ -4536,14 +4643,47 @@
       navigate(currentBrand);
     });
     document.getElementById("cut-options").addEventListener("click", (event) => {
+      const info = event.target.closest("[data-cut-info]");
+      if (info) {
+        event.preventDefault();
+        event.stopPropagation();
+        const cut = info.dataset.cutInfo;
+        const pop = document.getElementById("cut-info-pop");
+        if (pop && !pop.hidden && pop.dataset.cut === cut) {
+          hideCutInfoPop();
+          return;
+        }
+        showCutInfoPop(info, cut);
+        if (pop) pop.dataset.cut = cut;
+        return;
+      }
       const button = event.target.closest(".cut");
       if (!button || !currentItem || !currentBrand) return;
+      hideCutInfoPop();
       const cut = button.dataset.cut;
       const current = currentItem.variants[currentTone] || currentItem.variants[0];
       const sameTone = currentItem.variants.findIndex((variant) => variant.cut === cut && variant.tone === current.tone);
       const fallback = currentItem.variants.findIndex((variant) => variant.cut === cut);
       fillVariant(brands[currentBrand], currentItem, sameTone !== -1 ? sameTone : fallback);
     });
+    document.getElementById("cut-options").addEventListener("keydown", (event) => {
+      const info = event.target.closest("[data-cut-info]");
+      if (!info || (event.key !== "Enter" && event.key !== " ")) return;
+      event.preventDefault();
+      event.stopPropagation();
+      info.click();
+    });
+    document.addEventListener("pointerdown", (event) => {
+      const pop = document.getElementById("cut-info-pop");
+      if (!pop || pop.hidden) return;
+      if (event.target.closest("#cut-info-pop") || event.target.closest("[data-cut-info]")) return;
+      hideCutInfoPop();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hideCutInfoPop();
+    });
+    window.addEventListener("resize", hideCutInfoPop);
+    window.addEventListener("scroll", hideCutInfoPop, true);
     document.getElementById("color-options").addEventListener("click", (event) => {
       const button = event.target.closest(".tone");
       if (!button || !currentItem || !currentBrand) return;
