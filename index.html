@@ -807,7 +807,7 @@
       font-size: 15px;
       cursor: pointer;
     }
-    .buy:disabled { opacity: 0.55; cursor: not-allowed; }
+    .buy:disabled { opacity: 0.72; cursor: not-allowed; }
     .order-dialog {
       width: min(540px, calc(100% - 24px));
       max-width: none;
@@ -1389,7 +1389,12 @@
       transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
     }
     .buy:hover:not(:disabled) { background: #f5efe6; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); transform: translateY(-1px); }
-    .buy:disabled { background: rgba(239, 230, 218, .42); color: rgba(33, 28, 25, .45); }
+    .buy:disabled {
+      background: #d9cfc3;
+      color: #211c19;
+      opacity: 1;
+      font-weight: 650;
+    }
     .buy:focus-visible, .cut:focus-visible, .size:focus-visible, .tone:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .cart-view > h1 { margin: 0; }
     .cart-line { border-color: rgba(244, 233, 220, .1); border-radius: 14px; background: var(--paper); }
@@ -4457,8 +4462,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       const buyButton = document.getElementById("add-to-cart");
       buyButton.disabled = unavailable;
       buyButton.textContent = unavailable ? t("unavailable") : t("addToCart");
-      document.getElementById("choice").textContent = unavailable
-        ? t("nowUnavailable")
+      const choice = document.getElementById("choice");
+      choice.hidden = unavailable;
+      choice.textContent = unavailable
+        ? ""
         : options.length ? t("chooseSize") : t("pressOrderToRequest");
     }
 
