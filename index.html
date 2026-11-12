@@ -814,7 +814,7 @@
       font-size: 15px;
       cursor: pointer;
     }
-    .buy:disabled { opacity: 0.72; cursor: not-allowed; }
+    .buy:disabled { opacity: 0.55; cursor: not-allowed; }
     .order-dialog {
       width: min(540px, calc(100% - 24px));
       max-width: none;
@@ -1411,10 +1411,12 @@
     }
     .buy:hover:not(:disabled) { background: #f5efe6; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); transform: translateY(-1px); }
     .buy:disabled {
-      background: #d9cfc3;
-      color: #211c19;
+      background: rgba(239, 230, 218, .22);
+      color: rgba(244, 233, 220, .72);
       opacity: 1;
-      font-weight: 650;
+      font-weight: 600;
+      box-shadow: none;
+      transform: none;
     }
     .buy:focus-visible, .cut:focus-visible, .size:focus-visible, .tone:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .cart-view > h1 { margin: 0; }
