@@ -3796,7 +3796,22 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           ? []
           : data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
       );
-      const arrivals = products.filter(({ item }) => item.newArrival === true);
+      const arrivals = products.flatMap(({ id, item }) => {
+        if (item.newArrival !== true) return [];
+        const byTone = new Map();
+        item.variants.forEach((variant, index) => {
+          const tone = String(variant.tone || "").trim() || `variant-${index}`;
+          const current = byTone.get(tone);
+          if (!current) {
+            byTone.set(tone, { id, item, variant });
+            return;
+          }
+          if (variantInStock(variant) && !variantInStock(current.variant)) {
+            byTone.set(tone, { id, item, variant });
+          }
+        });
+        return [...byTone.values()];
+      });
       const restocked = products.filter(({ item }) => itemInStock(item)).map(({ id, item }) => ({
         id,
         item,
@@ -3809,7 +3824,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       newSection.hidden = arrivals.length === 0;
       newItems.classList.add("product-rail");
       newItems.innerHTML = arrivals
-        .map(({ id, item }) => itemCard(id, item, [], "newArrivalBadge"))
+        .map(({ id, item, variant }) => itemCard(id, item, [], "newArrivalBadge", variant))
         .join("");
       restockedSection.hidden = restocked.length === 0;
       restockedItems.classList.add("product-rail");
@@ -3833,33 +3848,30 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       }, animate);
     }
 
-    function itemCard(id, item, preferredColors = [], badgeKey = "") {
-      const matchingVariant = preferredColors.length
+    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null) {
+      const matchingVariant = featuredVariant || (preferredColors.length
         ? item.variants.find((variant) => variantInStock(variant) && preferredColors.includes(variant.tone))
           || item.variants.find((variant) => preferredColors.includes(variant.tone))
-        : null;
+        : null);
       const first = matchingVariant || item.variants.find(variantInStock) || item.variants[0];
       const variantIndex = item.variants.indexOf(first);
       const price = cardPrice(item, matchingVariant);
       const photos = variantPhotos(first);
       const photo = photos[0] || first.photo || "";
-      const cardPhotos = photos.length ? photos : photo ? [photo] : [];
       const color = first.color;
       const clothStyle = `--swatch:${color}`;
       const cardStyle = photo
         ? `--swatch:${color}`
         : `--swatch:${color};background-image:linear-gradient(${color},${color})`;
       const photoClass = photo ? " has-photo" : "";
-      const galleryClass = cardPhotos.length > 1 ? " has-gallery" : "";
-      const galleryData = cardPhotos.length > 1 ? ` data-gallery-photos="${encodeURIComponent(JSON.stringify(cardPhotos))}" data-photo-index="0"` : "";
       const photoTag = photo
         ? `<img src="${photo}" alt="${localizedItemName(item.name)}" loading="lazy" decoding="async">`
         : "";
-      const galleryDots = cardPhotos.length > 1
-        ? `<div class="item-gallery-dots" aria-hidden="true">${cardPhotos.map((_, index) => `<span class="${index === 0 ? "on" : ""}"></span>`).join("")}</div>`
-        : "";
       const activeBadge = badgeKey || (item.newArrival ? "newArrivalBadge" : "");
       const badge = activeBadge ? `<span class="item-badge">${t(activeBadge)}</span>` : "";
+      const colorLabel = featuredVariant && featuredVariant.tone
+        ? `<span class="item-color-label"><i style="--variant-color:${featuredVariant.color}" aria-hidden="true"></i>${localizedTone(featuredVariant.tone)}</span>`
+        : "";
       const stockNote = !variantInStock(first)
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
         : "";
@@ -3867,7 +3879,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       const meta = (stockNote || price)
         ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
         : "";
-      return `<a class="item" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}"><div class="cloth${photoClass}${galleryClass}" style="${clothStyle}"${galleryData}>${photoTag}${galleryDots}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${meta}</span></a>`;
+      return `<a class="item" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
@@ -4548,101 +4560,9 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         }, 50);
       }, { passive: false });
     }
-    let suppressItemCardClickUntil = 0;
-    const itemCardPhotoTransitions = new WeakMap();
-    function setItemCardPhoto(cloth, source) {
-      const image = cloth.querySelector("img");
-      if (!image || image.src === new URL(source, document.baseURI).href) return;
-      const previous = itemCardPhotoTransitions.get(cloth);
-      if (previous) {
-        window.clearTimeout(previous.timer);
-        window.clearTimeout(previous.revealTimer);
-        if (previous.preload) {
-          previous.preload.onload = null;
-          previous.preload.onerror = null;
-        }
-      }
-      const transition = { timer: 0, revealTimer: 0, preload: null, started: false };
-      itemCardPhotoTransitions.set(cloth, transition);
-      const showPhoto = () => {
-        if (transition.started || itemCardPhotoTransitions.get(cloth) !== transition) return;
-        transition.started = true;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          image.classList.remove("is-fading");
-          image.src = source;
-          itemCardPhotoTransitions.delete(cloth);
-          return;
-        }
-        image.classList.add("is-fading");
-        transition.timer = window.setTimeout(() => {
-          if (itemCardPhotoTransitions.get(cloth) !== transition) return;
-          image.src = source;
-          transition.revealTimer = window.setTimeout(() => {
-            if (itemCardPhotoTransitions.get(cloth) !== transition) return;
-            image.classList.remove("is-fading");
-            itemCardPhotoTransitions.delete(cloth);
-          }, 32);
-        }, 180);
-      };
-      const preload = new Image();
-      transition.preload = preload;
-      preload.onload = showPhoto;
-      preload.onerror = showPhoto;
-      preload.src = source;
-      if (preload.complete) showPhoto();
-    }
-    function enableItemCardSwipe(container) {
-      let pointerStart = null;
-      container.addEventListener("pointerdown", (event) => {
-        if (event.pointerType === "mouse") return;
-        const cloth = event.target.closest(".cloth[data-gallery-photos]");
-        if (!cloth) return;
-        const photos = JSON.parse(decodeURIComponent(cloth.dataset.galleryPhotos));
-        if (photos.length < 2) return;
-        pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY, cloth, photos };
-      });
-      window.addEventListener("pointerup", (event) => {
-        if (!pointerStart || event.pointerId !== pointerStart.id) return;
-        const deltaX = event.clientX - pointerStart.x;
-        const deltaY = event.clientY - pointerStart.y;
-        const { cloth, photos } = pointerStart;
-        pointerStart = null;
-        if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
-        const nextIndex = (Number(cloth.dataset.photoIndex) + (deltaX < 0 ? 1 : -1) + photos.length) % photos.length;
-        cloth.dataset.photoIndex = String(nextIndex);
-        setItemCardPhoto(cloth, photos[nextIndex]);
-        cloth.querySelectorAll(".item-gallery-dots span").forEach((dot, index) => {
-          dot.classList.toggle("on", index === nextIndex);
-        });
-        suppressItemCardClickUntil = Date.now() + 500;
-      });
-      window.addEventListener("pointercancel", (event) => {
-        if (pointerStart?.id === event.pointerId) pointerStart = null;
-      });
-      enableTrackpadSwipe(container, (direction, event) => {
-        const cloth = event.target.closest(".cloth[data-gallery-photos]");
-        if (!cloth) return;
-        const photos = JSON.parse(decodeURIComponent(cloth.dataset.galleryPhotos));
-        if (photos.length < 2) return;
-        const nextIndex = (Number(cloth.dataset.photoIndex) + (direction > 0 ? 1 : -1) + photos.length) % photos.length;
-        cloth.dataset.photoIndex = String(nextIndex);
-        setItemCardPhoto(cloth, photos[nextIndex]);
-        cloth.querySelectorAll(".item-gallery-dots span").forEach((dot, index) => {
-          dot.classList.toggle("on", index === nextIndex);
-        });
-      }, (event) => Boolean(event.target.closest(".cloth[data-gallery-photos]")));
-    }
-    enableItemCardSwipe(items);
-    enableItemCardSwipe(catalogBody);
     function openItemCard(event) {
       const card = event.target.closest("a.item");
       if (!card) return;
-      if (Date.now() < suppressItemCardClickUntil) {
-        suppressItemCardClickUntil = 0;
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
       event.preventDefault();
       const brandId = card.dataset.brand || currentBrand;
@@ -4651,6 +4571,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     }
     items.addEventListener("click", openItemCard);
     catalogBody.addEventListener("click", openItemCard);
+    document.getElementById("home-new-arrivals").addEventListener("click", openItemCard);
+    document.getElementById("home-restocked").addEventListener("click", openItemCard);
     document.getElementById("brand-filters").addEventListener("click", (event) => {
       const toggle = event.target.closest("#brand-filter-toggle");
       if (toggle) {
