@@ -41,10 +41,17 @@
     .site-footer .wrap { display: grid; gap: 10px; }
     .site-footer .footer-brand { color: var(--ink); font-weight: 650; letter-spacing: .06em; }
     .site-footer .footer-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 10px 16px; }
-    .site-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; }
+    .site-footer .footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; line-height: 1.45; }
     .site-footer .footer-links a { color: var(--accent); text-decoration: none; }
     .site-footer .footer-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
-    .site-footer .footer-social { gap: 2px; }
+    .site-footer .footer-social {
+      display: flex;
+      align-items: flex-end;
+      align-self: start;
+      gap: 2px;
+      height: 1.45em;
+      overflow: visible;
+    }
     .site-footer .footer-social a {
       display: inline-flex; align-items: center; justify-content: center;
       width: 30px; height: 30px; border-radius: 8px; color: var(--muted); text-decoration: none;

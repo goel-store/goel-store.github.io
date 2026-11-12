@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- pages-redeploy: 2026-11-12-footer-social-right -->
+<!-- pages-redeploy: 2026-11-12-footer-social-baseline -->
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -777,8 +777,15 @@
     .site-footer { display: grid; gap: 10px; margin-top: 40px; padding: 18px 0 28px; border-top: 1px solid rgba(244, 233, 220, .12); color: var(--muted); font-size: 13px; }
     .site-footer .footer-brand { color: var(--ink); font-weight: 650; letter-spacing: .06em; }
     .site-footer .footer-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 10px 16px; }
-    .site-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; }
-    .site-footer .footer-social { gap: 2px; padding-top: 0; }
+    .site-footer .footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; line-height: 1.45; }
+    .site-footer .footer-social {
+      display: flex;
+      align-items: flex-end;
+      align-self: start;
+      gap: 2px;
+      height: 1.45em;
+      overflow: visible;
+    }
     .site-footer .footer-social a {
       display: inline-flex;
       align-items: center;
