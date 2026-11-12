@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- pages-redeploy: 2026-11-11 -->
+<!-- pages-redeploy: 2026-11-12-rail-swipe -->
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -325,11 +325,11 @@
       padding: 14px var(--wrap-gutter, 16px) 20px;
       overflow-x: auto;
       overflow-y: hidden;
-      scroll-snap-type: x mandatory;
+      scroll-snap-type: x proximity;
       scroll-padding-inline: var(--wrap-gutter, 16px);
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
-      touch-action: none;
+      touch-action: pan-x;
       cursor: grab;
       scrollbar-width: none;
     }
@@ -344,10 +344,14 @@
       width: min(72vw, 240px);
       max-width: 240px;
       scroll-snap-align: start;
-      touch-action: none;
+      touch-action: pan-x;
+      -webkit-user-drag: none;
     }
-    .items.product-rail .cloth {
-      touch-action: none;
+    .items.product-rail .cloth,
+    .items.product-rail .cloth img {
+      touch-action: pan-x;
+      -webkit-user-drag: none;
+      user-select: none;
     }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
@@ -3038,6 +3042,23 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       }
       if (scrollMotionPreference.addEventListener) scrollMotionPreference.addEventListener("change", syncHeroAutoplay);
       else if (scrollMotionPreference.addListener) scrollMotionPreference.addListener(syncHeroAutoplay);
+      let heroSwipe = null;
+      heroCarousel.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0 || event.target.closest("a, button")) return;
+        heroSwipe = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      });
+      heroCarousel.addEventListener("pointerup", (event) => {
+        if (!heroSwipe || event.pointerId !== heroSwipe.id) return;
+        const dx = event.clientX - heroSwipe.x;
+        const dy = event.clientY - heroSwipe.y;
+        heroSwipe = null;
+        if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+        showHeroSlide(activeHeroSlide + (dx < 0 ? 1 : -1));
+        syncHeroAutoplay();
+      });
+      heroCarousel.addEventListener("pointercancel", (event) => {
+        if (heroSwipe?.id === event.pointerId) heroSwipe = null;
+      });
       showHeroSlide(0);
       syncHeroAutoplay();
     }
@@ -3865,6 +3886,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       restockedItems.innerHTML = restocked
         .map(({ id, item, tones }) => itemCard(id, item, tones, "restockedBadge"))
         .join("");
+      bindProductRails(home);
       window.requestAnimationFrame(() => observeScrollBlocks(home));
     }
 
@@ -3985,6 +4007,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           : "";
         return `<div class="product-rail-block">${title}${renderProductRail(rows.map((item) => itemCard(id, item, brandColorFilters)).join(""))}</div>`;
       }).join("");
+      bindProductRails(items);
       window.requestAnimationFrame(() => observeScrollBlocks(items));
     }
 
@@ -4198,6 +4221,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
             return `<div class="catalog-group"><h2>${group.data.title}</h2>${renderProductRail(group.items.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`;
           }).join("")
         : `<p class="blurb">${t("noCatalogItems")}</p>`;
+      bindProductRails(catalogBody);
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
 
@@ -4604,63 +4628,75 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         }, 50);
       }, { passive: false });
     }
-    (function enableProductRailDrag() {
-      let drag = null;
-      const endDrag = (event) => {
-        if (!drag || event.pointerId !== drag.id) return;
-        const { rail, moved } = drag;
-        rail.classList.remove("is-rail-dragging");
-        if (moved) {
-          const blockClick = (clickEvent) => {
-            clickEvent.preventDefault();
-            clickEvent.stopPropagation();
-          };
-          rail.addEventListener("click", blockClick, { capture: true, once: true });
-        }
-        drag = null;
-      };
-      document.addEventListener("pointerdown", (event) => {
-        if (event.button !== 0) return;
-        const rail = event.target.closest(".items.product-rail");
-        if (!rail || event.target.closest("button")) return;
-        if (rail.scrollWidth <= rail.clientWidth + 2) return;
-        drag = {
-          id: event.pointerId,
-          rail,
-          startX: event.clientX,
-          startY: event.clientY,
-          scrollLeft: rail.scrollLeft,
-          pageY: window.scrollY,
-          axis: null,
-          moved: false
-        };
-      });
-      document.addEventListener("pointermove", (event) => {
-        if (!drag || event.pointerId !== drag.id) return;
-        const dx = event.clientX - drag.startX;
-        const dy = event.clientY - drag.startY;
-        if (!drag.axis) {
-          if ((dx * dx) + (dy * dy) < 64) return;
-          drag.axis = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
-          if (drag.axis === "x") {
-            drag.rail.classList.add("is-rail-dragging");
-            try { drag.rail.setPointerCapture(event.pointerId); } catch (_) {}
+    function bindProductRails(root = document) {
+      root.querySelectorAll(".items.product-rail").forEach((rail) => {
+        if (rail.dataset.railBound === "1") return;
+        rail.dataset.railBound = "1";
+        let drag = null;
+
+        const endDrag = () => {
+          if (!drag) return;
+          rail.classList.remove("is-rail-dragging");
+          if (drag.moved) {
+            rail.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }, { capture: true, once: true });
           }
-        }
-        if (drag.axis === "x") {
+          drag = null;
+        };
+
+        // Touch: native overflow-x + touch-action:pan-x.
+        // Mouse/trackpad: drag + wheel, because overflow-x alone is awkward on desktop.
+        rail.addEventListener("pointerdown", (event) => {
+          if (event.pointerType === "touch" || event.button !== 0) return;
+          if (event.target.closest("button")) return;
+          if (rail.scrollWidth <= rail.clientWidth + 2) return;
+          drag = {
+            id: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            scrollLeft: rail.scrollLeft,
+            moved: false
+          };
+          rail.classList.add("is-rail-dragging");
+          try { rail.setPointerCapture(event.pointerId); } catch (_) {}
+        });
+
+        rail.addEventListener("pointermove", (event) => {
+          if (!drag || event.pointerId !== drag.id) return;
+          const dx = event.clientX - drag.startX;
+          const dy = event.clientY - drag.startY;
+          if (Math.abs(dx) < 3) return;
+          if (Math.abs(dx) < Math.abs(dy)) {
+            endDrag();
+            return;
+          }
+          rail.scrollLeft = drag.scrollLeft - dx;
+          if (Math.abs(dx) > 6) drag.moved = true;
+        });
+
+        rail.addEventListener("pointerup", (event) => {
+          if (!drag || event.pointerId !== drag.id) return;
+          endDrag();
+        });
+        rail.addEventListener("pointercancel", (event) => {
+          if (!drag || event.pointerId !== drag.id) return;
+          endDrag();
+        });
+
+        rail.addEventListener("wheel", (event) => {
+          if (rail.scrollWidth <= rail.clientWidth + 2) return;
+          const mostlyHorizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+          const shiftWheel = event.shiftKey && Math.abs(event.deltaY) > 0;
+          if (!mostlyHorizontal && !shiftWheel) return;
+          const delta = mostlyHorizontal ? event.deltaX : event.deltaY;
+          if (!delta) return;
           if (event.cancelable) event.preventDefault();
-          drag.rail.scrollLeft = drag.scrollLeft - dx;
-          if (Math.abs(dx) > 8) drag.moved = true;
-          return;
-        }
-        if (drag.axis === "y") {
-          if (event.cancelable) event.preventDefault();
-          window.scrollTo(0, drag.pageY - dy);
-        }
-      }, { passive: false });
-      document.addEventListener("pointerup", endDrag);
-      document.addEventListener("pointercancel", endDrag);
-    })();
+          rail.scrollLeft += delta;
+        }, { passive: false });
+      });
+    }
     function openItemCard(event) {
       const card = event.target.closest("a.item");
       if (!card) return;
