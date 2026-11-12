@@ -994,13 +994,13 @@
       width: min(520px, calc(100% - 48px));
       padding: clamp(28px, 4vw, 48px);
       transform: translateY(-50%);
-      border: 1px solid rgba(255, 255, 255, .24);
+      border: 1px solid rgba(255, 255, 255, .2);
       border-radius: 24px;
-      background: rgba(20, 18, 17, .54);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, .26);
+      background: rgba(20, 18, 17, .34);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, .22);
       color: #fffaf4;
-      -webkit-backdrop-filter: blur(18px) saturate(1.2);
-      backdrop-filter: blur(18px) saturate(1.2);
+      -webkit-backdrop-filter: blur(10px) saturate(1.12);
+      backdrop-filter: blur(10px) saturate(1.12);
     }
     #home .hero-kicker {
       margin: 0 0 18px;
@@ -1069,18 +1069,18 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 42%;
-      filter: saturate(.94) contrast(.98) brightness(.94);
-      transform: scale(1.005);
+      object-position: var(--hero-focus, 62% 40%);
+      filter: saturate(.96) contrast(1.02) brightness(.97);
+      transform: scale(1.01);
       transition: transform 10s cubic-bezier(0.22, 0.61, 0.36, 1);
     }
-    #home .hero-slide.is-active img { transform: scale(1.035); }
+    #home .hero-slide.is-active img { transform: scale(1.045); }
     #home .hero::after {
       content: "";
       position: absolute;
       z-index: 1;
       inset: 0;
-      background: linear-gradient(90deg, rgba(13, 12, 11, .38), rgba(13, 12, 11, .08) 68%), linear-gradient(0deg, rgba(13, 12, 11, .38), transparent 34%), rgba(235, 227, 215, .05);
+      background: linear-gradient(90deg, rgba(13, 12, 11, .22), rgba(13, 12, 11, .04) 58%, transparent 78%), linear-gradient(0deg, rgba(13, 12, 11, .28), transparent 42%), rgba(235, 227, 215, .03);
       pointer-events: none;
     }
     #home .hero-controls {
@@ -1130,9 +1130,9 @@
         padding: 26px 24px 28px;
         transform: none;
         border-radius: 20px;
-        background: rgba(20, 18, 17, .48);
-        -webkit-backdrop-filter: blur(16px) saturate(1.15);
-        backdrop-filter: blur(16px) saturate(1.15);
+        background: rgba(20, 18, 17, .32);
+        -webkit-backdrop-filter: blur(10px) saturate(1.1);
+        backdrop-filter: blur(10px) saturate(1.1);
       }
       #home .hero-copy h1 { font-size: clamp(46px, 11vw, 64px); }
       #home .hero-copy .verse { margin-top: 18px; font-size: 14px; }
@@ -1140,8 +1140,8 @@
       #home .hero-controls { right: 20px; bottom: 22px; left: 20px; justify-content: center; gap: 10px; }
       #home .hero-arrow { width: 38px; height: 38px; }
       #home .hero-count { min-width: 34px; }
-      #home .hero::after { background: linear-gradient(0deg, rgba(13, 12, 11, .42), rgba(13, 12, 11, .04) 72%); }
-      #home .hero-slide img { object-position: center center; }
+      #home .hero::after { background: linear-gradient(0deg, rgba(13, 12, 11, .3), rgba(13, 12, 11, .08) 36%, transparent 68%); }
+      #home .hero-slide img { object-position: var(--hero-focus-mobile, var(--hero-focus, 50% 58%)); }
     }
     @media (max-width: 380px) {
       #home .hero-copy { padding: 22px 20px 24px; }
@@ -1466,19 +1466,19 @@
           <a class="hero-cta" href="?catalog"><span data-i18n="exploreCatalog">Исследовать каталог</span><span aria-hidden="true">↗</span></a>
           <a class="hero-cta track-order-cta" href="tracking.html"><span data-i18n="trackOrder">Отследить заказ</span><span aria-hidden="true">↗</span></a>
         </div>
-        <div class="hero-slide is-active" data-hero-slide aria-hidden="false">
+        <div class="hero-slide is-active" data-hero-slide aria-hidden="false" style="--hero-focus: 70% 38%; --hero-focus-mobile: 58% 42%;">
           <img src="img/godderob/shepherd-emerald-01.jpg" alt="" fetchpriority="high">
         </div>
-        <div class="hero-slide" data-hero-slide aria-hidden="true">
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 58% 40%; --hero-focus-mobile: 50% 46%;">
           <img src="img/art/women-strength-black-white-03.jpg" alt="" loading="lazy">
         </div>
-        <div class="hero-slide" data-hero-slide aria-hidden="true">
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 54% 36%; --hero-focus-mobile: 50% 48%;">
           <img src="img/godderob/longgrafitti-01.jpg" alt="" loading="lazy">
         </div>
-        <div class="hero-slide" data-hero-slide aria-hidden="true">
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 60% 30%; --hero-focus-mobile: 52% 38%;">
           <img src="img/art/classic-victory-grey-yellow-03.jpg" alt="" loading="lazy">
         </div>
-        <div class="hero-slide" data-hero-slide aria-hidden="true">
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 40% 40%; --hero-focus-mobile: 42% 48%;">
           <img src="img/godderob/love-like-jesus-01.jpg" alt="" loading="lazy">
         </div>
         <div class="hero-controls" aria-hidden="true">
