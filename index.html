@@ -3670,18 +3670,17 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       return sizeScale.slice(indexes[0], indexes[indexes.length - 1] + 1);
     }
 
+    const apparelSizeChart = ["XS", "S", "M", "L", "XL", "2XL"];
+
     function sizeChartForVariant(item, variant) {
-      const collected = [];
-      const cut = variant.cut || "";
-      item.variants.forEach((candidate) => {
-        if ((candidate.cut || "") !== cut) return;
-        listedSizes(candidate.sizeChart || "").forEach((size) => collected.push(size));
-      });
-      listedSizes(variant.sizeChart || "").forEach((size) => collected.push(size));
-      listedSizes(variant.size || "").forEach((size) => collected.push(size));
-      const unique = [...new Set(collected)];
-      if (unique.length === 1 && (unique[0] === "OS" || /^(oversize|оверсайз)$/i.test(unique[0]))) return unique;
-      return contiguousSizeRun(unique);
+      if (itemCategory(item) === "caps") return ["OS"];
+      const rawChart = String(variant.sizeChart || "").trim();
+      if (/^(oversize|оверсайз)$/i.test(rawChart)) return [];
+      const chart = listedSizes(rawChart);
+      // Keep explicit wider charts (e.g. art XS–5XL); Godderob apparel is always XS–2XL.
+      if (chart.some((size) => ["3XL", "4XL", "5XL"].includes(size))) return contiguousSizeRun(chart);
+      if (!variant.stockManaged && chart.length) return contiguousSizeRun(chart);
+      return apparelSizeChart;
     }
 
     function availableSizeSet(variant) {
