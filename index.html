@@ -305,39 +305,6 @@
     .catalog-group { margin-top: 8px; }
     .catalog-group h2 { margin: 28px 0 0; }
     .catalog-group .items { padding-top: 14px; padding-bottom: 8px; }
-    .catalog-group .items.catalog-rail {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: stretch;
-      gap: 14px;
-      margin-inline: calc(0px - var(--wrap-gutter, 16px));
-      padding: 16px var(--wrap-gutter, 16px) 22px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-padding-inline: var(--wrap-gutter, 16px);
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
-    }
-    .catalog-group .items.catalog-rail::-webkit-scrollbar { display: none; }
-    .catalog-group .items.catalog-rail .item {
-      flex: 0 0 min(72vw, 240px);
-      width: min(72vw, 240px);
-      max-width: 240px;
-      scroll-snap-align: start;
-    }
-    .catalog-category-rail { margin-top: 6px; }
-    .catalog-category-rail h3 {
-      margin: 14px 0 0;
-      color: var(--muted);
-      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-    }
-    .catalog-category-rail .items.catalog-rail { padding-top: 12px; }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
       position: absolute;
@@ -1153,29 +1120,6 @@
     .catalog-group { margin-top: 30px; }
     .catalog-group h2 { margin: 28px 0 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 400; }
     .catalog-group .items { padding-top: 18px; }
-    .catalog-group .items.catalog-rail {
-      gap: 16px;
-      padding-top: 18px;
-      padding-bottom: 28px;
-    }
-    .catalog-group .items.catalog-rail .item {
-      flex-basis: min(42vw, 260px);
-      width: min(42vw, 260px);
-      max-width: 260px;
-    }
-    .catalog-category-rail h3 {
-      margin-top: 18px;
-      color: var(--muted);
-      font-size: 13px;
-      letter-spacing: .08em;
-    }
-    @media (max-width: 720px) {
-      .catalog-group .items.catalog-rail .item {
-        flex-basis: min(72vw, 240px);
-        width: min(72vw, 240px);
-        max-width: 240px;
-      }
-    }
     .brand {
       grid-template-columns: 58px 1fr auto;
       gap: 14px;
@@ -4160,60 +4104,19 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       if (!open && restoreFocus) toggle.focus();
     }
 
-    function renderCatalogRail(id, list) {
-      return `<div class="items catalog-rail" role="list">${list.map((item) => itemCard(id, item, catalogColorFilters)).join("")}</div>`;
-    }
-
     function renderCatalogBody() {
-      const useRails = catalogCategoryFilters.length > 0;
-      const splitByCategory = catalogCategoryFilters.length > 1;
       const groups = catalogEntries()
-        .map(({ id, data, items: list }) => {
-          const matching = list.filter(itemMatchesCatalogFilters);
-          if (!matching.length) return null;
-          if (!useRails) {
-            return {
-              id,
-              data,
-              mode: "grid",
-              items: sortItemsByAvailability(matching, catalogColorFilters)
-            };
-          }
-          if (!splitByCategory) {
-            return {
-              id,
-              data,
-              mode: "rail",
-              items: sortItemsByAvailability(matching, catalogColorFilters)
-            };
-          }
-          const rows = brandCategoryKeys
-            .filter((category) => catalogCategoryFilters.includes(category))
-            .map((category) => {
-              const items = sortItemsByAvailability(
-                matching.filter((item) => itemCategory(item) === category),
-                catalogColorFilters
-              );
-              return items.length ? { category, items } : null;
-            })
-            .filter(Boolean);
-          return rows.length ? { id, data, mode: "split", rows } : null;
-        })
-        .filter(Boolean);
-      catalogBody.classList.toggle("catalog-body-rails", useRails);
+        .map(({ id, data, items: list }) => ({
+          id,
+          data,
+          items: sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters)
+        }))
+        .filter(({ items: list }) => list.length);
+      catalogBody.classList.remove("catalog-body-rails");
       catalogBody.innerHTML = groups.length
-        ? groups.map((group) => {
-            if (group.mode === "grid") {
-              return `<div class="catalog-group"><h2>${group.data.title}</h2><div class="items">${group.items.map((item) => itemCard(group.id, item, catalogColorFilters)).join("")}</div></div>`;
-            }
-            if (group.mode === "rail") {
-              return `<div class="catalog-group"><h2>${group.data.title}</h2>${renderCatalogRail(group.id, group.items)}</div>`;
-            }
-            const rows = group.rows.map(({ category, items }) =>
-              `<div class="catalog-category-rail"><h3>${brandCategoryLabel[category]}</h3>${renderCatalogRail(group.id, items)}</div>`
-            ).join("");
-            return `<div class="catalog-group"><h2>${group.data.title}</h2>${rows}</div>`;
-          }).join("")
+        ? groups.map(({ id, data, items: list }) =>
+            `<div class="catalog-group"><h2>${data.title}</h2><div class="items">${list.map((item) => itemCard(id, item, catalogColorFilters)).join("")}</div></div>`
+          ).join("")
         : `<p class="blurb">${t("noCatalogItems")}</p>`;
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
