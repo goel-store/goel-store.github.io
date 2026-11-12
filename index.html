@@ -1471,7 +1471,7 @@
     </section>
 
     <section id="product" class="view">
-      <div class="crumbs">
+      <div class="crumbs" id="product-crumbs-standard">
         <button type="button" id="product-all" data-i18n="allBrands">Все бренды</button>
         <span>›</span>
         <button type="button" id="product-country"></button>
@@ -1479,6 +1479,11 @@
         <button type="button" id="product-brand"></button>
         <span>›</span>
         <span class="here" id="product-crumb"></span>
+      </div>
+      <div class="crumbs" id="product-crumbs-new" hidden>
+        <button type="button" id="product-from-new" data-i18n="newArrivalsTitle">Новинки</button>
+        <span>›</span>
+        <span class="here" id="product-crumb-new"></span>
       </div>
       <article class="product">
         <div class="product-cloth" id="product-cloth" role="button" tabindex="-1" aria-label="Нажмите, чтобы увеличить" data-i18n-aria="enlargePhoto">
@@ -3824,7 +3829,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       newSection.hidden = arrivals.length === 0;
       newItems.classList.add("product-rail");
       newItems.innerHTML = arrivals
-        .map(({ id, item, variant }) => itemCard(id, item, [], "newArrivalBadge", variant))
+        .map(({ id, item, variant }) => itemCard(id, item, [], "newArrivalBadge", variant, "new"))
         .join("");
       restockedSection.hidden = restocked.length === 0;
       restockedItems.classList.add("product-rail");
@@ -3848,7 +3853,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       }, animate);
     }
 
-    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null) {
+    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, fromSource = "") {
       const matchingVariant = featuredVariant || (preferredColors.length
         ? item.variants.find((variant) => variantInStock(variant) && preferredColors.includes(variant.tone))
           || item.variants.find((variant) => preferredColors.includes(variant.tone))
@@ -3876,10 +3881,12 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
         : "";
       const variantRoute = matchingVariant ? `&variant=${variantIndex}` : "";
+      const fromRoute = fromSource ? `&from=${encodeURIComponent(fromSource)}` : "";
+      const fromAttr = fromSource ? ` data-from="${fromSource}"` : "";
       const meta = (stockNote || price)
         ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
         : "";
-      return `<a class="item" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
+      return `<a class="item" href="?${id}/${item.slug}${variantRoute}${fromRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}"${fromAttr} style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
@@ -4267,10 +4274,18 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       currentBrand = id;
       currentItem = item;
       reveal(() => {
+        const itemName = localizedItemName(item.name);
+        const fromNew = new URLSearchParams(location.search).get("from") === "new";
+        const standardCrumbs = document.getElementById("product-crumbs-standard");
+        const newCrumbs = document.getElementById("product-crumbs-new");
+        standardCrumbs.hidden = fromNew;
+        newCrumbs.hidden = !fromNew;
         document.getElementById("product-country").textContent = localizedCountry(data.country);
         document.getElementById("product-brand").textContent = data.title;
-        document.getElementById("product-crumb").textContent = localizedItemName(item.name);
-        document.getElementById("product-title").textContent = localizedItemName(item.name);
+        document.getElementById("product-crumb").textContent = itemName;
+        document.getElementById("product-crumb-new").textContent = itemName;
+        document.getElementById("product-from-new").textContent = t("newArrivalsTitle");
+        document.getElementById("product-title").textContent = itemName;
         const requestedVariant = new URLSearchParams(location.search).get("variant");
         const requestedIndex = requestedVariant !== null && /^\d+$/.test(requestedVariant)
           ? Number(requestedVariant)
@@ -4567,7 +4582,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       event.preventDefault();
       const brandId = card.dataset.brand || currentBrand;
       const variant = card.dataset.variant;
-      navigate(`${brandId}/${card.dataset.slug}${variant === undefined ? "" : `&variant=${variant}`}`);
+      const from = card.dataset.from;
+      navigate(`${brandId}/${card.dataset.slug}${variant === undefined ? "" : `&variant=${variant}`}${from ? `&from=${from}` : ""}`);
     }
     items.addEventListener("click", openItemCard);
     catalogBody.addEventListener("click", openItemCard);
@@ -4706,6 +4722,12 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       saveViewState();
     });
     document.getElementById("product-all").addEventListener("click", () => navigate(""));
+    document.getElementById("product-from-new").addEventListener("click", () => {
+      navigate("");
+      window.requestAnimationFrame(() => {
+        document.getElementById("home-new-arrivals")?.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    });
     document.getElementById("product-country").addEventListener("click", () => {
       navigate(countrySlug[brands[currentBrand]?.country] || "");
     });
