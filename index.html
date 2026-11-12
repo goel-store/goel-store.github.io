@@ -2854,6 +2854,11 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     let brandColorFilters = [];
     let catalogCategoryFilters = [];
     let catalogColorFilters = [];
+    const VIEW_STORAGE_KEY = "goel-view-v1";
+    let syncFiltersFromRoute = true;
+    let restoreScrollY = null;
+    let ignoreScrollSave = false;
+    let scrollSaveTimer = 0;
     const CART_STORAGE_KEY = "goel-cart-v1";
     const ORDER_IDEMPOTENCY_STORAGE_KEY = "goel-order-request-v1";
     const ORDER_API_URL = "https://goel-order-api.o-el.workers.dev/order";
@@ -4349,6 +4354,60 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       return location.hash.replace(/^#/, "");
     }
 
+    function readViewState() {
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(VIEW_STORAGE_KEY) || "null");
+        return saved && typeof saved === "object" ? saved : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveViewState() {
+      if (ignoreScrollSave) return;
+      try {
+        sessionStorage.setItem(VIEW_STORAGE_KEY, JSON.stringify({
+          route: currentRoute(),
+          scrollY: Math.max(0, Math.round(window.scrollY || 0)),
+          catalogCategoryFilters,
+          catalogColorFilters,
+          brandCategoryFilters,
+          brandColorFilters
+        }));
+      } catch (error) {}
+    }
+
+    function hydrateViewStateFromSession() {
+      const saved = readViewState();
+      if (!saved || saved.route !== currentRoute()) return false;
+      if (Array.isArray(saved.catalogCategoryFilters)) catalogCategoryFilters = saved.catalogCategoryFilters.filter(Boolean);
+      if (Array.isArray(saved.catalogColorFilters)) catalogColorFilters = saved.catalogColorFilters.filter(Boolean);
+      if (Array.isArray(saved.brandCategoryFilters)) brandCategoryFilters = saved.brandCategoryFilters.filter(Boolean);
+      if (Array.isArray(saved.brandColorFilters)) brandColorFilters = saved.brandColorFilters.filter(Boolean);
+      if (typeof saved.scrollY === "number" && saved.scrollY > 0) restoreScrollY = saved.scrollY;
+      return true;
+    }
+
+    function finishScrollRestore() {
+      if (restoreScrollY == null) {
+        saveViewState();
+        return;
+      }
+      const y = restoreScrollY;
+      restoreScrollY = null;
+      ignoreScrollSave = true;
+      const applyScroll = () => window.scrollTo(0, y);
+      applyScroll();
+      requestAnimationFrame(() => {
+        applyScroll();
+        requestAnimationFrame(() => {
+          applyScroll();
+          ignoreScrollSave = false;
+          saveViewState();
+        });
+      });
+    }
+
     function apply(animate) {
       const [first, second] = currentRoute().split("/").filter(Boolean);
       closeMenus();
@@ -4362,9 +4421,13 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       }
       if (first === "catalog") {
         const category = brandCategoryKeys.includes(second) ? second : "";
-        catalogCategoryFilters = category ? [category] : [];
-        if (category) catalogColorFilters = [];
-        paintCatalog(category || "all", animate);
+        if (syncFiltersFromRoute) {
+          catalogCategoryFilters = category ? [category] : [];
+          if (category) catalogColorFilters = [];
+        }
+        const titleCategory = category
+          || (catalogCategoryFilters.length === 1 ? catalogCategoryFilters[0] : "");
+        paintCatalog(titleCategory || "all", animate);
         return;
       }
       if (countryName[first] && !second) {
@@ -4372,6 +4435,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         return;
       }
       if (brands[first] && !second) {
+        if (syncFiltersFromRoute && currentBrand !== first) {
+          brandCategoryFilters = [];
+          brandColorFilters = [];
+        }
         paintBrand(first, animate);
         return;
       }
@@ -4398,7 +4465,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       const savedPhoto = currentPhotoIndex;
       const savedSize = document.querySelector("#size-options .size.on")?.textContent.trim() || "";
       closeLightbox();
+      const previousSync = syncFiltersFromRoute;
+      syncFiltersFromRoute = false;
       apply(false);
+      syncFiltersFromRoute = previousSync;
       if (isProductRoute && currentItem?.slug === savedItemSlug) {
         fillVariant(brands[currentBrand], currentItem, savedTone);
         showProductPhoto(savedPhoto);
@@ -4438,12 +4508,16 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     function navigate(route) {
       const next = String(route).replace(/^#/, "");
       closeLightbox();
+      syncFiltersFromRoute = true;
+      restoreScrollY = null;
       if (currentRoute() === next) {
         apply(true);
+        saveViewState();
         return;
       }
       history.pushState(null, "", next ? location.pathname + "?" + next : location.pathname);
       apply(true);
+      saveViewState();
     }
 
     menuBtn.addEventListener("click", (event) => {
@@ -4668,6 +4742,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         document.querySelectorAll("#brand-filter-panel [data-brand-category], #brand-filter-panel [data-brand-color]").forEach((checkbox) => { checkbox.checked = false; });
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
         return;
       }
       const chip = event.target.closest("[data-remove-brand-category]");
@@ -4679,6 +4754,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         if (checkbox) checkbox.checked = false;
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
         return;
       }
       const colorChip = event.target.closest("[data-remove-brand-color]");
@@ -4690,6 +4766,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         if (checkbox) checkbox.checked = false;
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
       }
     });
     document.getElementById("brand-filters").addEventListener("change", (event) => {
@@ -4701,6 +4778,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         .map((option) => option.dataset.brandColor);
       updateBrandFilterSummary();
       renderBrandItems(currentBrand, brands[currentBrand]);
+      saveViewState();
     });
     document.addEventListener("click", (event) => {
       if (!event.target.closest("#brand-filters .category-filter")) setBrandFilterPanelOpen(false);
@@ -4732,6 +4810,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         document.querySelectorAll("#catalog-filter-panel [data-catalog-category], #catalog-filter-panel [data-catalog-color]").forEach((checkbox) => { checkbox.checked = false; });
         updateCatalogFilterSummary();
         renderCatalogBody();
+        saveViewState();
         return;
       }
       const categoryChip = event.target.closest("[data-remove-catalog-category]");
@@ -4743,6 +4822,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         if (checkbox) checkbox.checked = false;
         updateCatalogFilterSummary();
         renderCatalogBody();
+        saveViewState();
         return;
       }
       const colorChip = event.target.closest("[data-remove-catalog-color]");
@@ -4754,6 +4834,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         if (checkbox) checkbox.checked = false;
         updateCatalogFilterSummary();
         renderCatalogBody();
+        saveViewState();
       }
     });
     document.getElementById("catalog-filters").addEventListener("change", (event) => {
@@ -4765,6 +4846,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         .map((option) => option.dataset.catalogColor);
       updateCatalogFilterSummary();
       renderCatalogBody();
+      saveViewState();
     });
     document.getElementById("product-all").addEventListener("click", () => navigate(""));
     document.getElementById("product-country").addEventListener("click", () => {
@@ -4960,15 +5042,33 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     setCurrency(currentCurrency, false);
     closeUnlistedGodderobStock();
     renderCartContents();
-    Promise.all([loadAvailabilityFeed(), loadFxRates()]).finally(() => apply(false));
+    try { history.scrollRestoration = "manual"; } catch (error) {}
+    if (hydrateViewStateFromSession()) syncFiltersFromRoute = false;
+    Promise.all([loadAvailabilityFeed(), loadFxRates()]).finally(() => {
+      apply(false);
+      syncFiltersFromRoute = true;
+      finishScrollRestore();
+    });
+    window.addEventListener("scroll", () => {
+      if (ignoreScrollSave) return;
+      window.clearTimeout(scrollSaveTimer);
+      scrollSaveTimer = window.setTimeout(saveViewState, 120);
+    }, { passive: true });
+    window.addEventListener("pagehide", saveViewState);
     window.addEventListener("popstate", () => {
       closeLightbox();
+      syncFiltersFromRoute = true;
+      restoreScrollY = null;
       apply(true);
+      saveViewState();
     });
     window.addEventListener("hashchange", () => {
       if (!location.search) {
         closeLightbox();
+        syncFiltersFromRoute = true;
+        restoreScrollY = null;
         apply(true);
+        saveViewState();
       }
     });
   </script>
