@@ -329,8 +329,14 @@
       scroll-padding-inline: var(--wrap-gutter, 16px);
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
-      touch-action: pan-x;
+      touch-action: none;
+      cursor: grab;
       scrollbar-width: none;
+    }
+    .items.product-rail.is-rail-dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+      user-select: none;
     }
     .items.product-rail::-webkit-scrollbar { display: none; }
     .items.product-rail .item {
@@ -338,10 +344,10 @@
       width: min(72vw, 240px);
       max-width: 240px;
       scroll-snap-align: start;
-      touch-action: pan-x;
+      touch-action: none;
     }
     .items.product-rail .cloth {
-      touch-action: pan-x;
+      touch-action: none;
     }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
@@ -4598,6 +4604,63 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         }, 50);
       }, { passive: false });
     }
+    (function enableProductRailDrag() {
+      let drag = null;
+      const endDrag = (event) => {
+        if (!drag || event.pointerId !== drag.id) return;
+        const { rail, moved } = drag;
+        rail.classList.remove("is-rail-dragging");
+        if (moved) {
+          const blockClick = (clickEvent) => {
+            clickEvent.preventDefault();
+            clickEvent.stopPropagation();
+          };
+          rail.addEventListener("click", blockClick, { capture: true, once: true });
+        }
+        drag = null;
+      };
+      document.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0) return;
+        const rail = event.target.closest(".items.product-rail");
+        if (!rail || event.target.closest("button")) return;
+        if (rail.scrollWidth <= rail.clientWidth + 2) return;
+        drag = {
+          id: event.pointerId,
+          rail,
+          startX: event.clientX,
+          startY: event.clientY,
+          scrollLeft: rail.scrollLeft,
+          pageY: window.scrollY,
+          axis: null,
+          moved: false
+        };
+      });
+      document.addEventListener("pointermove", (event) => {
+        if (!drag || event.pointerId !== drag.id) return;
+        const dx = event.clientX - drag.startX;
+        const dy = event.clientY - drag.startY;
+        if (!drag.axis) {
+          if ((dx * dx) + (dy * dy) < 64) return;
+          drag.axis = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
+          if (drag.axis === "x") {
+            drag.rail.classList.add("is-rail-dragging");
+            try { drag.rail.setPointerCapture(event.pointerId); } catch (_) {}
+          }
+        }
+        if (drag.axis === "x") {
+          if (event.cancelable) event.preventDefault();
+          drag.rail.scrollLeft = drag.scrollLeft - dx;
+          if (Math.abs(dx) > 8) drag.moved = true;
+          return;
+        }
+        if (drag.axis === "y") {
+          if (event.cancelable) event.preventDefault();
+          window.scrollTo(0, drag.pageY - dy);
+        }
+      }, { passive: false });
+      document.addEventListener("pointerup", endDrag);
+      document.addEventListener("pointercancel", endDrag);
+    })();
     function openItemCard(event) {
       const card = event.target.closest("a.item");
       if (!card) return;
