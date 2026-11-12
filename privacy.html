@@ -117,10 +117,38 @@
     Object.assign(translations.be, { browserTitle: "Налады браўзера", browserBody: "Сайт захоўвае ў лакальным сховішчы браўзера выбраны язык, валюту і змест кошыка. На час афармлення заяўкі ў sessionStorage можа захоўвацца службовы ключ адпраўкі. Кантактныя даныя з формы ў браўзеры не захоўваюцца. Старонка адсочвання адпраўляе ўведзены код на сервер GO’EL, каб паказаць статус замовы." });
     Object.assign(translations.uk, { browserTitle: "Налаштування браузера", browserBody: "Сайт зберігає в локальному сховищі браузера обрану мову, валюту та вміст кошика. На час оформлення заявки в sessionStorage може зберігатися службовий ключ надсилання. Контактні дані з форми в браузері не зберігаються. Сторінка відстеження надсилає введений код на сервер GO’EL, щоб показати статус замовлення." });
     Object.assign(translations.en, { browserTitle: "Browser settings", browserBody: "The site saves your selected language, currency and cart contents in your browser’s local storage. While you submit a request, a temporary send key may be kept in sessionStorage. Contact details from the form are not stored in the browser. The tracking page sends the code you enter to GO’EL’s server to show order status." });
-    Object.assign(translations.ru, { privacyLink: "Политика обработки данных", deliveryPayment: "Оплата и доставка", trackOrder: "Отследить заказ", footerNavigation: "Информация", socialNetworks: "Социальные сети", privacyLink: "Палітыка апрацоўкі даных", deliveryPayment: "Аплата і дастаўка", trackOrder: "Адсачыць замову", footerNavigation: "Інфармацыя", socialNetworks: "Сацыяльныя сеткі", privacyLink: "Політика обробки даних", deliveryPayment: "Оплата й доставка", trackOrder: "Відстежити замовлення", footerNavigation: "Інформація", socialNetworks: "Соціальні мережі", privacyLink: "Privacy notice", deliveryPayment: "Payment & delivery", trackOrder: "Track your order", footerNavigation: "Information", socialNetworks: "Social networks", languageLabel: "Язык" });
-    Object.assign(translations.be, { languageLabel: "Мова" });
-    Object.assign(translations.uk, { languageLabel: "Мова" });
-    Object.assign(translations.en, { languageLabel: "Language" });
+    Object.assign(translations.ru, {
+      privacyLink: "Политика обработки данных",
+      deliveryPayment: "Оплата и доставка",
+      trackOrder: "Отследить заказ",
+      footerNavigation: "Информация",
+      socialNetworks: "Социальные сети",
+      languageLabel: "Язык"
+    });
+    Object.assign(translations.be, {
+      privacyLink: "Палітыка апрацоўкі даных",
+      deliveryPayment: "Аплата і дастаўка",
+      trackOrder: "Адсачыць замову",
+      footerNavigation: "Інфармацыя",
+      socialNetworks: "Сацыяльныя сеткі",
+      languageLabel: "Мова"
+    });
+    Object.assign(translations.uk, {
+      privacyLink: "Політика обробки даних",
+      deliveryPayment: "Оплата й доставка",
+      trackOrder: "Відстежити замовлення",
+      footerNavigation: "Інформація",
+      socialNetworks: "Соціальні мережі",
+      languageLabel: "Мова"
+    });
+    Object.assign(translations.en, {
+      privacyLink: "Privacy notice",
+      deliveryPayment: "Payment & delivery",
+      trackOrder: "Track your order",
+      footerNavigation: "Information",
+      socialNetworks: "Social networks",
+      languageLabel: "Language"
+    });
     const languageSelect = document.getElementById("language-select");
     let language = "ru";
     try { const saved = localStorage.getItem("goel-language"); if (translations[saved]) language = saved; } catch (error) {}
