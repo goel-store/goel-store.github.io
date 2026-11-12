@@ -1167,40 +1167,11 @@
       padding-top: 12px;
     }
     .item .price { margin-top: 0; color: var(--accent); font-weight: 600; }
-    #home-new-arrivals h2 { display: flex; align-items: center; gap: 16px; }
-    #home-new-arrivals h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
-    #home-new-arrivals .items {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 0;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding: 38px 46px 48px;
-      scrollbar-width: none;
-    }
-    #home-new-arrivals .items::-webkit-scrollbar { display: none; }
-    .home-arrival-card {
-      position: relative;
-      z-index: var(--stack-layer, 1);
-      overflow: visible;
-      border-radius: 15px;
-      flex: 0 1 min(300px, 38vw);
-      width: min(300px, 38vw);
-      margin-left: -76px;
-      background: var(--paper);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
-      transform: translateY(var(--stack-lift, 0px)) rotate(var(--stack-rotation, 0deg));
-      transition: transform 320ms cubic-bezier(.2,.75,.25,1), box-shadow 240ms ease;
-    }
-    .home-arrival-card:first-child { margin-left: 0; }
-    .home-arrival-card:hover { z-index: 20; box-shadow: 0 14px 28px rgba(0, 0, 0, .24); }
-    .home-arrival-card .cloth { position: relative; z-index: 1; border-radius: 15px 15px 0 0; }
-    .home-arrival-card .item-badge { z-index: 2; background: rgba(42, 33, 29, .58); color: #f4e9dc !important; }
-    .home-arrival-card .body { position: relative; z-index: 1; border: 1px solid rgba(244, 233, 220, .1); border-top: 0; border-radius: 0 0 15px 15px; background: var(--paper); }
+    #home-new-arrivals h2,
+    #home-restocked h2 { display: flex; align-items: center; gap: 16px; }
+    #home-new-arrivals h2::after,
+    #home-restocked h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
     .item .item-stock-note { margin-top: 0; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
-    @media (prefers-reduced-motion: reduce) { .home-arrival-card { transition: none; } }
     .item .item-color-label { display: flex; align-items: center; gap: 7px; width: fit-content; margin-top: 8px; color: var(--muted); font-size: 12px; }
     .item-color-label i { width: 12px; height: 12px; flex: none; border: 1px solid rgba(244, 233, 220, .3); border-radius: 50%; background: var(--variant-color, #eee); box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .08); }
     .product { gap: clamp(28px, 6vw, 82px); align-items: start; }
@@ -1276,9 +1247,6 @@
       .site-menu-toggle { min-height: 36px; padding: 6px 9px; font-size: 12px; }
       .cart-toggle { min-height: 36px; }
       .items { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 22px 0 36px; }
-      #home-new-arrivals .items { justify-content: flex-start; overflow-x: auto; overflow-y: hidden; padding: 28px 22px 40px; scroll-snap-type: x proximity; }
-      .home-arrival-card { flex: 0 0 min(72vw, 260px); width: min(72vw, 260px); margin-left: -58px; scroll-snap-align: center; }
-      .home-arrival-card:first-child { margin-left: 0; }
       .cloth { aspect-ratio: .72 / 1; }
       .item .body { padding: 12px 11px 14px; }
       .item b { font-size: 12px; }
@@ -3764,9 +3732,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           ? []
           : data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
       );
-      const arrivals = products.flatMap(({ id, item }) => item.newArrival === true
-        ? item.variants.map((variant) => ({ id, item, variant }))
-        : []);
+      const arrivals = products.filter(({ item }) => item.newArrival === true);
       const restocked = products.filter(({ item }) => itemInStock(item)).map(({ id, item }) => ({
         id,
         item,
@@ -3775,29 +3741,9 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       const newSection = document.getElementById("home-new-arrivals");
       const restockedSection = document.getElementById("home-restocked");
       newSection.hidden = arrivals.length === 0;
-      const newItems = newSection.querySelector(".items");
-      newItems.innerHTML = arrivals
-        .map(({ id, item, variant }, index) => itemCard(id, item, [], "newArrivalBadge", variant, index, arrivals.length))
+      newSection.querySelector(".items").innerHTML = arrivals
+        .map(({ id, item }) => itemCard(id, item, [], "newArrivalBadge"))
         .join("");
-      const spreadArrivalDeck = (event) => {
-        if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        const selectedCard = event.target instanceof Element ? event.target.closest(".home-arrival-card") : null;
-        newItems.querySelectorAll(".home-arrival-card").forEach((card) => {
-          const shift = card.style.getPropertyValue("--stack-shift") || "0px";
-          const rotation = selectedCard === card ? "0deg" : card.style.getPropertyValue("--stack-rotation") || "0deg";
-          const lift = selectedCard === card ? "-18px" : "-4px";
-          const scale = selectedCard === card ? " scale(1.025)" : "";
-          card.style.transform = `translateX(${shift}) translateY(${lift}) rotate(${rotation})${scale}`;
-        });
-      };
-      const resetArrivalDeck = () => newItems.querySelectorAll(".home-arrival-card").forEach((card) => card.style.removeProperty("transform"));
-      newItems.onpointerenter = spreadArrivalDeck;
-      newItems.onpointermove = spreadArrivalDeck;
-      newItems.onpointerleave = resetArrivalDeck;
-      newItems.onfocusin = spreadArrivalDeck;
-      newItems.onfocusout = () => requestAnimationFrame(() => {
-        if (!newItems.contains(document.activeElement)) resetArrivalDeck();
-      });
       restockedSection.hidden = restocked.length === 0;
       restockedSection.querySelector(".items").innerHTML = restocked
         .map(({ id, item, tones }) => itemCard(id, item, tones, "restockedBadge"))
@@ -3819,11 +3765,11 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       }, animate);
     }
 
-    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, stackIndex = -1, stackCount = 0) {
-      const matchingVariant = featuredVariant || (preferredColors.length
+    function itemCard(id, item, preferredColors = [], badgeKey = "") {
+      const matchingVariant = preferredColors.length
         ? item.variants.find((variant) => variantInStock(variant) && preferredColors.includes(variant.tone))
           || item.variants.find((variant) => preferredColors.includes(variant.tone))
-        : null);
+        : null;
       const first = matchingVariant || item.variants.find(variantInStock) || item.variants[0];
       const variantIndex = item.variants.indexOf(first);
       const price = cardPrice(item, matchingVariant);
@@ -3846,21 +3792,14 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         : "";
       const activeBadge = badgeKey || (item.newArrival ? "newArrivalBadge" : "");
       const badge = activeBadge ? `<span class="item-badge">${t(activeBadge)}</span>` : "";
-      const colorLabel = featuredVariant && featuredVariant.tone
-        ? `<span class="item-color-label"><i style="--variant-color:${featuredVariant.color}" aria-hidden="true"></i>${localizedTone(featuredVariant.tone)}</span>`
-        : "";
       const stockNote = !variantInStock(first)
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
-        : "";
-      const centeredIndex = stackCount ? stackIndex - (stackCount - 1) / 2 : 0;
-      const stackStyle = featuredVariant
-        ? `;--stack-layer:${stackIndex + 1};--stack-shift:${Math.round(centeredIndex * 56)}px;--stack-rotation:${Math.max(-6, Math.min(6, centeredIndex * 3))}deg;--stack-lift:${Math.round(Math.abs(centeredIndex) * 2)}px`
         : "";
       const variantRoute = matchingVariant ? `&variant=${variantIndex}` : "";
       const meta = (stockNote || price)
         ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
         : "";
-      return `<a class="item${featuredVariant ? " home-arrival-card" : ""}" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}${stackStyle}"><div class="cloth${photoClass}${galleryClass}" style="${clothStyle}"${galleryData}>${photoTag}${galleryDots}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
+      return `<a class="item" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}"><div class="cloth${photoClass}${galleryClass}" style="${clothStyle}"${galleryData}>${photoTag}${galleryDots}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
