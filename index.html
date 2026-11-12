@@ -741,6 +741,13 @@
       cursor: pointer;
       font-size: 13px;
     }
+    .size.is-unavailable,
+    .size:disabled {
+      opacity: 0.42;
+      color: var(--muted);
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
     .cut {
       position: relative;
       padding-right: 22px;
@@ -1376,6 +1383,20 @@
     .product-price { color: var(--accent); font-weight: 600; }
     .cut, .size { border-color: var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease; }
     .cut.on, .size.on { border-color: var(--accent); background: var(--forest); color: var(--ink); }
+    .size.is-unavailable,
+    .size:disabled {
+      opacity: 0.38;
+      color: #9f8e80;
+      background: #3a2f29;
+      border-color: rgba(244, 233, 220, .14);
+      text-decoration: line-through;
+    }
+    .size.is-unavailable.on,
+    .size:disabled.on {
+      background: #3a2f29;
+      color: #9f8e80;
+      border-color: rgba(244, 233, 220, .14);
+    }
     .tone.on { outline-color: var(--accent); }
     .buy {
       display: inline-flex;
@@ -3277,6 +3298,16 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       return item.variants.some(variantInStock);
     }
 
+    function preserveSizeCharts() {
+      Object.values(brands).forEach((data) => {
+        data.items.forEach((item) => {
+          item.variants.forEach((variant) => {
+            if (variant.sizeChart == null) variant.sizeChart = String(variant.size || "");
+          });
+        });
+      });
+    }
+
     function closeUnlistedGodderobStock() {
       const data = brands.godderob;
       if (!data) return;
@@ -3644,6 +3675,32 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       return parts.length > 1 ? parts : [];
     }
 
+    function contiguousSizeRun(sizes) {
+      const indexes = [...new Set(sizes.map((size) => sizeScale.indexOf(size)).filter((index) => index >= 0))]
+        .sort((left, right) => left - right);
+      if (!indexes.length) return sizes.filter(Boolean);
+      return sizeScale.slice(indexes[0], indexes[indexes.length - 1] + 1);
+    }
+
+    function sizeChartForVariant(item, variant) {
+      const collected = [];
+      const cut = variant.cut || "";
+      item.variants.forEach((candidate) => {
+        if ((candidate.cut || "") !== cut) return;
+        listedSizes(candidate.sizeChart || "").forEach((size) => collected.push(size));
+      });
+      listedSizes(variant.sizeChart || "").forEach((size) => collected.push(size));
+      listedSizes(variant.size || "").forEach((size) => collected.push(size));
+      const unique = [...new Set(collected)];
+      if (unique.length === 1 && (unique[0] === "OS" || /^(oversize|оверсайз)$/i.test(unique[0]))) return unique;
+      return contiguousSizeRun(unique);
+    }
+
+    function availableSizeSet(variant) {
+      if (!variant.stockManaged) return new Set(listedSizes(variant.sizeChart || variant.size));
+      return new Set(listedSizes(variant.size));
+    }
+
     function rangeLabel(size) {
       if (!size) return "";
       if (/^oversize$/i.test(size.trim())) return t("oversizeFit");
@@ -3787,13 +3844,18 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     function addCurrentToCart() {
       if (!currentBrand || !currentItem) return;
       const variant = currentItem.variants[currentTone] || currentItem.variants[0];
-      const sizes = listedSizes(variant.size);
-      const selectedSize = document.querySelector("#size-options .size.on")?.textContent.trim() || "";
+      const sizes = sizeChartForVariant(currentItem, variant);
+      const available = availableSizeSet(variant);
+      const selectedSize = document.querySelector("#size-options .size.on:not(:disabled)")?.dataset.size
+        || document.querySelector("#size-options .size.on:not(:disabled)")?.textContent.trim()
+        || "";
       if (sizes.length && !selectedSize) {
+        document.getElementById("choice").hidden = false;
         document.getElementById("choice").textContent = t("firstChooseSize");
         document.getElementById("size-options").scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
+      if (selectedSize && !available.has(selectedSize)) return;
       if (!variantInStock(variant)) return;
       const line = { brand: currentBrand, slug: currentItem.slug, tone: variant.tone || "", cut: variant.cut || "", size: selectedSize || variant.size || "", variantIndex: currentTone, quantity: 1 };
       const existing = cartLines.find((item) => cartLineKey(item) === cartLineKey(line));
@@ -4444,18 +4506,20 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
             return `<button type="button" class="tone${index === currentTone ? " on" : ""}" data-tone="${index}" style="--tone:${option.color}" aria-label="${localizedTone(option.tone) || t("color")}"></button>`;
           }).join("")
         : "";
-      const options = listedSizes(variant.size);
+      const chart = sizeChartForVariant(item, variant);
+      const available = availableSizeSet(variant);
       const range = document.getElementById("size-range");
       const sizes = document.getElementById("product-sizes");
       const unavailable = !variantInStock(variant);
-      range.hidden = !unavailable && (options.length > 0 || !variant.size);
+      range.hidden = !unavailable && (chart.length > 0 || !(variant.sizeChart || variant.size));
       range.textContent = unavailable
         ? t("nowUnavailable")
-        : options.length || !variant.size ? "" : rangeLabel(variant.size);
-      sizes.hidden = unavailable || options.length === 0;
-      document.getElementById("size-options").innerHTML = options.map((option) =>
-        `<button type="button" class="size">${option}</button>`
-      ).join("");
+        : chart.length || !(variant.sizeChart || variant.size) ? "" : rangeLabel(variant.sizeChart || variant.size);
+      sizes.hidden = unavailable || chart.length === 0;
+      document.getElementById("size-options").innerHTML = chart.map((option) => {
+        const isAvailable = available.has(option);
+        return `<button type="button" class="size${isAvailable ? "" : " is-unavailable"}" data-size="${option}"${isAvailable ? "" : " disabled aria-disabled=\"true\""}>${option}</button>`;
+      }).join("");
       const priceEl = document.getElementById("product-price");
       priceEl.hidden = !variant.price;
       priceEl.textContent = displayPrice(variant.price || "");
@@ -4466,7 +4530,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       choice.hidden = unavailable;
       choice.textContent = unavailable
         ? ""
-        : options.length ? t("chooseSize") : t("pressOrderToRequest");
+        : chart.length ? t("chooseSize") : t("pressOrderToRequest");
     }
 
     function paintProduct(id, index, animate) {
@@ -4636,10 +4700,13 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         fillVariant(brands[currentBrand], currentItem, savedTone);
         showProductPhoto(savedPhoto);
         if (savedSize) {
-          const sizeButton = [...document.querySelectorAll("#size-options .size")].find((button) => button.textContent.trim() === savedSize);
+          const sizeButton = [...document.querySelectorAll("#size-options .size")].find((button) =>
+            !button.disabled && (button.dataset.size || button.textContent.trim()) === savedSize
+          );
           if (sizeButton) {
             sizeButton.classList.add("on");
             writeChoice(savedSize);
+            document.getElementById("choice").hidden = false;
           }
         }
       }
@@ -4997,9 +5064,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     });
     document.getElementById("size-options").addEventListener("click", (event) => {
       const button = event.target.closest(".size");
-      if (!button) return;
+      if (!button || button.disabled) return;
       document.querySelectorAll("#size-options .size").forEach((item) => item.classList.toggle("on", item === button));
-      writeChoice(button.textContent);
+      writeChoice(button.dataset.size || button.textContent);
+      document.getElementById("choice").hidden = false;
     });
 
     const lightbox = document.getElementById("lightbox");
@@ -5131,6 +5199,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
 
     setLanguage(currentLanguage, false);
     setCurrency(currentCurrency, false);
+    preserveSizeCharts();
     closeUnlistedGodderobStock();
     renderCartContents();
     try { history.scrollRestoration = "manual"; } catch (error) {}
