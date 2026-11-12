@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- pages-redeploy: 2026-11-12-trackpad-only -->
+<!-- pages-redeploy: 2026-11-12-native-rail-both-ways -->
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -333,7 +333,6 @@
       scroll-padding-inline: var(--wrap-gutter, 16px);
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
-      touch-action: manipulation;
       scrollbar-width: none;
     }
     .items.product-rail::-webkit-scrollbar { display: none; }
@@ -348,7 +347,6 @@
     .items.product-rail .cloth img {
       -webkit-user-drag: none;
       user-select: none;
-      pointer-events: none;
     }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
@@ -3883,7 +3881,6 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       restockedItems.innerHTML = restocked
         .map(({ id, item, tones }) => itemCard(id, item, tones, "restockedBadge"))
         .join("");
-      bindProductRails(home);
       window.requestAnimationFrame(() => observeScrollBlocks(home));
     }
 
@@ -4004,7 +4001,6 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           : "";
         return `<div class="product-rail-block">${title}${renderProductRail(rows.map((item) => itemCard(id, item, brandColorFilters)).join(""))}</div>`;
       }).join("");
-      bindProductRails(items);
       window.requestAnimationFrame(() => observeScrollBlocks(items));
     }
 
@@ -4218,7 +4214,6 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
             return `<div class="catalog-group"><h2>${group.data.title}</h2>${renderProductRail(group.items.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`;
           }).join("")
         : `<p class="blurb">${t("noCatalogItems")}</p>`;
-      bindProductRails(catalogBody);
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
 
@@ -4624,27 +4619,6 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           handled = false;
         }, 50);
       }, { passive: false });
-    }
-    function bindProductRails(root = document) {
-      root.querySelectorAll(".items.product-rail").forEach((rail) => {
-        if (rail.dataset.railBound === "1") return;
-        rail.dataset.railBound = "1";
-
-        // Same gesture as page scroll: Mac trackpad two-finger swipe / phone finger swipe.
-        // No click-and-drag. Horizontal delta scrolls the row; vertical still scrolls the page
-        // unless the gesture is clearly sideways.
-        rail.addEventListener("wheel", (event) => {
-          if (rail.scrollWidth <= rail.clientWidth + 2) return;
-          const absX = Math.abs(event.deltaX);
-          const absY = Math.abs(event.deltaY);
-          if (absX < 0.5 || absX < absY) return;
-          const maxLeft = rail.scrollWidth - rail.clientWidth;
-          const nextLeft = rail.scrollLeft + event.deltaX;
-          if ((event.deltaX < 0 && rail.scrollLeft <= 0) || (event.deltaX > 0 && rail.scrollLeft >= maxLeft - 1)) return;
-          if (event.cancelable) event.preventDefault();
-          rail.scrollLeft = Math.max(0, Math.min(maxLeft, nextLeft));
-        }, { passive: false });
-      });
     }
     function openItemCard(event) {
       const card = event.target.closest("a.item");
