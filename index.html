@@ -499,14 +499,20 @@
     .product-options {
       display: flex;
       flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 168px;
+      flex: 0 0 auto;
+      min-height: 0;
     }
     .product-actions {
-      margin-top: auto;
-      padding-top: 22px;
+      margin-top: 22px;
+      padding-top: 0;
     }
-    .product-actions .buy { margin-top: 0; }
+    .product-actions .buy {
+      margin-top: 0;
+      width: 100%;
+      max-width: 320px;
+      justify-content: center;
+      text-align: center;
+    }
     .product-actions .order { margin-top: 12px; }
     .cart-toggle { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 8px; color: var(--ink); font-size: 14px; white-space: nowrap; }
     .cart-toggle:hover { color: var(--accent); }
@@ -881,7 +887,8 @@
       .product { grid-template-columns: 1fr; gap: 20px; }
       .product-cloth { width: 100%; justify-self: stretch; }
       .product-copy { min-height: 0; }
-      .product-options { min-height: 140px; }
+      .product-options { min-height: 0; }
+      .product-actions .buy { max-width: none; }
       header { gap: 12px 16px; }
       .crumbs { flex-wrap: wrap; margin: 20px 0 16px; }
     }
