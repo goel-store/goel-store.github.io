@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<!-- pages-redeploy: 2026-11-11 -->
+<!-- pages-redeploy: 2026-11-12-live-gh-pages -->
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#2a211d">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Христианские бренды одежды в одной витрине. Выберите вещь и отправьте заявку на заказ онлайн.">
   <link rel="canonical" href="https://goel-store.github.io/">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
@@ -304,6 +305,54 @@
     .catalog-group { margin-top: 8px; }
     .catalog-group h2 { margin: 28px 0 0; }
     .catalog-group .items { padding-top: 14px; padding-bottom: 8px; }
+    .product-rail-stack { display: grid; gap: 8px; padding: 18px 0 36px; }
+    .product-rail-block { min-width: 0; }
+    .product-rail-block h3 {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .items.product-rail {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 14px;
+      margin-inline: calc(0px - var(--wrap-gutter, 16px));
+      padding: 14px var(--wrap-gutter, 16px) 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x proximity;
+      scroll-padding-inline: var(--wrap-gutter, 16px);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      touch-action: pan-x;
+      cursor: grab;
+      scrollbar-width: none;
+    }
+    .items.product-rail.is-rail-dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+      user-select: none;
+    }
+    .items.product-rail::-webkit-scrollbar { display: none; }
+    .items.product-rail .item {
+      flex: 0 0 min(72vw, 240px);
+      width: min(72vw, 240px);
+      max-width: 240px;
+      scroll-snap-align: start;
+      touch-action: pan-x;
+      -webkit-user-drag: none;
+    }
+    .items.product-rail .cloth,
+    .items.product-rail .cloth img {
+      touch-action: pan-x;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
       position: absolute;
@@ -342,7 +391,6 @@
       outline-offset: -1px;
       background-color: var(--swatch);
       overflow: hidden;
-      touch-action: pan-y;
     }
     .cloth.has-photo, .product-cloth.has-photo {
       background-color: #ebe4da;
@@ -631,6 +679,61 @@
       cursor: pointer;
       font-size: 13px;
     }
+    .cut {
+      position: relative;
+      padding-right: 22px;
+    }
+    .cut-info {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 16px;
+      height: 16px;
+      border: 1px solid rgba(33, 28, 25, 0.35);
+      border-radius: 50%;
+      background: #efe6da;
+      color: #211c19;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    }
+    .cut.on .cut-info {
+      border-color: rgba(33, 28, 25, 0.4);
+      background: #efe6da;
+      color: #211c19;
+    }
+    .cut-info:hover, .cut-info:focus-visible {
+      background: #f5efe6;
+      color: #211c19;
+      border-color: #211c19;
+      outline: none;
+    }
+    .cut-info-pop {
+      position: absolute;
+      z-index: 40;
+      width: min(280px, calc(100vw - 32px));
+      padding: 12px 14px;
+      border: 1px solid rgba(33, 28, 25, 0.18);
+      border-radius: 12px;
+      background: #fffcf8;
+      color: #211c19;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .cut-info-pop[hidden] { display: none; }
+    .cut-info-pop strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #211c19;
+    }
+    .cut-info-pop p { margin: 0; color: #5a5048; }
     .cut.on, .size.on { background: var(--ink); color: #fff; border-color: var(--ink); }
     .product-price { margin: 16px 0 0; font-size: 18px; }
     .buy {
@@ -676,8 +779,20 @@
     .order-consent input { margin: 4px 0 0; accent-color: var(--accent); }
     .order-consent a, .site-footer a { color: var(--accent); text-underline-offset: 3px; }
     .order-process-note { margin: 0; padding: 11px 13px; border-left: 2px solid var(--accent); background: rgba(231, 164, 124, .08); color: var(--muted); font-size: 13px; line-height: 1.5; }
-    .site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; margin-top: 40px; padding: 18px 0 28px; border-top: 1px solid rgba(244, 233, 220, .12); color: var(--muted); font-size: 13px; }
-    .site-footer nav { display: flex; flex-wrap: wrap; gap: 16px; }
+    .site-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; margin-top: 40px; padding: 18px 0 28px; border-top: 1px solid rgba(244, 233, 220, .12); color: var(--muted); font-size: 13px; }
+    .site-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+    .site-footer .footer-social { margin-left: auto; gap: 10px; }
+    .site-footer .footer-social a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      color: var(--muted);
+    }
+    .site-footer .footer-social a:hover { color: var(--accent); }
+    .site-footer .footer-social svg { display: block; width: 18px; height: 18px; }
     .order-turnstile { min-height: 65px; }
     .order-submit { width: 100%; margin: 0; text-align: center; }
     .order-submit:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -700,13 +815,13 @@
     }
     @media (max-width: 560px) {
       .filter-popover { max-height: min(70vh, 560px, calc(100vh - 300px)); max-height: min(70vh, 560px, calc(100dvh - 300px)); }
-      header { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 10px 14px; }
+      header { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px 14px; }
       header > #logo { grid-column: 1; grid-row: 1; }
       header > .site-nav { grid-column: 2; grid-row: 1; justify-self: end; }
       .site-menu-list { left: 50%; width: min(260px, calc(100vw - 48px)); transform: translateX(-50%); }
       header > .cart-toggle { grid-column: 3; grid-row: 1; justify-self: end; width: 36px; padding: 0; }
       .cart-toggle-label { display: none; }
-      header > nav.links { grid-column: 4; grid-row: 1; justify-self: end; margin-left: 0; }
+      .site-footer .footer-social { margin-left: 0; width: 100%; }
       .wrap { width: calc(100% - 24px); }
       h1 { font-size: 24px; }
       .brand-head h1 { font-size: 22px; }
@@ -745,8 +860,13 @@
       --forest: #47332a;
       --lime: #f0cba5;
     }
-    html { color-scheme: dark; scrollbar-gutter: stable; }
-    body { background: var(--bg); color: var(--ink); }
+    html { color-scheme: dark; scrollbar-gutter: stable; background: #2a211d; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      background-color: #2a211d;
+      overscroll-behavior-y: none;
+    }
     body::before { filter: blur(28px) saturate(.55); opacity: .22; }
     body::after { background: linear-gradient(180deg, rgba(42, 33, 29, .74), rgba(42, 33, 29, .94)); }
     .wrap {
@@ -760,16 +880,25 @@
       top: 0;
       z-index: 30;
       width: calc(100% + var(--wrap-gutter) + var(--wrap-gutter));
-      height: 64px;
+      height: calc(64px + env(safe-area-inset-top, 0px));
       margin-inline: calc(0px - var(--wrap-gutter));
       flex-wrap: nowrap;
       gap: clamp(10px, 2.4vw, 30px);
-      padding: 0 var(--wrap-gutter);
+      padding: env(safe-area-inset-top, 0px) var(--wrap-gutter) 0;
       border-bottom: 1px solid rgba(244, 233, 220, .12);
-      background: rgba(42, 33, 29, .93);
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
+      background: #2a211d;
       box-sizing: border-box;
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -100vh;
+      height: 100vh;
+      background: #2a211d;
+      pointer-events: none;
+      z-index: -1;
     }
     .mark { display: inline-flex; align-items: center; color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: .09em; line-height: 1; }
     .site-menu-toggle, .cart-toggle {
@@ -1050,6 +1179,21 @@
     .catalog-group { margin-top: 30px; }
     .catalog-group h2 { margin: 28px 0 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 400; }
     .catalog-group .items { padding-top: 18px; }
+    .product-rail-stack { gap: 10px; padding: 22px 0 48px; }
+    .product-rail-block h3 { margin-top: 18px; color: var(--muted); letter-spacing: .08em; }
+    .items.product-rail { gap: 16px; padding-top: 16px; padding-bottom: 26px; }
+    .items.product-rail .item {
+      flex-basis: min(42vw, 260px);
+      width: min(42vw, 260px);
+      max-width: 260px;
+    }
+    @media (max-width: 720px) {
+      .items.product-rail .item {
+        flex-basis: min(72vw, 240px);
+        width: min(72vw, 240px);
+        max-width: 240px;
+      }
+    }
     .brand {
       grid-template-columns: 58px 1fr auto;
       gap: 14px;
@@ -1097,40 +1241,11 @@
       padding-top: 12px;
     }
     .item .price { margin-top: 0; color: var(--accent); font-weight: 600; }
-    #home-new-arrivals h2 { display: flex; align-items: center; gap: 16px; }
-    #home-new-arrivals h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
-    #home-new-arrivals .items {
-      display: flex;
-      flex-wrap: nowrap;
-      align-items: flex-start;
-      justify-content: center;
-      gap: 0;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding: 38px 46px 48px;
-      scrollbar-width: none;
-    }
-    #home-new-arrivals .items::-webkit-scrollbar { display: none; }
-    .home-arrival-card {
-      position: relative;
-      z-index: var(--stack-layer, 1);
-      overflow: visible;
-      border-radius: 15px;
-      flex: 0 1 min(300px, 38vw);
-      width: min(300px, 38vw);
-      margin-left: -76px;
-      background: var(--paper);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, .16);
-      transform: translateY(var(--stack-lift, 0px)) rotate(var(--stack-rotation, 0deg));
-      transition: transform 320ms cubic-bezier(.2,.75,.25,1), box-shadow 240ms ease;
-    }
-    .home-arrival-card:first-child { margin-left: 0; }
-    .home-arrival-card:hover { z-index: 20; box-shadow: 0 14px 28px rgba(0, 0, 0, .24); }
-    .home-arrival-card .cloth { position: relative; z-index: 1; border-radius: 15px 15px 0 0; }
-    .home-arrival-card .item-badge { z-index: 2; background: rgba(42, 33, 29, .58); color: #f4e9dc !important; }
-    .home-arrival-card .body { position: relative; z-index: 1; border: 1px solid rgba(244, 233, 220, .1); border-top: 0; border-radius: 0 0 15px 15px; background: var(--paper); }
+    #home-new-arrivals h2,
+    #home-restocked h2 { display: flex; align-items: center; gap: 16px; }
+    #home-new-arrivals h2::after,
+    #home-restocked h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
     .item .item-stock-note { margin-top: 0; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
-    @media (prefers-reduced-motion: reduce) { .home-arrival-card { transition: none; } }
     .item .item-color-label { display: flex; align-items: center; gap: 7px; width: fit-content; margin-top: 8px; color: var(--muted); font-size: 12px; }
     .item-color-label i { width: 12px; height: 12px; flex: none; border: 1px solid rgba(244, 233, 220, .3); border-radius: 50%; background: var(--variant-color, #eee); box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .08); }
     .product { gap: clamp(28px, 6vw, 82px); align-items: start; }
@@ -1196,14 +1311,16 @@
     }
     @media (max-width: 560px) {
       .wrap { --wrap-gutter: 14px; }
-      header { top: 0; height: 56px; gap: 10px 12px; padding: 0 var(--wrap-gutter); }
+      header {
+        top: 0;
+        height: calc(56px + env(safe-area-inset-top, 0px));
+        gap: 10px 12px;
+        padding: env(safe-area-inset-top, 0px) var(--wrap-gutter) 0;
+      }
       .mark { font-size: 19px; }
       .site-menu-toggle { min-height: 36px; padding: 6px 9px; font-size: 12px; }
       .cart-toggle { min-height: 36px; }
       .items { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 22px 0 36px; }
-      #home-new-arrivals .items { justify-content: flex-start; overflow-x: auto; overflow-y: hidden; padding: 28px 22px 40px; scroll-snap-type: x proximity; }
-      .home-arrival-card { flex: 0 0 min(72vw, 260px); width: min(72vw, 260px); margin-left: -58px; scroll-snap-align: center; }
-      .home-arrival-card:first-child { margin-left: 0; }
       .cloth { aspect-ratio: .72 / 1; }
       .item .body { padding: 12px 11px 14px; }
       .item b { font-size: 12px; }
@@ -1251,7 +1368,11 @@
           </div>
           <button type="button" class="submenu-toggle" id="catalog-toggle" aria-expanded="false" aria-controls="catalog-submenu"><span data-i18n="catalogMenu">Каталог</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list" id="catalog-submenu" hidden>
-            <button type="button" data-catalog="all" data-i18n="all">Всё</button>
+            <button type="button" data-catalog="tshirts" data-i18n="tshirts">Футболки</button>
+            <button type="button" data-catalog="sweatshirts" data-i18n="sweatshirts">Свитшоты</button>
+            <button type="button" data-catalog="longSleeves" data-i18n="longSleeves">Лонгсливы</button>
+            <button type="button" data-catalog="halfZips" data-i18n="halfZips">Полузипы</button>
+            <button type="button" data-catalog="caps" data-i18n="caps">Кепки</button>
           </div>
           <button type="button" class="submenu-toggle" id="language-toggle" aria-expanded="false" aria-controls="language-submenu"><span data-i18n="languageLabel">Язык</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list language-submenu-list" id="language-submenu" role="radiogroup" aria-label="Язык" data-i18n-aria="languageLabel" hidden>
@@ -1274,14 +1395,6 @@
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 1.9-1.4L21 9H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1" fill="currentColor"/><circle cx="18" cy="20" r="1" fill="currentColor"/></svg>
         <span class="cart-toggle-label" data-i18n="cart">Корзина</span><span class="cart-count" id="cart-count" hidden></span>
       </button>
-      <nav class="links" aria-label="Социальные сети" data-i18n-aria="socialNetworks">
-        <a href="https://t.me/JHVHGOeL" aria-label="Telegram" title="Telegram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 3.4 2.8 10.7c-1.3.5-1.3 1.2-.2 1.5l4.6 1.4 1.7 5.4c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.4-2.3 4.8 3.5c.9.5 1.5.2 1.7-.8L23.3 5c.3-1.3-.5-1.9-1.7-1.6zM8.7 13.2l9.3-5.8c.5-.3.9-.1.5.2l-7.7 7-.3 3.4-1.8-4.8z"/></svg>
-        </a>
-        <a href="https://www.instagram.com/jehovah_goel/" aria-label="Instagram" title="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.8" cy="6.5" r="1.1" fill="currentColor"/></svg>
-        </a>
-      </nav>
     </header>
 
     <div id="stage">
@@ -1337,7 +1450,7 @@
         <h2 data-i18n="russia">Россия</h2>
         <a class="brand" href="?art" data-brand="art">
           <img class="swatch" src="img/art/avatar.jpg" alt="" width="64" height="64">
-          <span><b>art.brand.jesus.saves</b></span>
+          <span><b>Jesus Saves</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
         </a>
       </div>
@@ -1358,7 +1471,7 @@
       <p class="stock" id="note"></p>
       <p class="ahead" data-i18n="chooseItemHint">Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.</p>
       <div class="filters" id="brand-filters" hidden></div>
-      <div class="items" id="items"></div>
+      <div class="product-rail-stack" id="items"></div>
     </section>
 
     <section id="catalog" class="view">
@@ -1376,7 +1489,7 @@
     </section>
 
     <section id="product" class="view">
-      <div class="crumbs">
+      <div class="crumbs" id="product-crumbs-standard">
         <button type="button" id="product-all" data-i18n="allBrands">Все бренды</button>
         <span>›</span>
         <button type="button" id="product-country"></button>
@@ -1384,6 +1497,11 @@
         <button type="button" id="product-brand"></button>
         <span>›</span>
         <span class="here" id="product-crumb"></span>
+      </div>
+      <div class="crumbs" id="product-crumbs-new" hidden>
+        <button type="button" id="product-from-new" data-i18n="newArrivalsTitle">Новинки</button>
+        <span>›</span>
+        <span class="here" id="product-crumb-new"></span>
       </div>
       <article class="product">
         <div class="product-cloth" id="product-cloth" role="button" tabindex="-1" aria-label="Нажмите, чтобы увеличить" data-i18n-aria="enlargePhoto">
@@ -1466,7 +1584,22 @@
       </form>
     </section>
     </div>
-    <footer class="site-footer"><span>GO’EL</span><nav aria-label="Информация" data-i18n-aria="footerNavigation"><a href="privacy.html" data-i18n="privacyLink">Политика обработки данных</a><a href="delivery.html" data-i18n="deliveryPayment">Оплата и доставка</a><a href="tracking.html" data-i18n="trackOrder">Отследить заказ</a></nav></footer>
+    <footer class="site-footer">
+      <span>GO’EL</span>
+      <nav class="footer-links" aria-label="Информация" data-i18n-aria="footerNavigation">
+        <a href="privacy.html" data-i18n="privacyLink">Политика обработки данных</a>
+        <a href="delivery.html" data-i18n="deliveryPayment">Оплата и доставка</a>
+        <a href="tracking.html" data-i18n="trackOrder">Отследить заказ</a>
+      </nav>
+      <nav class="footer-social links" aria-label="Социальные сети" data-i18n-aria="socialNetworks">
+        <a href="https://t.me/JHVHGOeL" aria-label="Telegram" title="Telegram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 3.4 2.8 10.7c-1.3.5-1.3 1.2-.2 1.5l4.6 1.4 1.7 5.4c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.4-2.3 4.8 3.5c.9.5 1.5.2 1.7-.8L23.3 5c.3-1.3-.5-1.9-1.7-1.6zM8.7 13.2l9.3-5.8c.5-.3.9-.1.5.2l-7.7 7-.3 3.4-1.8-4.8z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/jehovah_goel/" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.8" cy="6.5" r="1.1" fill="currentColor"/></svg>
+        </a>
+      </nav>
+    </footer>
   </div>
   <div class="lightbox" id="lightbox" hidden>
     <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Закрыть" data-i18n-aria="close">×</button>
@@ -1475,6 +1608,7 @@
     <button type="button" class="lightbox-nav next" id="lightbox-next" hidden aria-label="Следующее фото" data-i18n-aria="nextPhoto">›</button>
     <div class="lightbox-count" id="lightbox-count" hidden></div>
   </div>
+  <div class="cut-info-pop" id="cut-info-pop" hidden role="dialog" aria-modal="false"></div>
   <script>
     const translations = {
       ru: {
@@ -1484,7 +1618,7 @@
         allBrands: "Все бренды", view: "Смотреть", chooseItemHint: "Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.", cart: "Корзина", cartTitle: "Корзина", cartCount: "Корзина, товаров: {{count}}", cartEmpty: "Корзина пока пуста. Добавьте товары из каталога.", continueShopping: "Продолжить покупки", addToCart: "В корзину", addedToCart: "Добавлено в корзину.", cartCheckout: "Оформить заявку", cartTotal: "Итого: {{total}}", cartTotalOnRequest: "Итого: стоимость уточняется", cartUnavailable: "Этот вариант больше недоступен. Удалите его из корзины, чтобы продолжить.", removeCartItem: "Удалить товар", decreaseQuantity: "Уменьшить количество", increaseQuantity: "Увеличить количество", checkoutTitle: "Контактные данные",
         cartLimit: "В корзине может быть не больше 25 разных товаров.",
         cartInsufficientStock: "В наличии меньше выбранного количества. Уменьшите количество.",
-        catalogTitle: "Каталог", catalogDescription: "Одежда всех брендов в одном месте.", catalogFilteredDescription: "{{gender}} от всех брендов.",
+        catalogTitle: "Каталог", catalogDescription: "Одежда всех брендов в одном месте.", catalogFilteredDescription: "{{category}} от всех брендов.",
         enlargePhoto: "Нажмите, чтобы увеличить", previousPhoto: "Предыдущее фото", nextPhoto: "Следующее фото", photoPlaceholder: "Место под фото",
         model: "Модель", color: "Цвет", size: "Размер", order: "Заказать", orderNotConnected: "Оформление заказа ещё не включено.",
         orderTitle: "Заявка на заказ", orderSetupConnected: "После отправки заявка придёт GO’EL в Telegram.", orderSetupDisabled: "Приём заявок включится после подключения Telegram-бота.",
@@ -1512,7 +1646,7 @@
         allBrands: "Усе брэнды", view: "Глядзець", chooseItemHint: "Выберыце рэч і варыянт — заяўку можна будзе пакінуць проста на сайце.", cart: "Кошык", cartTitle: "Кошык", cartCount: "Кошык, тавараў: {{count}}", cartEmpty: "Кошык пакуль пусты. Дадайце тавары з каталога.", continueShopping: "Працягнуць пакупкі", addToCart: "У кошык", addedToCart: "Дададзена ў кошык.", cartCheckout: "Аформіць заяўку", cartTotal: "Разам: {{total}}", cartTotalOnRequest: "Разам: кошт удакладняецца", cartUnavailable: "Гэты варыянт больш недаступны. Выдаліце яго з кошыка, каб працягнуць.", removeCartItem: "Выдаліць тавар", decreaseQuantity: "Паменшыць колькасць", increaseQuantity: "Павялічыць колькасць", checkoutTitle: "Кантактныя даныя",
         cartLimit: "У кошыку можа быць не больш за 25 розных тавараў.",
         cartInsufficientStock: "У наяўнасці менш выбранай колькасці. Паменшыце колькасць.",
-        catalogTitle: "Каталог", catalogDescription: "Адзенне ўсіх брэндаў у адным месцы.", catalogFilteredDescription: "{{gender}} ад усіх брэндаў.",
+        catalogTitle: "Каталог", catalogDescription: "Адзенне ўсіх брэндаў у адным месцы.", catalogFilteredDescription: "{{category}} ад усіх брэндаў.",
         enlargePhoto: "Націсніце, каб павялічыць", previousPhoto: "Папярэдняе фота", nextPhoto: "Наступнае фота", photoPlaceholder: "Месца для фота",
         model: "Мадэль", color: "Колер", size: "Памер", order: "Замовіць", orderNotConnected: "Афармленне замовы яшчэ не ўключана.",
         orderTitle: "Заяўка на замову", orderSetupConnected: "Пасля адпраўкі заяўка прыйдзе GO’EL у Telegram.", orderSetupDisabled: "Прыём заявак уключыцца пасля падключэння Telegram-бота.",
@@ -1540,7 +1674,7 @@
         allBrands: "Усі бренди", view: "Переглянути", chooseItemHint: "Оберіть річ і варіант — заявку можна буде залишити просто на сайті.", cart: "Кошик", cartTitle: "Кошик", cartCount: "Кошик, товарів: {{count}}", cartEmpty: "Кошик поки порожній. Додайте товари з каталогу.", continueShopping: "Продовжити покупки", addToCart: "До кошика", addedToCart: "Додано до кошика.", cartCheckout: "Оформити заявку", cartTotal: "Разом: {{total}}", cartTotalOnRequest: "Разом: вартість уточнюється", cartUnavailable: "Цей варіант більше недоступний. Видаліть його з кошика, щоб продовжити.", removeCartItem: "Видалити товар", decreaseQuantity: "Зменшити кількість", increaseQuantity: "Збільшити кількість", checkoutTitle: "Контактні дані",
         cartLimit: "У кошику може бути не більше 25 різних товарів.",
         cartInsufficientStock: "У наявності менше вибраної кількості. Зменште кількість.",
-        catalogTitle: "Каталог", catalogDescription: "Одяг усіх брендів в одному місці.", catalogFilteredDescription: "{{gender}} від усіх брендів.",
+        catalogTitle: "Каталог", catalogDescription: "Одяг усіх брендів в одному місці.", catalogFilteredDescription: "{{category}} від усіх брендів.",
         enlargePhoto: "Натисніть, щоб збільшити", previousPhoto: "Попереднє фото", nextPhoto: "Наступне фото", photoPlaceholder: "Місце для фото",
         model: "Модель", color: "Колір", size: "Розмір", order: "Замовити", orderNotConnected: "Оформлення замовлення ще не ввімкнено.",
         orderTitle: "Заявка на замовлення", orderSetupConnected: "Після надсилання заявка надійде GO’EL у Telegram.", orderSetupDisabled: "Приймання заявок увімкнеться після підключення Telegram-бота.",
@@ -1568,7 +1702,7 @@
         allBrands: "All brands", view: "Browse", chooseItemHint: "Choose an item and a variant — you can submit a request right here on the site.", cart: "Cart", cartTitle: "Your cart", cartCount: "Cart, items: {{count}}", cartEmpty: "Your cart is empty. Add items from the catalog.", continueShopping: "Continue shopping", addToCart: "Add to cart", addedToCart: "Added to cart.", cartCheckout: "Submit request", cartTotal: "Total: {{total}}", cartTotalOnRequest: "Total: price to be confirmed", cartUnavailable: "This option is no longer available. Remove it from your cart to continue.", removeCartItem: "Remove item", decreaseQuantity: "Decrease quantity", increaseQuantity: "Increase quantity", checkoutTitle: "Contact details",
         cartLimit: "Your cart can contain up to 25 different items.",
         cartInsufficientStock: "There aren’t enough items in stock. Reduce the quantity.",
-        catalogTitle: "Catalog", catalogDescription: "Clothing from all brands in one place.", catalogFilteredDescription: "{{gender}} clothing from all brands.",
+        catalogTitle: "Catalog", catalogDescription: "Clothing from all brands in one place.", catalogFilteredDescription: "{{category}} from all brands.",
         enlargePhoto: "Click to enlarge", previousPhoto: "Previous photo", nextPhoto: "Next photo", photoPlaceholder: "Photo placeholder",
         model: "Style", color: "Color", size: "Size", order: "Order", orderNotConnected: "Online ordering is not available yet.",
         orderTitle: "Order request", orderSetupConnected: "Your request will be sent to GO’EL on Telegram.", orderSetupDisabled: "Order requests will be enabled once the Telegram bot is connected.",
@@ -1596,28 +1730,40 @@
       footerNavigation: "Информация", privacyLink: "Политика обработки данных", deliveryPayment: "Оплата и доставка",
       orderProcessNote: "Это заявка, а не оплата. Мы свяжемся с вами, подтвердим наличие и согласуем дальнейшие условия заказа.",
       tshirtType: "Футболка", sweatshirtType: "Свитшот", longsleeveType: "Лонгслив", halfzipType: "Полузип", capType: "Кепка", hoodieType: "Худи",
-      light: "светлый", dark: "тёмный", green: "зелёный", sky: "голубой", gray: "серый", whiteBurgundy: "белый и бордовый", whiteSky: "белый и голубой", whiteSand: "белый и песочный", milkBrown: "молочный и коричневый", grayWhite: "серый и белый", grayYellow: "серый и жёлтый", grayPink: "серый и розовый", blackWhite: "чёрный и белый", coffee: "кофейный", emerald: "изумрудный"
+light: "светлый", dark: "тёмный", green: "зелёный", sky: "голубой", gray: "серый", whiteBurgundy: "белый и бордовый", whiteSky: "белый и голубой", whiteSand: "белый и песочный", whiteBrown: "белый и коричневый", whiteRed: "белый и красный", whitePeach: "белый и персиковый", whitePink: "белый и розовый", whiteBlue: "белый и синий", milkBrown: "молочный и коричневый", milkBlue: "молочный и голубой", milkNavy: "молочный и синий", grayWhite: "серый и белый", grayYellow: "серый и жёлтый", grayPink: "серый и розовый", blackWhite: "чёрный и белый", blackYellow: "чёрный и жёлтый", coffee: "кофейный", emerald: "изумрудный",
+      cutInfoLabel: "О модели {{cut}}",
+      classicFitInfo: "Универсальный вариант для мужчин и женщин. Единый размер — оверсайз.",
+      womenFitInfo: "Модель для женщин. Отличия от Classic: чуть длиннее рукав, необработанный край (низ и рукав), форма ближе к трапеции."
     });
     Object.assign(translations.be, {
       pageDescription: "Хрысціянскія брэнды адзення ў адной вітрыне. Выберыце рэч і адпраўце заяўку на заказ анлайн.",
       footerNavigation: "Інфармацыя", privacyLink: "Палітыка апрацоўкі даных", deliveryPayment: "Аплата і дастаўка",
       orderProcessNote: "Гэта заяўка, а не аплата. Мы звяжамся з вамі, пацвердзім наяўнасць і ўзгоднім далейшыя ўмовы замовы.",
       tshirtType: "Футболка", sweatshirtType: "Світашот", longsleeveType: "Лонгсліў", halfzipType: "Паўзіп", capType: "Кепка", hoodieType: "Худи",
-      light: "светлы", dark: "цёмны", green: "зялёны", sky: "блакітны", gray: "шэры", whiteBurgundy: "белы і бардовы", whiteSky: "белы і блакітны", whiteSand: "белы і пясочны", milkBrown: "малочны і карычневы", grayWhite: "шэры і белы", grayYellow: "шэры і жоўты", grayPink: "шэры і ружовы", blackWhite: "чорны і белы", coffee: "кававы", emerald: "смарагдавы"
+      light: "светлы", dark: "цёмны", green: "зялёны", sky: "блакітны", gray: "шэры", whiteBurgundy: "белы і бардовы", whiteSky: "белы і блакітны", whiteSand: "белы і пясочны", whiteBrown: "белы і карычневы", whiteRed: "белы і чырвоны", whitePeach: "белы і персікавы", whitePink: "белы і ружовы", whiteBlue: "белы і сіні", milkBrown: "малочны і карычневы", milkBlue: "малочны і блакітны", milkNavy: "малочны і сіні", grayWhite: "шэры і белы", grayYellow: "шэры і жоўты", grayPink: "шэры і ружовы", blackWhite: "чорны і белы", blackYellow: "чорны і жоўты", coffee: "кававы", emerald: "смарагдавы",
+      cutInfoLabel: "Пра мадэль {{cut}}",
+      classicFitInfo: "Універсальны варыянт для мужчын і жанчын. Адзіны памер — оверсайз.",
+      womenFitInfo: "Мадэль для жанчын. Адрозненні ад Classic: трохі даўжэйшы рукаў, неапрацаваны край (ніз і рукаў), форма бліжэй да трапецыі."
     });
     Object.assign(translations.uk, {
       pageDescription: "Християнські бренди одягу в одній вітрині. Оберіть річ і надішліть заявку на замовлення онлайн.",
       footerNavigation: "Інформація", privacyLink: "Політика обробки даних", deliveryPayment: "Оплата й доставка",
       orderProcessNote: "Це заявка, а не оплата. Ми зв’яжемося з вами, підтвердимо наявність і погодимо подальші умови замовлення.",
       tshirtType: "Футболка", sweatshirtType: "Світшот", longsleeveType: "Лонгслів", halfzipType: "Напівзип", capType: "Кепка", hoodieType: "Худі",
-      light: "світлий", dark: "темний", green: "зелений", sky: "блакитний", gray: "сірий", whiteBurgundy: "білий і бордовий", whiteSky: "білий і блакитний", whiteSand: "білий і пісочний", milkBrown: "молочний і коричневий", grayWhite: "сірий і білий", grayYellow: "сірий і жовтий", grayPink: "сірий і рожевий", blackWhite: "чорний і білий", coffee: "кавовий", emerald: "смарагдовий"
+      light: "світлий", dark: "темний", green: "зелений", sky: "блакитний", gray: "сірий", whiteBurgundy: "білий і бордовий", whiteSky: "білий і блакитний", whiteSand: "білий і пісочний", whiteBrown: "білий і коричневий", whiteRed: "білий і червоний", whitePeach: "білий і персиковий", whitePink: "білий і рожевий", whiteBlue: "білий і синій", milkBrown: "молочний і коричневий", milkBlue: "молочний і блакитний", milkNavy: "молочний і синій", grayWhite: "сірий і білий", grayYellow: "сірий і жовтий", grayPink: "сірий і рожевий", blackWhite: "чорний і білий", blackYellow: "чорний і жовтий", coffee: "кавовий", emerald: "смарагдовий",
+      cutInfoLabel: "Про модель {{cut}}",
+      classicFitInfo: "Універсальний варіант для чоловіків і жінок. Єдиний розмір — оверсайз.",
+      womenFitInfo: "Модель для жінок. Відмінності від Classic: трохи довший рукав, необроблений край (низ і рукав), форма ближче до трапеції."
     });
     Object.assign(translations.en, {
       pageDescription: "Christian clothing brands in one storefront. Browse the collection and send an order request online.",
       footerNavigation: "Information", privacyLink: "Privacy notice", deliveryPayment: "Payment & delivery",
       orderProcessNote: "This is an order request, not a payment. We’ll contact you to confirm availability and agree on the next steps.",
       tshirtType: "T-shirt", sweatshirtType: "Sweatshirt", longsleeveType: "Long-sleeve top", halfzipType: "Half-zip", capType: "Cap", hoodieType: "Hoodie",
-      light: "light", dark: "dark", green: "green", sky: "sky blue", gray: "gray", whiteBurgundy: "white / burgundy", whiteSky: "white / blue", whiteSand: "white / sand", milkBrown: "cream / brown", grayWhite: "gray / white", grayYellow: "gray / yellow", grayPink: "gray / pink", blackWhite: "black / white", coffee: "coffee brown", emerald: "emerald", milk: "milky"
+      light: "light", dark: "dark", green: "green", sky: "sky blue", gray: "gray", whiteBurgundy: "white / burgundy", whiteSky: "white / blue", whiteSand: "white / sand", whiteBrown: "white / brown", whiteRed: "white / red", whitePeach: "white / peach", whitePink: "white / pink", whiteBlue: "white / blue", milkBrown: "cream / brown", milkBlue: "cream / sky blue", milkNavy: "cream / navy", grayWhite: "gray / white", grayYellow: "gray / yellow", grayPink: "gray / pink", blackWhite: "black / white", blackYellow: "black / yellow", coffee: "coffee brown", emerald: "emerald", milk: "milky",
+      cutInfoLabel: "About {{cut}}",
+      classicFitInfo: "A unisex option for men and women. One size — oversized.",
+      womenFitInfo: "A women’s cut. Unlike Classic: slightly longer sleeves, raw hem and cuffs, and a more trapezoid shape."
     });
     let currentLanguage = "ru";
     try {
@@ -1641,8 +1787,11 @@
     };
     Object.assign(toneTranslationKeys, {
       "светлый": "light", "тёмный": "dark", "зелёный": "green", "голубой": "sky", "серый": "gray",
-      "белый-бордо": "whiteBurgundy", "белый-голубой": "whiteSky", "белый-песок": "whiteSand", "молоко-коричневый": "milkBrown",
-      "серый-белый": "grayWhite", "серый-жёлтый": "grayYellow", "серый-розовый": "grayPink", "чёрный-белый": "blackWhite", "меланж": "melange", "сливовый": "plum"
+      "белый-бордо": "whiteBurgundy", "белый-голубой": "whiteSky", "белый-песок": "whiteSand",
+      "белый-коричневый": "whiteBrown", "белый-красный": "whiteRed", "белый-персик": "whitePeach", "белый-розовый": "whitePink", "белый-синий": "whiteBlue",
+      "молоко-коричневый": "milkBrown", "молоко-голубой": "milkBlue", "молоко-синий": "milkNavy",
+      "серый-белый": "grayWhite", "серый-жёлтый": "grayYellow", "серый-розовый": "grayPink",
+      "чёрный-белый": "blackWhite", "чёрный-жёлтый": "blackYellow", "меланж": "melange", "сливовый": "plum"
     });
     function localizedTone(tone) { return toneTranslationKeys[tone] ? t(toneTranslationKeys[tone]) : tone; }
     const garmentTypeTranslation = {
@@ -1659,6 +1808,41 @@
       "божий цветочек": "GOD'S LITTLE FLOWER", "из божьего сада": "FROM GOD'S GARDEN", "сосуды": "VESSELS", "плоды духа": "FRUIT OF THE SPIRIT",
       "будьте как дети": "BE LIKE CHILDREN", "jesus (леопард)": "JESUS (LEOPARD)"
     };
+    function cutInfoKey(cut) {
+      const key = String(cut || "").trim().toLowerCase();
+      if (key === "classic") return "classicFitInfo";
+      if (key === "women") return "womenFitInfo";
+      return "";
+    }
+    function hideCutInfoPop() {
+      const pop = document.getElementById("cut-info-pop");
+      if (!pop) return;
+      pop.hidden = true;
+      pop.innerHTML = "";
+      pop.removeAttribute("style");
+    }
+    function showCutInfoPop(anchor, cut) {
+      const infoKey = cutInfoKey(cut);
+      const pop = document.getElementById("cut-info-pop");
+      if (!infoKey || !pop || !anchor) return;
+      const label = localizedGarmentType(cut);
+      pop.innerHTML = `<strong>${label}</strong><p>${t(infoKey)}</p>`;
+      pop.hidden = false;
+      const rect = anchor.getBoundingClientRect();
+      const width = Math.min(280, window.innerWidth - 32);
+      let left = rect.right - width;
+      left = Math.max(16, Math.min(left, window.innerWidth - width - 16));
+      let top = rect.bottom + 8;
+      pop.style.position = "fixed";
+      pop.style.width = `${width}px`;
+      pop.style.left = `${left}px`;
+      pop.style.top = `${top}px`;
+      const popRect = pop.getBoundingClientRect();
+      if (popRect.bottom > window.innerHeight - 12) {
+        top = Math.max(12, rect.top - popRect.height - 8);
+        pop.style.top = `${top}px`;
+      }
+    }
     function localizedGarmentType(type) {
       const key = String(type || "").trim().toLocaleLowerCase("ru");
       return garmentTypeTranslation[key] ? t(garmentTypeTranslation[key]) : type;
@@ -2589,7 +2773,7 @@
   },
   art: {
     country: "Россия",
-    title: "art.brand.jesus.saves",
+    title: "Jesus Saves",
     blurb: "",
     note: "",
     items: [
@@ -2598,16 +2782,19 @@
         slug: "strength",
         gender: "unisex",
         variants: [
-          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-white-03.jpg", "img/art/classic-strength-grey-white-04.jpg", "img/art/classic-strength-grey-white-05.jpg", "img/art/classic-strength-grey-white-06.jpg", "img/art/classic-strength-grey-white-07.jpg", "img/art/classic-strength-grey-white-08.jpg"], photo: "img/art/classic-strength-grey-white-03.jpg" },
-          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-yellow-03.jpg", "img/art/classic-strength-grey-yellow-04.jpg"], photo: "img/art/classic-strength-grey-yellow-03.jpg" },
+          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-white-01.jpg", "img/art/classic-strength-grey-white-02.jpg", "img/art/classic-strength-grey-white-03.jpg"], photo: "img/art/classic-strength-grey-white-01.jpg" },
+          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-yellow-01.jpg", "img/art/classic-strength-grey-yellow-02.jpg", "img/art/classic-strength-grey-yellow-03.jpg"], photo: "img/art/classic-strength-grey-yellow-01.jpg" },
           { cut: "Classic", tone: "белый-синий", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-blue-01.jpg", "img/art/classic-strength-white-blue-02.jpg"], photo: "img/art/classic-strength-white-blue-01.jpg" },
-          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-brown-01.jpg", "img/art/classic-strength-white-brown-02.jpg"], photo: "img/art/classic-strength-white-brown-01.jpg" },
-          { cut: "Women", tone: "белый-голубой", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-blue-01.jpg", "img/art/women-strength-white-blue-02.jpg"], photo: "img/art/women-strength-white-blue-01.jpg" },
-          { cut: "Women", tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-black-white-01.jpg", "img/art/women-strength-black-white-02.jpg"], photo: "img/art/women-strength-black-white-01.jpg" },
-          { cut: "Women", tone: "белый-песок", color: "#f3efe6", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-sand-01.jpg", "img/art/women-strength-white-sand-02.jpg"], photo: "img/art/women-strength-white-sand-01.jpg" },
+          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-brown-back-01.jpg", "img/art/classic-strength-white-brown-card-01.jpg", "img/art/classic-strength-white-brown-wear-01.jpg"], photo: "img/art/classic-strength-white-brown-back-01.jpg" },
+          { cut: "Women", tone: "белый-синий", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-blue-01.jpg", "img/art/women-strength-white-blue-02.jpg", "img/art/women-strength-white-blue-03.jpg"], photo: "img/art/women-strength-white-blue-01.jpg" },
+          { cut: "Women", tone: "белый-голубой", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-lightblue-01.jpg", "img/art/women-strength-white-lightblue-02.jpg", "img/art/women-strength-white-lightblue-03.jpg"], photo: "img/art/women-strength-white-lightblue-01.jpg" },
+          { cut: "Women", tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-black-white-01.jpg", "img/art/women-strength-black-white-02.jpg", "img/art/women-strength-black-white-03.jpg"], photo: "img/art/women-strength-black-white-01.jpg" },
+          { cut: "Women", tone: "чёрный-жёлтый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-black-yellow-01.jpg", "img/art/women-strength-black-yellow-02.jpg"], photo: "img/art/women-strength-black-yellow-01.jpg" },
+          { cut: "Women", tone: "белый-песок", color: "#f3efe6", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-sand-01.jpg", "img/art/women-strength-white-sand-02.jpg", "img/art/women-strength-white-sand-03.jpg"], photo: "img/art/women-strength-white-sand-01.jpg" },
           { cut: "Women", tone: "молоко-голубой", color: "#f0ebe3", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-blue-01.jpg", "img/art/women-strength-milk-blue-02.jpg"], photo: "img/art/women-strength-milk-blue-01.jpg" },
           { cut: "Women", tone: "молоко-коричневый", color: "#efe6da", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-brown-01.jpg", "img/art/women-strength-milk-brown-02.jpg"], photo: "img/art/women-strength-milk-brown-01.jpg" },
           { cut: "Women", tone: "молоко-синий", color: "#ebe4d8", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-navy-01.jpg", "img/art/women-strength-milk-navy-02.jpg"], photo: "img/art/women-strength-milk-navy-01.jpg" }
+        
         ]
       },
       {
@@ -2615,12 +2802,10 @@
         slug: "victory",
         gender: "unisex",
         variants: [
-          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-grey-yellow-03.jpg", "img/art/classic-victory-grey-yellow-04.jpg", "img/art/classic-victory-grey-yellow-05.jpg", "img/art/classic-victory-grey-yellow-06.jpg", "img/art/classic-victory-grey-yellow-07.jpg"], photo: "img/art/classic-victory-grey-yellow-03.jpg" },
-          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-brown-01.jpg", "img/art/classic-victory-white-brown-02.jpg"], photo: "img/art/classic-victory-white-brown-01.jpg" },
-          { cut: "Classic", tone: "белый-красный", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-red-01.jpg", "img/art/classic-victory-white-red-02.jpg"], photo: "img/art/classic-victory-white-red-01.jpg" },
-          { cut: "Women", tone: "белый-бордо", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-white-bordo-01.jpg", "img/art/women-victory-white-bordo-02.jpg", "img/art/women-victory-white-bordo-03.jpg"], photo: "img/art/women-victory-white-bordo-01.jpg" },
-          { cut: "Women", tone: "молоко-коричневый", color: "#f0ebe3", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-milk-brown-01.jpg", "img/art/women-victory-milk-brown-02.jpg", "img/art/women-victory-milk-brown-03.jpg"], photo: "img/art/women-victory-milk-brown-01.jpg" },
-          { cut: "Women", tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-black-white-01.jpg", "img/art/women-victory-black-white-02.jpg"], photo: "img/art/women-victory-black-white-01.jpg" }
+          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-grey-yellow-01.jpg", "img/art/classic-victory-grey-yellow-02.jpg", "img/art/classic-victory-grey-yellow-03.jpg"], photo: "img/art/classic-victory-grey-yellow-01.jpg" },
+          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-brown-v2-01.jpg", "img/art/classic-victory-white-brown-v2-02.jpg"], photo: "img/art/classic-victory-white-brown-v2-01.jpg" },
+          { cut: "Classic", tone: "белый-красный", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-red-v2-01.jpg", "img/art/classic-victory-white-red-v2-02.jpg", "img/art/classic-victory-white-red-v2-03.jpg"], photo: "img/art/classic-victory-white-red-v2-01.jpg" }
+        
         ]
       },
       {
@@ -2628,9 +2813,9 @@
         slug: "skateboard",
         gender: "unisex",
         variants: [
-          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-white-03.jpg", "img/art/classic-skateboard-grey-white-04.jpg"], photo: "img/art/classic-skateboard-grey-white-03.jpg" },
-          { cut: "Classic", tone: "серый-розовый", color: "#433c40", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-pink-03.jpg", "img/art/classic-skateboard-grey-pink-04.jpg"], photo: "img/art/classic-skateboard-grey-pink-03.jpg" },
-          { cut: "Classic", tone: "белый-розовый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-white-pink-01.jpg", "img/art/classic-skateboard-white-pink-02.jpg"], photo: "img/art/classic-skateboard-white-pink-01.jpg" }
+          { cut: "Classic", tone: "серый-розовый", color: "#433c40", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-pink-01.jpg", "img/art/classic-skateboard-grey-pink-02.jpg"], photo: "img/art/classic-skateboard-grey-pink-01.jpg" },
+          { cut: "Classic", tone: "белый-розовый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-white-pink-v2-01.jpg", "img/art/classic-skateboard-white-pink-v2-02.jpg"], photo: "img/art/classic-skateboard-white-pink-v2-01.jpg" }
+        
         ]
       },
       {
@@ -2638,7 +2823,8 @@
         slug: "defender",
         gender: "unisex",
         variants: [
-          { cut: "Classic", tone: "белый-персик", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-defender-white-peach-01.jpg", "img/art/classic-defender-white-peach-02.jpg", "img/art/classic-defender-white-peach-03.jpg", "img/art/classic-defender-white-peach-04.jpg", "img/art/classic-defender-white-peach-05.jpg", "img/art/classic-defender-white-peach-06.jpg"], photo: "img/art/classic-defender-white-peach-01.jpg" }
+          { cut: "Classic", tone: "белый-персик", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-defender-white-peach-v2-01.jpg", "img/art/classic-defender-white-peach-v2-02.jpg", "img/art/classic-defender-white-peach-v2-03.jpg"], photo: "img/art/classic-defender-white-peach-v2-01.jpg" }
+        
         ]
       }
     ]
@@ -2666,6 +2852,11 @@
     let brandColorFilters = [];
     let catalogCategoryFilters = [];
     let catalogColorFilters = [];
+    const VIEW_STORAGE_KEY = "goel-view-v1";
+    let syncFiltersFromRoute = true;
+    let restoreScrollY = null;
+    let ignoreScrollSave = false;
+    let scrollSaveTimer = 0;
     const CART_STORAGE_KEY = "goel-cart-v1";
     const ORDER_IDEMPOTENCY_STORAGE_KEY = "goel-order-request-v1";
     const ORDER_API_URL = "https://goel-order-api.o-el.workers.dev/order";
@@ -2851,6 +3042,23 @@
       }
       if (scrollMotionPreference.addEventListener) scrollMotionPreference.addEventListener("change", syncHeroAutoplay);
       else if (scrollMotionPreference.addListener) scrollMotionPreference.addListener(syncHeroAutoplay);
+      let heroSwipe = null;
+      heroCarousel.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0 || event.target.closest("a, button")) return;
+        heroSwipe = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      });
+      heroCarousel.addEventListener("pointerup", (event) => {
+        if (!heroSwipe || event.pointerId !== heroSwipe.id) return;
+        const dx = event.clientX - heroSwipe.x;
+        const dy = event.clientY - heroSwipe.y;
+        heroSwipe = null;
+        if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+        showHeroSlide(activeHeroSlide + (dx < 0 ? 1 : -1));
+        syncHeroAutoplay();
+      });
+      heroCarousel.addEventListener("pointercancel", (event) => {
+        if (heroSwipe?.id === event.pointerId) heroSwipe = null;
+      });
       showHeroSlide(0);
       syncHeroAutoplay();
     }
@@ -3621,15 +3829,44 @@
       return `${t("from")} ${formatMoney(min, currentCurrency)}`.trim();
     }
 
+    function renderProductRail(cardsHtml) {
+      return `<div class="items product-rail" role="list">${cardsHtml}</div>`;
+    }
+
+    function groupItemsByCategory(list) {
+      const known = brandCategoryKeys
+        .map((category) => ({
+          category,
+          items: list.filter((item) => itemCategory(item) === category)
+        }))
+        .filter(({ items: rows }) => rows.length);
+      const other = list.filter((item) => !itemCategory(item));
+      if (other.length) known.push({ category: "", items: other });
+      return known;
+    }
+
     function renderHomeCollections(country = "all") {
       const products = Object.entries(brands).flatMap(([id, data]) =>
         country !== "all" && data.country !== country
           ? []
           : data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
       );
-      const arrivals = products.flatMap(({ id, item }) => item.newArrival === true
-        ? item.variants.map((variant) => ({ id, item, variant }))
-        : []);
+      const arrivals = products.flatMap(({ id, item }) => {
+        if (item.newArrival !== true) return [];
+        const byTone = new Map();
+        item.variants.forEach((variant, index) => {
+          const tone = String(variant.tone || "").trim() || `variant-${index}`;
+          const current = byTone.get(tone);
+          if (!current) {
+            byTone.set(tone, { id, item, variant });
+            return;
+          }
+          if (variantInStock(variant) && !variantInStock(current.variant)) {
+            byTone.set(tone, { id, item, variant });
+          }
+        });
+        return [...byTone.values()];
+      });
       const restocked = products.filter(({ item }) => itemInStock(item)).map(({ id, item }) => ({
         id,
         item,
@@ -3637,34 +3874,19 @@
       })).filter(({ tones }) => tones.length);
       const newSection = document.getElementById("home-new-arrivals");
       const restockedSection = document.getElementById("home-restocked");
-      newSection.hidden = arrivals.length === 0;
       const newItems = newSection.querySelector(".items");
+      const restockedItems = restockedSection.querySelector(".items");
+      newSection.hidden = arrivals.length === 0;
+      newItems.classList.add("product-rail");
       newItems.innerHTML = arrivals
-        .map(({ id, item, variant }, index) => itemCard(id, item, [], "newArrivalBadge", variant, index, arrivals.length))
+        .map(({ id, item, variant }) => itemCard(id, item, [], "newArrivalBadge", variant, "new"))
         .join("");
-      const spreadArrivalDeck = (event) => {
-        if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-        const selectedCard = event.target instanceof Element ? event.target.closest(".home-arrival-card") : null;
-        newItems.querySelectorAll(".home-arrival-card").forEach((card) => {
-          const shift = card.style.getPropertyValue("--stack-shift") || "0px";
-          const rotation = selectedCard === card ? "0deg" : card.style.getPropertyValue("--stack-rotation") || "0deg";
-          const lift = selectedCard === card ? "-18px" : "-4px";
-          const scale = selectedCard === card ? " scale(1.025)" : "";
-          card.style.transform = `translateX(${shift}) translateY(${lift}) rotate(${rotation})${scale}`;
-        });
-      };
-      const resetArrivalDeck = () => newItems.querySelectorAll(".home-arrival-card").forEach((card) => card.style.removeProperty("transform"));
-      newItems.onpointerenter = spreadArrivalDeck;
-      newItems.onpointermove = spreadArrivalDeck;
-      newItems.onpointerleave = resetArrivalDeck;
-      newItems.onfocusin = spreadArrivalDeck;
-      newItems.onfocusout = () => requestAnimationFrame(() => {
-        if (!newItems.contains(document.activeElement)) resetArrivalDeck();
-      });
       restockedSection.hidden = restocked.length === 0;
-      restockedSection.querySelector(".items").innerHTML = restocked
+      restockedItems.classList.add("product-rail");
+      restockedItems.innerHTML = restocked
         .map(({ id, item, tones }) => itemCard(id, item, tones, "restockedBadge"))
         .join("");
+      bindProductRails(home);
       window.requestAnimationFrame(() => observeScrollBlocks(home));
     }
 
@@ -3682,7 +3904,7 @@
       }, animate);
     }
 
-    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, stackIndex = -1, stackCount = 0) {
+    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, fromSource = "") {
       const matchingVariant = featuredVariant || (preferredColors.length
         ? item.variants.find((variant) => variantInStock(variant) && preferredColors.includes(variant.tone))
           || item.variants.find((variant) => preferredColors.includes(variant.tone))
@@ -3692,20 +3914,14 @@
       const price = cardPrice(item, matchingVariant);
       const photos = variantPhotos(first);
       const photo = photos[0] || first.photo || "";
-      const cardPhotos = photos.length ? photos : photo ? [photo] : [];
       const color = first.color;
       const clothStyle = `--swatch:${color}`;
       const cardStyle = photo
         ? `--swatch:${color}`
         : `--swatch:${color};background-image:linear-gradient(${color},${color})`;
       const photoClass = photo ? " has-photo" : "";
-      const galleryClass = cardPhotos.length > 1 ? " has-gallery" : "";
-      const galleryData = cardPhotos.length > 1 ? ` data-gallery-photos="${encodeURIComponent(JSON.stringify(cardPhotos))}" data-photo-index="0"` : "";
       const photoTag = photo
         ? `<img src="${photo}" alt="${localizedItemName(item.name)}" loading="lazy" decoding="async">`
-        : "";
-      const galleryDots = cardPhotos.length > 1
-        ? `<div class="item-gallery-dots" aria-hidden="true">${cardPhotos.map((_, index) => `<span class="${index === 0 ? "on" : ""}"></span>`).join("")}</div>`
         : "";
       const activeBadge = badgeKey || (item.newArrival ? "newArrivalBadge" : "");
       const badge = activeBadge ? `<span class="item-badge">${t(activeBadge)}</span>` : "";
@@ -3715,15 +3931,13 @@
       const stockNote = !variantInStock(first)
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
         : "";
-      const centeredIndex = stackCount ? stackIndex - (stackCount - 1) / 2 : 0;
-      const stackStyle = featuredVariant
-        ? `;--stack-layer:${stackIndex + 1};--stack-shift:${Math.round(centeredIndex * 56)}px;--stack-rotation:${Math.max(-6, Math.min(6, centeredIndex * 3))}deg;--stack-lift:${Math.round(Math.abs(centeredIndex) * 2)}px`
-        : "";
       const variantRoute = matchingVariant ? `&variant=${variantIndex}` : "";
+      const fromRoute = fromSource ? `&from=${encodeURIComponent(fromSource)}` : "";
+      const fromAttr = fromSource ? ` data-from="${fromSource}"` : "";
       const meta = (stockNote || price)
         ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
         : "";
-      return `<a class="item${featuredVariant ? " home-arrival-card" : ""}" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}${stackStyle}"><div class="cloth${photoClass}${galleryClass}" style="${clothStyle}"${galleryData}>${photoTag}${galleryDots}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
+      return `<a class="item" href="?${id}/${item.slug}${variantRoute}${fromRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}"${fromAttr} style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
@@ -3780,9 +3994,20 @@
 
     function renderBrandItems(id, data) {
       const list = sortItemsByAvailability(filterItemsByBrandFilters(data.items, brandCategoryFilters, brandColorFilters), brandColorFilters);
-      items.innerHTML = list.length
-        ? list.map((item) => itemCard(id, item, brandColorFilters)).join("")
-        : `<p class="blurb">${t("noFilterItems")}</p>`;
+      if (!list.length) {
+        items.innerHTML = `<p class="blurb">${t("noFilterItems")}</p>`;
+        window.requestAnimationFrame(() => observeScrollBlocks(items));
+        return;
+      }
+      const showCategoryTitles = brandCategoryFilters.length !== 1;
+      const groups = showCategoryTitles ? groupItemsByCategory(list) : [{ category: "", items: list }];
+      items.innerHTML = groups.map(({ category, items: rows }) => {
+        const title = category && showCategoryTitles && groups.length > 1
+          ? `<h3>${brandCategoryLabel[category] || category}</h3>`
+          : "";
+        return `<div class="product-rail-block">${title}${renderProductRail(rows.map((item) => itemCard(id, item, brandColorFilters)).join(""))}</div>`;
+      }).join("");
+      bindProductRails(items);
       window.requestAnimationFrame(() => observeScrollBlocks(items));
     }
 
@@ -3968,22 +4193,46 @@
     }
 
     function renderCatalogBody() {
+      const splitByCategory = catalogCategoryFilters.length > 1;
       const groups = catalogEntries()
-        .map(({ id, data, items: list }) => ({ id, data, items: sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters) }))
-        .filter(({ items: list }) => list.length);
+        .map(({ id, data, items: list }) => {
+          const matching = sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters);
+          if (!matching.length) return null;
+          if (!splitByCategory) return { id, data, items: matching };
+          const rows = brandCategoryKeys
+            .filter((category) => catalogCategoryFilters.includes(category))
+            .map((category) => {
+              const itemsForCategory = matching.filter((item) => itemCategory(item) === category);
+              return itemsForCategory.length ? { category, items: itemsForCategory } : null;
+            })
+            .filter(Boolean);
+          return rows.length ? { id, data, rows } : null;
+        })
+        .filter(Boolean);
+      catalogBody.classList.add("product-rail-stack");
       catalogBody.innerHTML = groups.length
-        ? groups.map(({ id, data, items: list }) =>
-            `<div class="catalog-group"><h2>${data.title}</h2><div class="items">${list.map((item) => itemCard(id, item, catalogColorFilters)).join("")}</div></div>`
-          ).join("")
+        ? groups.map((group) => {
+            if (group.rows) {
+              const rows = group.rows.map(({ category, items: list }) =>
+                `<div class="product-rail-block"><h3>${brandCategoryLabel[category]}</h3>${renderProductRail(list.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`
+              ).join("");
+              return `<div class="catalog-group"><h2>${group.data.title}</h2>${rows}</div>`;
+            }
+            return `<div class="catalog-group"><h2>${group.data.title}</h2>${renderProductRail(group.items.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`;
+          }).join("")
         : `<p class="blurb">${t("noCatalogItems")}</p>`;
+      bindProductRails(catalogBody);
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
 
-    function paintCatalog(_gender, animate) {
+    function paintCatalog(category, animate) {
       reveal(() => {
-        document.getElementById("catalog-crumb").textContent = t("catalogTitle");
-        document.getElementById("catalog-title").textContent = t("catalogTitle");
-        document.getElementById("catalog-blurb").textContent = t("catalogDescription");
+        const label = brandCategoryKeys.includes(category) ? brandCategoryLabel[category] : "";
+        document.getElementById("catalog-crumb").textContent = label || t("catalogTitle");
+        document.getElementById("catalog-title").textContent = label || t("catalogTitle");
+        document.getElementById("catalog-blurb").textContent = label
+          ? t("catalogFilteredDescription", { category: label })
+          : t("catalogDescription");
         renderCatalogFilters();
         renderCatalogBody();
         home.classList.remove("on");
@@ -4026,10 +4275,16 @@
       const cutsEl = document.getElementById("product-cuts");
       cutsEl.hidden = cuts.length < 2;
       document.getElementById("cut-options").innerHTML = cuts.length > 1
-        ? cuts.map((cut) =>
-            `<button type="button" class="cut${cut === variant.cut ? " on" : ""}" data-cut="${cut}">${localizedGarmentType(cut)}</button>`
-          ).join("")
+        ? cuts.map((cut) => {
+            const label = localizedGarmentType(cut);
+            const infoKey = cutInfoKey(cut);
+            const info = infoKey
+              ? `<span class="cut-info" data-cut-info="${cut}" role="button" tabindex="0" aria-label="${t("cutInfoLabel", { cut: label })}">i</span>`
+              : "";
+            return `<button type="button" class="cut${cut === variant.cut ? " on" : ""}" data-cut="${cut}">${label}${info}</button>`;
+          }).join("")
         : "";
+      hideCutInfoPop();
       const colorPool = variantsForCut(item, variant.cut);
       const colors = document.getElementById("product-colors");
       const many = colorPool.length > 1;
@@ -4072,10 +4327,18 @@
       currentBrand = id;
       currentItem = item;
       reveal(() => {
+        const itemName = localizedItemName(item.name);
+        const fromNew = new URLSearchParams(location.search).get("from") === "new";
+        const standardCrumbs = document.getElementById("product-crumbs-standard");
+        const newCrumbs = document.getElementById("product-crumbs-new");
+        standardCrumbs.hidden = fromNew;
+        newCrumbs.hidden = !fromNew;
         document.getElementById("product-country").textContent = localizedCountry(data.country);
         document.getElementById("product-brand").textContent = data.title;
-        document.getElementById("product-crumb").textContent = localizedItemName(item.name);
-        document.getElementById("product-title").textContent = localizedItemName(item.name);
+        document.getElementById("product-crumb").textContent = itemName;
+        document.getElementById("product-crumb-new").textContent = itemName;
+        document.getElementById("product-from-new").textContent = t("newArrivalsTitle");
+        document.getElementById("product-title").textContent = itemName;
         const requestedVariant = new URLSearchParams(location.search).get("variant");
         const requestedIndex = requestedVariant !== null && /^\d+$/.test(requestedVariant)
           ? Number(requestedVariant)
@@ -4106,6 +4369,60 @@
       return location.hash.replace(/^#/, "");
     }
 
+    function readViewState() {
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(VIEW_STORAGE_KEY) || "null");
+        return saved && typeof saved === "object" ? saved : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveViewState() {
+      if (ignoreScrollSave) return;
+      try {
+        sessionStorage.setItem(VIEW_STORAGE_KEY, JSON.stringify({
+          route: currentRoute(),
+          scrollY: Math.max(0, Math.round(window.scrollY || 0)),
+          catalogCategoryFilters,
+          catalogColorFilters,
+          brandCategoryFilters,
+          brandColorFilters
+        }));
+      } catch (error) {}
+    }
+
+    function hydrateViewStateFromSession() {
+      const saved = readViewState();
+      if (!saved || saved.route !== currentRoute()) return false;
+      if (Array.isArray(saved.catalogCategoryFilters)) catalogCategoryFilters = saved.catalogCategoryFilters.filter(Boolean);
+      if (Array.isArray(saved.catalogColorFilters)) catalogColorFilters = saved.catalogColorFilters.filter(Boolean);
+      if (Array.isArray(saved.brandCategoryFilters)) brandCategoryFilters = saved.brandCategoryFilters.filter(Boolean);
+      if (Array.isArray(saved.brandColorFilters)) brandColorFilters = saved.brandColorFilters.filter(Boolean);
+      if (typeof saved.scrollY === "number" && saved.scrollY > 0) restoreScrollY = saved.scrollY;
+      return true;
+    }
+
+    function finishScrollRestore() {
+      if (restoreScrollY == null) {
+        saveViewState();
+        return;
+      }
+      const y = restoreScrollY;
+      restoreScrollY = null;
+      ignoreScrollSave = true;
+      const applyScroll = () => window.scrollTo(0, y);
+      applyScroll();
+      requestAnimationFrame(() => {
+        applyScroll();
+        requestAnimationFrame(() => {
+          applyScroll();
+          ignoreScrollSave = false;
+          saveViewState();
+        });
+      });
+    }
+
     function apply(animate) {
       const [first, second] = currentRoute().split("/").filter(Boolean);
       closeMenus();
@@ -4118,8 +4435,14 @@
         return;
       }
       if (first === "catalog") {
-        const gender = ["unisex", "women", "men"].includes(second) ? second : "all";
-        paintCatalog(gender, animate);
+        const category = brandCategoryKeys.includes(second) ? second : "";
+        if (syncFiltersFromRoute) {
+          catalogCategoryFilters = category ? [category] : [];
+          if (category) catalogColorFilters = [];
+        }
+        const titleCategory = category
+          || (catalogCategoryFilters.length === 1 ? catalogCategoryFilters[0] : "");
+        paintCatalog(titleCategory || "all", animate);
         return;
       }
       if (countryName[first] && !second) {
@@ -4127,6 +4450,10 @@
         return;
       }
       if (brands[first] && !second) {
+        if (syncFiltersFromRoute && currentBrand !== first) {
+          brandCategoryFilters = [];
+          brandColorFilters = [];
+        }
         paintBrand(first, animate);
         return;
       }
@@ -4153,7 +4480,10 @@
       const savedPhoto = currentPhotoIndex;
       const savedSize = document.querySelector("#size-options .size.on")?.textContent.trim() || "";
       closeLightbox();
+      const previousSync = syncFiltersFromRoute;
+      syncFiltersFromRoute = false;
       apply(false);
+      syncFiltersFromRoute = previousSync;
       if (isProductRoute && currentItem?.slug === savedItemSlug) {
         fillVariant(brands[currentBrand], currentItem, savedTone);
         showProductPhoto(savedPhoto);
@@ -4193,12 +4523,16 @@
     function navigate(route) {
       const next = String(route).replace(/^#/, "");
       closeLightbox();
+      syncFiltersFromRoute = true;
+      restoreScrollY = null;
       if (currentRoute() === next) {
         apply(true);
+        saveViewState();
         return;
       }
       history.pushState(null, "", next ? location.pathname + "?" + next : location.pathname);
       apply(true);
+      saveViewState();
     }
 
     menuBtn.addEventListener("click", (event) => {
@@ -4245,7 +4579,7 @@
     document.querySelectorAll("#site-menu-list [data-catalog]").forEach((button) => {
       button.addEventListener("click", () => {
         const value = button.dataset.catalog;
-        navigate(value === "all" ? "catalog" : `catalog/${value}`);
+        navigate(brandCategoryKeys.includes(value) ? `catalog/${value}` : "catalog");
       });
     });
     document.getElementById("logo").addEventListener("click", () => navigate(""));
@@ -4294,109 +4628,89 @@
         }, 50);
       }, { passive: false });
     }
-    let suppressItemCardClickUntil = 0;
-    const itemCardPhotoTransitions = new WeakMap();
-    function setItemCardPhoto(cloth, source) {
-      const image = cloth.querySelector("img");
-      if (!image || image.src === new URL(source, document.baseURI).href) return;
-      const previous = itemCardPhotoTransitions.get(cloth);
-      if (previous) {
-        window.clearTimeout(previous.timer);
-        window.clearTimeout(previous.revealTimer);
-        if (previous.preload) {
-          previous.preload.onload = null;
-          previous.preload.onerror = null;
-        }
-      }
-      const transition = { timer: 0, revealTimer: 0, preload: null, started: false };
-      itemCardPhotoTransitions.set(cloth, transition);
-      const showPhoto = () => {
-        if (transition.started || itemCardPhotoTransitions.get(cloth) !== transition) return;
-        transition.started = true;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          image.classList.remove("is-fading");
-          image.src = source;
-          itemCardPhotoTransitions.delete(cloth);
-          return;
-        }
-        image.classList.add("is-fading");
-        transition.timer = window.setTimeout(() => {
-          if (itemCardPhotoTransitions.get(cloth) !== transition) return;
-          image.src = source;
-          transition.revealTimer = window.setTimeout(() => {
-            if (itemCardPhotoTransitions.get(cloth) !== transition) return;
-            image.classList.remove("is-fading");
-            itemCardPhotoTransitions.delete(cloth);
-          }, 32);
-        }, 180);
-      };
-      const preload = new Image();
-      transition.preload = preload;
-      preload.onload = showPhoto;
-      preload.onerror = showPhoto;
-      preload.src = source;
-      if (preload.complete) showPhoto();
-    }
-    function enableItemCardSwipe(container) {
-      let pointerStart = null;
-      container.addEventListener("pointerdown", (event) => {
-        if (event.pointerType === "mouse") return;
-        const cloth = event.target.closest(".cloth[data-gallery-photos]");
-        if (!cloth) return;
-        const photos = JSON.parse(decodeURIComponent(cloth.dataset.galleryPhotos));
-        if (photos.length < 2) return;
-        pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY, cloth, photos };
-      });
-      window.addEventListener("pointerup", (event) => {
-        if (!pointerStart || event.pointerId !== pointerStart.id) return;
-        const deltaX = event.clientX - pointerStart.x;
-        const deltaY = event.clientY - pointerStart.y;
-        const { cloth, photos } = pointerStart;
-        pointerStart = null;
-        if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
-        const nextIndex = (Number(cloth.dataset.photoIndex) + (deltaX < 0 ? 1 : -1) + photos.length) % photos.length;
-        cloth.dataset.photoIndex = String(nextIndex);
-        setItemCardPhoto(cloth, photos[nextIndex]);
-        cloth.querySelectorAll(".item-gallery-dots span").forEach((dot, index) => {
-          dot.classList.toggle("on", index === nextIndex);
+    function bindProductRails(root = document) {
+      root.querySelectorAll(".items.product-rail").forEach((rail) => {
+        if (rail.dataset.railBound === "1") return;
+        rail.dataset.railBound = "1";
+        let drag = null;
+
+        const endDrag = () => {
+          if (!drag) return;
+          rail.classList.remove("is-rail-dragging");
+          if (drag.moved) {
+            rail.addEventListener("click", (event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }, { capture: true, once: true });
+          }
+          drag = null;
+        };
+
+        // Touch: native overflow-x + touch-action:pan-x.
+        // Mouse/trackpad: drag + wheel, because overflow-x alone is awkward on desktop.
+        rail.addEventListener("pointerdown", (event) => {
+          if (event.pointerType === "touch" || event.button !== 0) return;
+          if (event.target.closest("button")) return;
+          if (rail.scrollWidth <= rail.clientWidth + 2) return;
+          drag = {
+            id: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            scrollLeft: rail.scrollLeft,
+            moved: false
+          };
+          rail.classList.add("is-rail-dragging");
+          try { rail.setPointerCapture(event.pointerId); } catch (_) {}
         });
-        suppressItemCardClickUntil = Date.now() + 500;
-      });
-      window.addEventListener("pointercancel", (event) => {
-        if (pointerStart?.id === event.pointerId) pointerStart = null;
-      });
-      enableTrackpadSwipe(container, (direction, event) => {
-        const cloth = event.target.closest(".cloth[data-gallery-photos]");
-        if (!cloth) return;
-        const photos = JSON.parse(decodeURIComponent(cloth.dataset.galleryPhotos));
-        if (photos.length < 2) return;
-        const nextIndex = (Number(cloth.dataset.photoIndex) + (direction > 0 ? 1 : -1) + photos.length) % photos.length;
-        cloth.dataset.photoIndex = String(nextIndex);
-        setItemCardPhoto(cloth, photos[nextIndex]);
-        cloth.querySelectorAll(".item-gallery-dots span").forEach((dot, index) => {
-          dot.classList.toggle("on", index === nextIndex);
+
+        rail.addEventListener("pointermove", (event) => {
+          if (!drag || event.pointerId !== drag.id) return;
+          const dx = event.clientX - drag.startX;
+          const dy = event.clientY - drag.startY;
+          if (Math.abs(dx) < 3) return;
+          if (Math.abs(dx) < Math.abs(dy)) {
+            endDrag();
+            return;
+          }
+          rail.scrollLeft = drag.scrollLeft - dx;
+          if (Math.abs(dx) > 6) drag.moved = true;
         });
-      }, (event) => Boolean(event.target.closest(".cloth[data-gallery-photos]")));
+
+        rail.addEventListener("pointerup", (event) => {
+          if (!drag || event.pointerId !== drag.id) return;
+          endDrag();
+        });
+        rail.addEventListener("pointercancel", (event) => {
+          if (!drag || event.pointerId !== drag.id) return;
+          endDrag();
+        });
+
+        rail.addEventListener("wheel", (event) => {
+          if (rail.scrollWidth <= rail.clientWidth + 2) return;
+          const mostlyHorizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+          const shiftWheel = event.shiftKey && Math.abs(event.deltaY) > 0;
+          if (!mostlyHorizontal && !shiftWheel) return;
+          const delta = mostlyHorizontal ? event.deltaX : event.deltaY;
+          if (!delta) return;
+          if (event.cancelable) event.preventDefault();
+          rail.scrollLeft += delta;
+        }, { passive: false });
+      });
     }
-    enableItemCardSwipe(items);
-    enableItemCardSwipe(catalogBody);
     function openItemCard(event) {
       const card = event.target.closest("a.item");
       if (!card) return;
-      if (Date.now() < suppressItemCardClickUntil) {
-        suppressItemCardClickUntil = 0;
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
       event.preventDefault();
       const brandId = card.dataset.brand || currentBrand;
       const variant = card.dataset.variant;
-      navigate(`${brandId}/${card.dataset.slug}${variant === undefined ? "" : `&variant=${variant}`}`);
+      const from = card.dataset.from;
+      navigate(`${brandId}/${card.dataset.slug}${variant === undefined ? "" : `&variant=${variant}`}${from ? `&from=${from}` : ""}`);
     }
     items.addEventListener("click", openItemCard);
     catalogBody.addEventListener("click", openItemCard);
+    document.getElementById("home-new-arrivals").addEventListener("click", openItemCard);
+    document.getElementById("home-restocked").addEventListener("click", openItemCard);
     document.getElementById("brand-filters").addEventListener("click", (event) => {
       const toggle = event.target.closest("#brand-filter-toggle");
       if (toggle) {
@@ -4423,6 +4737,7 @@
         document.querySelectorAll("#brand-filter-panel [data-brand-category], #brand-filter-panel [data-brand-color]").forEach((checkbox) => { checkbox.checked = false; });
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
         return;
       }
       const chip = event.target.closest("[data-remove-brand-category]");
@@ -4434,6 +4749,7 @@
         if (checkbox) checkbox.checked = false;
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
         return;
       }
       const colorChip = event.target.closest("[data-remove-brand-color]");
@@ -4445,6 +4761,7 @@
         if (checkbox) checkbox.checked = false;
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
       }
     });
     document.getElementById("brand-filters").addEventListener("change", (event) => {
@@ -4456,6 +4773,7 @@
         .map((option) => option.dataset.brandColor);
       updateBrandFilterSummary();
       renderBrandItems(currentBrand, brands[currentBrand]);
+      saveViewState();
     });
     document.addEventListener("click", (event) => {
       if (!event.target.closest("#brand-filters .category-filter")) setBrandFilterPanelOpen(false);
@@ -4487,6 +4805,7 @@
         document.querySelectorAll("#catalog-filter-panel [data-catalog-category], #catalog-filter-panel [data-catalog-color]").forEach((checkbox) => { checkbox.checked = false; });
         updateCatalogFilterSummary();
         renderCatalogBody();
+        saveViewState();
         return;
       }
       const categoryChip = event.target.closest("[data-remove-catalog-category]");
@@ -4498,6 +4817,7 @@
         if (checkbox) checkbox.checked = false;
         updateCatalogFilterSummary();
         renderCatalogBody();
+        saveViewState();
         return;
       }
       const colorChip = event.target.closest("[data-remove-catalog-color]");
@@ -4509,6 +4829,7 @@
         if (checkbox) checkbox.checked = false;
         updateCatalogFilterSummary();
         renderCatalogBody();
+        saveViewState();
       }
     });
     document.getElementById("catalog-filters").addEventListener("change", (event) => {
@@ -4520,8 +4841,15 @@
         .map((option) => option.dataset.catalogColor);
       updateCatalogFilterSummary();
       renderCatalogBody();
+      saveViewState();
     });
     document.getElementById("product-all").addEventListener("click", () => navigate(""));
+    document.getElementById("product-from-new").addEventListener("click", () => {
+      navigate("");
+      window.requestAnimationFrame(() => {
+        document.getElementById("home-new-arrivals")?.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    });
     document.getElementById("product-country").addEventListener("click", () => {
       navigate(countrySlug[brands[currentBrand]?.country] || "");
     });
@@ -4531,14 +4859,47 @@
       navigate(currentBrand);
     });
     document.getElementById("cut-options").addEventListener("click", (event) => {
+      const info = event.target.closest("[data-cut-info]");
+      if (info) {
+        event.preventDefault();
+        event.stopPropagation();
+        const cut = info.dataset.cutInfo;
+        const pop = document.getElementById("cut-info-pop");
+        if (pop && !pop.hidden && pop.dataset.cut === cut) {
+          hideCutInfoPop();
+          return;
+        }
+        showCutInfoPop(info, cut);
+        if (pop) pop.dataset.cut = cut;
+        return;
+      }
       const button = event.target.closest(".cut");
       if (!button || !currentItem || !currentBrand) return;
+      hideCutInfoPop();
       const cut = button.dataset.cut;
       const current = currentItem.variants[currentTone] || currentItem.variants[0];
       const sameTone = currentItem.variants.findIndex((variant) => variant.cut === cut && variant.tone === current.tone);
       const fallback = currentItem.variants.findIndex((variant) => variant.cut === cut);
       fillVariant(brands[currentBrand], currentItem, sameTone !== -1 ? sameTone : fallback);
     });
+    document.getElementById("cut-options").addEventListener("keydown", (event) => {
+      const info = event.target.closest("[data-cut-info]");
+      if (!info || (event.key !== "Enter" && event.key !== " ")) return;
+      event.preventDefault();
+      event.stopPropagation();
+      info.click();
+    });
+    document.addEventListener("pointerdown", (event) => {
+      const pop = document.getElementById("cut-info-pop");
+      if (!pop || pop.hidden) return;
+      if (event.target.closest("#cut-info-pop") || event.target.closest("[data-cut-info]")) return;
+      hideCutInfoPop();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hideCutInfoPop();
+    });
+    window.addEventListener("resize", hideCutInfoPop);
+    window.addEventListener("scroll", hideCutInfoPop, true);
     document.getElementById("color-options").addEventListener("click", (event) => {
       const button = event.target.closest(".tone");
       if (!button || !currentItem || !currentBrand) return;
@@ -4682,15 +5043,33 @@
     setCurrency(currentCurrency, false);
     closeUnlistedGodderobStock();
     renderCartContents();
-    Promise.all([loadAvailabilityFeed(), loadFxRates()]).finally(() => apply(false));
+    try { history.scrollRestoration = "manual"; } catch (error) {}
+    if (hydrateViewStateFromSession()) syncFiltersFromRoute = false;
+    Promise.all([loadAvailabilityFeed(), loadFxRates()]).finally(() => {
+      apply(false);
+      syncFiltersFromRoute = true;
+      finishScrollRestore();
+    });
+    window.addEventListener("scroll", () => {
+      if (ignoreScrollSave) return;
+      window.clearTimeout(scrollSaveTimer);
+      scrollSaveTimer = window.setTimeout(saveViewState, 120);
+    }, { passive: true });
+    window.addEventListener("pagehide", saveViewState);
     window.addEventListener("popstate", () => {
       closeLightbox();
+      syncFiltersFromRoute = true;
+      restoreScrollY = null;
       apply(true);
+      saveViewState();
     });
     window.addEventListener("hashchange", () => {
       if (!location.search) {
         closeLightbox();
+        syncFiltersFromRoute = true;
+        restoreScrollY = null;
         apply(true);
+        saveViewState();
       }
     });
   </script>
