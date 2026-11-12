@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- pages-redeploy: 2026-11-12-rail-swipe-2 -->
+<!-- pages-redeploy: 2026-11-12-catalog-rail-contain -->
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -28,7 +28,7 @@
     }
     * { box-sizing: border-box; }
     html { color-scheme: light; }
-    html, body { margin: 0; }
+    html, body { margin: 0; overflow-x: clip; }
     body {
       position: relative;
       isolation: isolate;
@@ -302,11 +302,11 @@
     .filters .filter-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 32px; padding: 5px 9px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 252, 248, .8); color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
     .filters .filter-chip:hover { border-color: #cfc6bb; background: #f3efe8; color: var(--ink); }
     .filter-chip-x { color: var(--muted); font-size: 15px; line-height: 1; }
-    .catalog-group { margin-top: 8px; }
+    .catalog-group { margin-top: 8px; min-width: 0; max-width: 100%; }
     .catalog-group h2 { margin: 28px 0 0; }
     .catalog-group .items { padding-top: 14px; padding-bottom: 8px; }
-    .product-rail-stack { display: grid; gap: 8px; padding: 18px 0 36px; }
-    .product-rail-block { min-width: 0; }
+    .product-rail-stack { display: grid; gap: 8px; padding: 18px 0 36px; min-width: 0; max-width: 100%; }
+    .product-rail-block { min-width: 0; max-width: 100%; }
     .product-rail-block h3 {
       margin: 16px 0 0;
       color: var(--muted);
@@ -321,6 +321,10 @@
       flex-wrap: nowrap;
       align-items: stretch;
       gap: 14px;
+      box-sizing: border-box;
+      width: calc(100% + (2 * var(--wrap-gutter, 16px)));
+      max-width: calc(100% + (2 * var(--wrap-gutter, 16px)));
+      min-width: 0;
       margin-inline: calc(0px - var(--wrap-gutter, 16px));
       padding: 14px var(--wrap-gutter, 16px) 20px;
       overflow-x: auto;
@@ -329,7 +333,7 @@
       scroll-padding-inline: var(--wrap-gutter, 16px);
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
-      touch-action: pan-x;
+      touch-action: manipulation;
       cursor: grab;
       scrollbar-width: none;
     }
@@ -344,14 +348,13 @@
       width: min(72vw, 240px);
       max-width: 240px;
       scroll-snap-align: start;
-      touch-action: pan-x;
       -webkit-user-drag: none;
     }
     .items.product-rail .cloth,
     .items.product-rail .cloth img {
-      touch-action: pan-x;
       -webkit-user-drag: none;
       user-select: none;
+      pointer-events: none;
     }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
@@ -3001,7 +3004,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           });
         }, { threshold: 0.14, rootMargin: "0px 0px -36px 0px" })
       : null;
-    const scrollRevealSelector = ".hero-copy, [data-country-group] > h2, .brand, .item, .product, .cart-line, .checkout-form";
+    const scrollRevealSelector = ".hero-copy, [data-country-group] > h2, .brand, .product, .cart-line, .checkout-form";
     const heroCarousel = document.querySelector("#home .hero");
     if (heroCarousel) {
       const heroSlides = Array.from(heroCarousel.querySelectorAll("[data-hero-slide]"));
