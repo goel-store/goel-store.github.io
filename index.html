@@ -3593,7 +3593,11 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     }
 
     function sortItemsByAvailability(list, colors = []) {
-      return [...list].sort((left, right) => Number(itemAvailableForColors(right, colors)) - Number(itemAvailableForColors(left, colors)));
+      return [...list].sort((left, right) => {
+        const newDelta = Number(right.newArrival === true) - Number(left.newArrival === true);
+        if (newDelta) return newDelta;
+        return Number(itemAvailableForColors(right, colors)) - Number(itemAvailableForColors(left, colors));
+      });
     }
 
     function filterItemsByGender(list, gender) {
