@@ -4424,7 +4424,9 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           }).join("")
         : "";
       hideCutInfoPop();
-      const colorPool = variantsForCut(item, variant.cut);
+      const colorPool = [...variantsForCut(item, variant.cut)].sort((left, right) =>
+        Number(variantInStock(right)) - Number(variantInStock(left))
+      );
       const colors = document.getElementById("product-colors");
       const many = colorPool.length > 1;
       colors.hidden = !many;
