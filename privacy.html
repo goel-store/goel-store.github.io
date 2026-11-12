@@ -36,7 +36,21 @@
     h2 { margin: 0 0 8px; font-size: 23px; }
     section p { margin: 0; color: var(--muted); }
     .contact { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); }
-    footer { padding: 18px 0 26px; border-top: 1px solid rgba(244,233,220,.12); color: var(--muted); font-size: 13px; }
+
+    .site-footer { margin-top: 0; padding: 18px 0 26px; border-top: 1px solid rgba(244,233,220,.12); color: var(--muted); font-size: 13px; }
+    .site-footer .wrap { display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: 16px 24px; }
+    .site-footer .footer-main { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; min-width: 0; }
+    .site-footer .footer-brand { flex: 0 0 auto; color: var(--ink); font-weight: 650; letter-spacing: .06em; }
+    .site-footer nav { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; }
+    .site-footer .footer-links a { color: var(--accent); text-decoration: none; }
+    .site-footer .footer-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .site-footer .footer-social { flex: 0 0 auto; margin-left: auto; gap: 8px; }
+    .site-footer .footer-social a {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 10px; color: var(--muted); text-decoration: none;
+    }
+    .site-footer .footer-social a:hover { color: var(--accent); }
+    .site-footer .footer-social svg { display: block; width: 18px; height: 18px; }
     @media (max-width: 560px) { .wrap { width: min(100% - 28px, 760px); } .site-header { --header-gutter: 14px; height: 56px; } .wordmark { font-size: 19px; } .header-actions { gap: 12px; } main { padding-top: 30px; } article { border-radius: 16px; } }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
   </style>
@@ -64,7 +78,26 @@
       <section class="contact"><h2 data-i18n="contactTitle">Связаться с GO’EL</h2><p><a href="https://t.me/JHVHGOeL" target="_blank" rel="noopener noreferrer" data-i18n="contactLink">Написать в Telegram</a></p></section>
     </article>
   </main>
-  <footer><div class="wrap">GO’EL</div></footer>
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-main">
+        <span class="footer-brand">GO’EL</span>
+        <nav class="footer-links" aria-label="Информация" data-i18n-aria="footerNavigation">
+          <a href="privacy.html" data-i18n="privacyLink">Политика обработки данных</a>
+          <a href="delivery.html" data-i18n="deliveryPayment">Оплата и доставка</a>
+          <a href="tracking.html" data-i18n="trackOrder">Отследить заказ</a>
+        </nav>
+      </div>
+      <nav class="footer-social" aria-label="Социальные сети" data-i18n-aria="socialNetworks">
+        <a href="https://t.me/JHVHGOeL" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 3.4 2.8 10.7c-1.3.5-1.3 1.2-.2 1.5l4.6 1.4 1.7 5.4c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.4-2.3 4.8 3.5c.9.5 1.5.2 1.7-.8L23.3 5c.3-1.3-.5-1.9-1.7-1.6zM8.7 13.2l9.3-5.8c.5-.3.9-.1.5.2l-7.7 7-.3 3.4-1.8-4.8z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/jehovah_goel/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.8" cy="6.5" r="1.1" fill="currentColor"/></svg>
+        </a>
+      </nav>
+    </div>
+  </footer>
   <script>
     const translations = {
       ru: {
@@ -84,7 +117,7 @@
     Object.assign(translations.be, { browserTitle: "Налады браўзера", browserBody: "Сайт захоўвае ў лакальным сховішчы браўзера выбраны язык, валюту і змест кошыка. На час афармлення заяўкі ў sessionStorage можа захоўвацца службовы ключ адпраўкі. Кантактныя даныя з формы ў браўзеры не захоўваюцца. Старонка адсочвання адпраўляе ўведзены код на сервер GO’EL, каб паказаць статус замовы." });
     Object.assign(translations.uk, { browserTitle: "Налаштування браузера", browserBody: "Сайт зберігає в локальному сховищі браузера обрану мову, валюту та вміст кошика. На час оформлення заявки в sessionStorage може зберігатися службовий ключ надсилання. Контактні дані з форми в браузері не зберігаються. Сторінка відстеження надсилає введений код на сервер GO’EL, щоб показати статус замовлення." });
     Object.assign(translations.en, { browserTitle: "Browser settings", browserBody: "The site saves your selected language, currency and cart contents in your browser’s local storage. While you submit a request, a temporary send key may be kept in sessionStorage. Contact details from the form are not stored in the browser. The tracking page sends the code you enter to GO’EL’s server to show order status." });
-    Object.assign(translations.ru, { languageLabel: "Язык" });
+    Object.assign(translations.ru, { privacyLink: "Политика обработки данных", deliveryPayment: "Оплата и доставка", trackOrder: "Отследить заказ", footerNavigation: "Информация", socialNetworks: "Социальные сети", privacyLink: "Палітыка апрацоўкі даных", deliveryPayment: "Аплата і дастаўка", trackOrder: "Адсачыць замову", footerNavigation: "Інфармацыя", socialNetworks: "Сацыяльныя сеткі", privacyLink: "Політика обробки даних", deliveryPayment: "Оплата й доставка", trackOrder: "Відстежити замовлення", footerNavigation: "Інформація", socialNetworks: "Соціальні мережі", privacyLink: "Privacy notice", deliveryPayment: "Payment & delivery", trackOrder: "Track your order", footerNavigation: "Information", socialNetworks: "Social networks", languageLabel: "Язык" });
     Object.assign(translations.be, { languageLabel: "Мова" });
     Object.assign(translations.uk, { languageLabel: "Мова" });
     Object.assign(translations.en, { languageLabel: "Language" });
@@ -98,6 +131,11 @@
       document.querySelector('meta[property="og:title"]')?.setAttribute("content", translations[language].pageTitle);
       document.querySelector('meta[property="og:description"]')?.setAttribute("content", translations[language].description);
       document.querySelectorAll("[data-i18n]").forEach((element) => { element.textContent = translations[language][element.dataset.i18n]; });
+      document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+        const key = element.getAttribute("data-i18n-aria");
+        const value = translations[language][key];
+        if (value) element.setAttribute("aria-label", value);
+      });
       languageSelect.setAttribute("aria-label", translations[language].languageLabel);
       languageSelect.value = language;
     }
