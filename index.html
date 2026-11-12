@@ -329,6 +329,7 @@
       scroll-padding-inline: var(--wrap-gutter, 16px);
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
+      touch-action: pan-x;
       scrollbar-width: none;
     }
     .items.product-rail::-webkit-scrollbar { display: none; }
@@ -337,6 +338,10 @@
       width: min(72vw, 240px);
       max-width: 240px;
       scroll-snap-align: start;
+      touch-action: pan-x;
+    }
+    .items.product-rail .cloth {
+      touch-action: pan-x;
     }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
@@ -376,7 +381,6 @@
       outline-offset: -1px;
       background-color: var(--swatch);
       overflow: hidden;
-      touch-action: pan-y;
     }
     .cloth.has-photo, .product-cloth.has-photo {
       background-color: #ebe4da;
