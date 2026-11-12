@@ -3,8 +3,9 @@
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#2a211d">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Христианские бренды одежды в одной витрине. Выберите вещь и отправьте заявку на заказ онлайн.">
   <link rel="canonical" href="https://goel-store.github.io/">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
@@ -800,8 +801,13 @@
       --forest: #47332a;
       --lime: #f0cba5;
     }
-    html { color-scheme: dark; scrollbar-gutter: stable; }
-    body { background: var(--bg); color: var(--ink); }
+    html { color-scheme: dark; scrollbar-gutter: stable; background: #2a211d; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      background-color: #2a211d;
+      overscroll-behavior-y: none;
+    }
     body::before { filter: blur(28px) saturate(.55); opacity: .22; }
     body::after { background: linear-gradient(180deg, rgba(42, 33, 29, .74), rgba(42, 33, 29, .94)); }
     .wrap {
@@ -815,16 +821,25 @@
       top: 0;
       z-index: 30;
       width: calc(100% + var(--wrap-gutter) + var(--wrap-gutter));
-      height: 64px;
+      height: calc(64px + env(safe-area-inset-top, 0px));
       margin-inline: calc(0px - var(--wrap-gutter));
       flex-wrap: nowrap;
       gap: clamp(10px, 2.4vw, 30px);
-      padding: 0 var(--wrap-gutter);
+      padding: env(safe-area-inset-top, 0px) var(--wrap-gutter) 0;
       border-bottom: 1px solid rgba(244, 233, 220, .12);
-      background: rgba(42, 33, 29, .93);
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
+      background: #2a211d;
       box-sizing: border-box;
+    }
+    header::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -100vh;
+      height: 100vh;
+      background: #2a211d;
+      pointer-events: none;
+      z-index: -1;
     }
     .mark { display: inline-flex; align-items: center; color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: .09em; line-height: 1; }
     .site-menu-toggle, .cart-toggle {
@@ -1251,7 +1266,12 @@
     }
     @media (max-width: 560px) {
       .wrap { --wrap-gutter: 14px; }
-      header { top: 0; height: 56px; gap: 10px 12px; padding: 0 var(--wrap-gutter); }
+      header {
+        top: 0;
+        height: calc(56px + env(safe-area-inset-top, 0px));
+        gap: 10px 12px;
+        padding: env(safe-area-inset-top, 0px) var(--wrap-gutter) 0;
+      }
       .mark { font-size: 19px; }
       .site-menu-toggle { min-height: 36px; padding: 6px 9px; font-size: 12px; }
       .cart-toggle { min-height: 36px; }
