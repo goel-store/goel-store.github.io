@@ -179,6 +179,9 @@
       margin: 28px 0 12px;
     }
     #home.filtered h2 { display: none; }
+    #home.filtered .hero,
+    #home.filtered .home-collection { display: none !important; }
+    #home.filtered #home-crumbs { margin-top: 28px; }
     .brand {
       display: grid;
       grid-template-columns: 64px 1fr auto;
@@ -3973,10 +3976,21 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     }
 
     function renderHomeCollections(country = "all") {
+      const newSection = document.getElementById("home-new-arrivals");
+      const restockedSection = document.getElementById("home-restocked");
+      const newItems = newSection.querySelector(".items");
+      const restockedItems = restockedSection.querySelector(".items");
+      // New arrivals / restocked rails stay on the main home only.
+      if (country !== "all") {
+        newSection.hidden = true;
+        restockedSection.hidden = true;
+        newItems.innerHTML = "";
+        restockedItems.innerHTML = "";
+        window.requestAnimationFrame(() => observeScrollBlocks(home));
+        return;
+      }
       const products = Object.entries(brands).flatMap(([id, data]) =>
-        country !== "all" && data.country !== country
-          ? []
-          : data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
+        data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
       );
       const arrivals = products.flatMap(({ id, item }) => {
         if (item.newArrival !== true) return [];
@@ -3999,10 +4013,6 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         item,
         tones: item.variants.filter((variant) => variantInStock(variant) && recentlyRestockedKeys.has(stockKey(item, variant))).map((variant) => variant.tone)
       })).filter(({ tones }) => tones.length);
-      const newSection = document.getElementById("home-new-arrivals");
-      const restockedSection = document.getElementById("home-restocked");
-      const newItems = newSection.querySelector(".items");
-      const restockedItems = restockedSection.querySelector(".items");
       newSection.hidden = arrivals.length === 0;
       newItems.classList.add("product-rail");
       newItems.innerHTML = arrivals
