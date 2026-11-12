@@ -305,6 +305,39 @@
     .catalog-group { margin-top: 8px; }
     .catalog-group h2 { margin: 28px 0 0; }
     .catalog-group .items { padding-top: 14px; padding-bottom: 8px; }
+    .product-rail-stack { display: grid; gap: 8px; padding: 18px 0 36px; }
+    .product-rail-block { min-width: 0; }
+    .product-rail-block h3 {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .items.product-rail {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 14px;
+      margin-inline: calc(0px - var(--wrap-gutter, 16px));
+      padding: 14px var(--wrap-gutter, 16px) 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--wrap-gutter, 16px);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .items.product-rail::-webkit-scrollbar { display: none; }
+    .items.product-rail .item {
+      flex: 0 0 min(72vw, 240px);
+      width: min(72vw, 240px);
+      max-width: 240px;
+      scroll-snap-align: start;
+    }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
       position: absolute;
@@ -1120,6 +1153,21 @@
     .catalog-group { margin-top: 30px; }
     .catalog-group h2 { margin: 28px 0 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 400; }
     .catalog-group .items { padding-top: 18px; }
+    .product-rail-stack { gap: 10px; padding: 22px 0 48px; }
+    .product-rail-block h3 { margin-top: 18px; color: var(--muted); letter-spacing: .08em; }
+    .items.product-rail { gap: 16px; padding-top: 16px; padding-bottom: 26px; }
+    .items.product-rail .item {
+      flex-basis: min(42vw, 260px);
+      width: min(42vw, 260px);
+      max-width: 260px;
+    }
+    @media (max-width: 720px) {
+      .items.product-rail .item {
+        flex-basis: min(72vw, 240px);
+        width: min(72vw, 240px);
+        max-width: 240px;
+      }
+    }
     .brand {
       grid-template-columns: 58px 1fr auto;
       gap: 14px;
@@ -1405,7 +1453,7 @@
       <p class="stock" id="note"></p>
       <p class="ahead" data-i18n="chooseItemHint">Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.</p>
       <div class="filters" id="brand-filters" hidden></div>
-      <div class="items" id="items"></div>
+      <div class="product-rail-stack" id="items"></div>
     </section>
 
     <section id="catalog" class="view">
@@ -3726,6 +3774,22 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       return `${t("from")} ${formatMoney(min, currentCurrency)}`.trim();
     }
 
+    function renderProductRail(cardsHtml) {
+      return `<div class="items product-rail" role="list">${cardsHtml}</div>`;
+    }
+
+    function groupItemsByCategory(list) {
+      const known = brandCategoryKeys
+        .map((category) => ({
+          category,
+          items: list.filter((item) => itemCategory(item) === category)
+        }))
+        .filter(({ items: rows }) => rows.length);
+      const other = list.filter((item) => !itemCategory(item));
+      if (other.length) known.push({ category: "", items: other });
+      return known;
+    }
+
     function renderHomeCollections(country = "all") {
       const products = Object.entries(brands).flatMap(([id, data]) =>
         country !== "all" && data.country !== country
@@ -3740,12 +3804,16 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       })).filter(({ tones }) => tones.length);
       const newSection = document.getElementById("home-new-arrivals");
       const restockedSection = document.getElementById("home-restocked");
+      const newItems = newSection.querySelector(".items");
+      const restockedItems = restockedSection.querySelector(".items");
       newSection.hidden = arrivals.length === 0;
-      newSection.querySelector(".items").innerHTML = arrivals
+      newItems.classList.add("product-rail");
+      newItems.innerHTML = arrivals
         .map(({ id, item }) => itemCard(id, item, [], "newArrivalBadge"))
         .join("");
       restockedSection.hidden = restocked.length === 0;
-      restockedSection.querySelector(".items").innerHTML = restocked
+      restockedItems.classList.add("product-rail");
+      restockedItems.innerHTML = restocked
         .map(({ id, item, tones }) => itemCard(id, item, tones, "restockedBadge"))
         .join("");
       window.requestAnimationFrame(() => observeScrollBlocks(home));
@@ -3856,9 +3924,19 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
 
     function renderBrandItems(id, data) {
       const list = sortItemsByAvailability(filterItemsByBrandFilters(data.items, brandCategoryFilters, brandColorFilters), brandColorFilters);
-      items.innerHTML = list.length
-        ? list.map((item) => itemCard(id, item, brandColorFilters)).join("")
-        : `<p class="blurb">${t("noFilterItems")}</p>`;
+      if (!list.length) {
+        items.innerHTML = `<p class="blurb">${t("noFilterItems")}</p>`;
+        window.requestAnimationFrame(() => observeScrollBlocks(items));
+        return;
+      }
+      const showCategoryTitles = brandCategoryFilters.length !== 1;
+      const groups = showCategoryTitles ? groupItemsByCategory(list) : [{ category: "", items: list }];
+      items.innerHTML = groups.map(({ category, items: rows }) => {
+        const title = category && showCategoryTitles && groups.length > 1
+          ? `<h3>${brandCategoryLabel[category] || category}</h3>`
+          : "";
+        return `<div class="product-rail-block">${title}${renderProductRail(rows.map((item) => itemCard(id, item, brandColorFilters)).join(""))}</div>`;
+      }).join("");
       window.requestAnimationFrame(() => observeScrollBlocks(items));
     }
 
@@ -4044,18 +4122,33 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     }
 
     function renderCatalogBody() {
+      const splitByCategory = catalogCategoryFilters.length > 1;
       const groups = catalogEntries()
-        .map(({ id, data, items: list }) => ({
-          id,
-          data,
-          items: sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters)
-        }))
-        .filter(({ items: list }) => list.length);
-      catalogBody.classList.remove("catalog-body-rails");
+        .map(({ id, data, items: list }) => {
+          const matching = sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters);
+          if (!matching.length) return null;
+          if (!splitByCategory) return { id, data, items: matching };
+          const rows = brandCategoryKeys
+            .filter((category) => catalogCategoryFilters.includes(category))
+            .map((category) => {
+              const itemsForCategory = matching.filter((item) => itemCategory(item) === category);
+              return itemsForCategory.length ? { category, items: itemsForCategory } : null;
+            })
+            .filter(Boolean);
+          return rows.length ? { id, data, rows } : null;
+        })
+        .filter(Boolean);
+      catalogBody.classList.add("product-rail-stack");
       catalogBody.innerHTML = groups.length
-        ? groups.map(({ id, data, items: list }) =>
-            `<div class="catalog-group"><h2>${data.title}</h2><div class="items">${list.map((item) => itemCard(id, item, catalogColorFilters)).join("")}</div></div>`
-          ).join("")
+        ? groups.map((group) => {
+            if (group.rows) {
+              const rows = group.rows.map(({ category, items: list }) =>
+                `<div class="product-rail-block"><h3>${brandCategoryLabel[category]}</h3>${renderProductRail(list.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`
+              ).join("");
+              return `<div class="catalog-group"><h2>${group.data.title}</h2>${rows}</div>`;
+            }
+            return `<div class="catalog-group"><h2>${group.data.title}</h2>${renderProductRail(group.items.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`;
+          }).join("")
         : `<p class="blurb">${t("noCatalogItems")}</p>`;
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
