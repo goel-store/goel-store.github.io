@@ -4431,14 +4431,28 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
 
+    function updateCatalogChrome(category = "") {
+      const key = brandCategoryKeys.includes(category) ? category : "";
+      const label = key ? brandCategoryLabel[key] : "";
+      document.getElementById("catalog-crumb").textContent = label || t("catalogTitle");
+      document.getElementById("catalog-title").textContent = label || t("catalogTitle");
+      document.getElementById("catalog-blurb").textContent = label
+        ? t("catalogFilteredDescription", { category: label })
+        : t("catalogDescription");
+    }
+
+    function syncCatalogUrlFromFilters() {
+      const category = catalogCategoryFilters.length === 1 ? catalogCategoryFilters[0] : "";
+      const desired = category ? `catalog/${category}` : "catalog";
+      if (currentRoute() !== desired) {
+        history.replaceState(null, "", `${location.pathname}?${desired}`);
+      }
+      updateCatalogChrome(category);
+    }
+
     function paintCatalog(category, animate) {
       reveal(() => {
-        const label = brandCategoryKeys.includes(category) ? brandCategoryLabel[category] : "";
-        document.getElementById("catalog-crumb").textContent = label || t("catalogTitle");
-        document.getElementById("catalog-title").textContent = label || t("catalogTitle");
-        document.getElementById("catalog-blurb").textContent = label
-          ? t("catalogFilteredDescription", { category: label })
-          : t("catalogDescription");
+        updateCatalogChrome(category);
         renderCatalogFilters();
         renderCatalogBody();
         home.classList.remove("on");
@@ -4962,6 +4976,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         document.querySelectorAll("#catalog-filter-panel [data-catalog-category], #catalog-filter-panel [data-catalog-color]").forEach((checkbox) => { checkbox.checked = false; });
         updateCatalogFilterSummary();
         renderCatalogBody();
+        syncCatalogUrlFromFilters();
         saveViewState();
         return;
       }
@@ -4974,6 +4989,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         if (checkbox) checkbox.checked = false;
         updateCatalogFilterSummary();
         renderCatalogBody();
+        syncCatalogUrlFromFilters();
         saveViewState();
         return;
       }
@@ -4998,6 +5014,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         .map((option) => option.dataset.catalogColor);
       updateCatalogFilterSummary();
       renderCatalogBody();
+      syncCatalogUrlFromFilters();
       saveViewState();
     });
     document.getElementById("product-all").addEventListener("click", () => navigate(""));
