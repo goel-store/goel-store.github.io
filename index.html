@@ -1326,7 +1326,11 @@
           </div>
           <button type="button" class="submenu-toggle" id="catalog-toggle" aria-expanded="false" aria-controls="catalog-submenu"><span data-i18n="catalogMenu">Каталог</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list" id="catalog-submenu" hidden>
-            <button type="button" data-catalog="all" data-i18n="all">Всё</button>
+            <button type="button" data-catalog="tshirts" data-i18n="tshirts">Футболки</button>
+            <button type="button" data-catalog="sweatshirts" data-i18n="sweatshirts">Свитшоты</button>
+            <button type="button" data-catalog="longSleeves" data-i18n="longSleeves">Лонгсливы</button>
+            <button type="button" data-catalog="halfZips" data-i18n="halfZips">Полузипы</button>
+            <button type="button" data-catalog="caps" data-i18n="caps">Кепки</button>
           </div>
           <button type="button" class="submenu-toggle" id="language-toggle" aria-expanded="false" aria-controls="language-submenu"><span data-i18n="languageLabel">Язык</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list language-submenu-list" id="language-submenu" role="radiogroup" aria-label="Язык" data-i18n-aria="languageLabel" hidden>
@@ -1412,7 +1416,7 @@
         <h2 data-i18n="russia">Россия</h2>
         <a class="brand" href="?art" data-brand="art">
           <img class="swatch" src="img/art/avatar.jpg" alt="" width="64" height="64">
-          <span><b>art.brand.jesus.saves</b></span>
+          <span><b>Jesus Saves</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
         </a>
       </div>
@@ -1560,7 +1564,7 @@
         allBrands: "Все бренды", view: "Смотреть", chooseItemHint: "Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.", cart: "Корзина", cartTitle: "Корзина", cartCount: "Корзина, товаров: {{count}}", cartEmpty: "Корзина пока пуста. Добавьте товары из каталога.", continueShopping: "Продолжить покупки", addToCart: "В корзину", addedToCart: "Добавлено в корзину.", cartCheckout: "Оформить заявку", cartTotal: "Итого: {{total}}", cartTotalOnRequest: "Итого: стоимость уточняется", cartUnavailable: "Этот вариант больше недоступен. Удалите его из корзины, чтобы продолжить.", removeCartItem: "Удалить товар", decreaseQuantity: "Уменьшить количество", increaseQuantity: "Увеличить количество", checkoutTitle: "Контактные данные",
         cartLimit: "В корзине может быть не больше 25 разных товаров.",
         cartInsufficientStock: "В наличии меньше выбранного количества. Уменьшите количество.",
-        catalogTitle: "Каталог", catalogDescription: "Одежда всех брендов в одном месте.", catalogFilteredDescription: "{{gender}} от всех брендов.",
+        catalogTitle: "Каталог", catalogDescription: "Одежда всех брендов в одном месте.", catalogFilteredDescription: "{{category}} от всех брендов.",
         enlargePhoto: "Нажмите, чтобы увеличить", previousPhoto: "Предыдущее фото", nextPhoto: "Следующее фото", photoPlaceholder: "Место под фото",
         model: "Модель", color: "Цвет", size: "Размер", order: "Заказать", orderNotConnected: "Оформление заказа ещё не включено.",
         orderTitle: "Заявка на заказ", orderSetupConnected: "После отправки заявка придёт GO’EL в Telegram.", orderSetupDisabled: "Приём заявок включится после подключения Telegram-бота.",
@@ -1588,7 +1592,7 @@
         allBrands: "Усе брэнды", view: "Глядзець", chooseItemHint: "Выберыце рэч і варыянт — заяўку можна будзе пакінуць проста на сайце.", cart: "Кошык", cartTitle: "Кошык", cartCount: "Кошык, тавараў: {{count}}", cartEmpty: "Кошык пакуль пусты. Дадайце тавары з каталога.", continueShopping: "Працягнуць пакупкі", addToCart: "У кошык", addedToCart: "Дададзена ў кошык.", cartCheckout: "Аформіць заяўку", cartTotal: "Разам: {{total}}", cartTotalOnRequest: "Разам: кошт удакладняецца", cartUnavailable: "Гэты варыянт больш недаступны. Выдаліце яго з кошыка, каб працягнуць.", removeCartItem: "Выдаліць тавар", decreaseQuantity: "Паменшыць колькасць", increaseQuantity: "Павялічыць колькасць", checkoutTitle: "Кантактныя даныя",
         cartLimit: "У кошыку можа быць не больш за 25 розных тавараў.",
         cartInsufficientStock: "У наяўнасці менш выбранай колькасці. Паменшыце колькасць.",
-        catalogTitle: "Каталог", catalogDescription: "Адзенне ўсіх брэндаў у адным месцы.", catalogFilteredDescription: "{{gender}} ад усіх брэндаў.",
+        catalogTitle: "Каталог", catalogDescription: "Адзенне ўсіх брэндаў у адным месцы.", catalogFilteredDescription: "{{category}} ад усіх брэндаў.",
         enlargePhoto: "Націсніце, каб павялічыць", previousPhoto: "Папярэдняе фота", nextPhoto: "Наступнае фота", photoPlaceholder: "Месца для фота",
         model: "Мадэль", color: "Колер", size: "Памер", order: "Замовіць", orderNotConnected: "Афармленне замовы яшчэ не ўключана.",
         orderTitle: "Заяўка на замову", orderSetupConnected: "Пасля адпраўкі заяўка прыйдзе GO’EL у Telegram.", orderSetupDisabled: "Прыём заявак уключыцца пасля падключэння Telegram-бота.",
@@ -1616,7 +1620,7 @@
         allBrands: "Усі бренди", view: "Переглянути", chooseItemHint: "Оберіть річ і варіант — заявку можна буде залишити просто на сайті.", cart: "Кошик", cartTitle: "Кошик", cartCount: "Кошик, товарів: {{count}}", cartEmpty: "Кошик поки порожній. Додайте товари з каталогу.", continueShopping: "Продовжити покупки", addToCart: "До кошика", addedToCart: "Додано до кошика.", cartCheckout: "Оформити заявку", cartTotal: "Разом: {{total}}", cartTotalOnRequest: "Разом: вартість уточнюється", cartUnavailable: "Цей варіант більше недоступний. Видаліть його з кошика, щоб продовжити.", removeCartItem: "Видалити товар", decreaseQuantity: "Зменшити кількість", increaseQuantity: "Збільшити кількість", checkoutTitle: "Контактні дані",
         cartLimit: "У кошику може бути не більше 25 різних товарів.",
         cartInsufficientStock: "У наявності менше вибраної кількості. Зменште кількість.",
-        catalogTitle: "Каталог", catalogDescription: "Одяг усіх брендів в одному місці.", catalogFilteredDescription: "{{gender}} від усіх брендів.",
+        catalogTitle: "Каталог", catalogDescription: "Одяг усіх брендів в одному місці.", catalogFilteredDescription: "{{category}} від усіх брендів.",
         enlargePhoto: "Натисніть, щоб збільшити", previousPhoto: "Попереднє фото", nextPhoto: "Наступне фото", photoPlaceholder: "Місце для фото",
         model: "Модель", color: "Колір", size: "Розмір", order: "Замовити", orderNotConnected: "Оформлення замовлення ще не ввімкнено.",
         orderTitle: "Заявка на замовлення", orderSetupConnected: "Після надсилання заявка надійде GO’EL у Telegram.", orderSetupDisabled: "Приймання заявок увімкнеться після підключення Telegram-бота.",
@@ -1644,7 +1648,7 @@
         allBrands: "All brands", view: "Browse", chooseItemHint: "Choose an item and a variant — you can submit a request right here on the site.", cart: "Cart", cartTitle: "Your cart", cartCount: "Cart, items: {{count}}", cartEmpty: "Your cart is empty. Add items from the catalog.", continueShopping: "Continue shopping", addToCart: "Add to cart", addedToCart: "Added to cart.", cartCheckout: "Submit request", cartTotal: "Total: {{total}}", cartTotalOnRequest: "Total: price to be confirmed", cartUnavailable: "This option is no longer available. Remove it from your cart to continue.", removeCartItem: "Remove item", decreaseQuantity: "Decrease quantity", increaseQuantity: "Increase quantity", checkoutTitle: "Contact details",
         cartLimit: "Your cart can contain up to 25 different items.",
         cartInsufficientStock: "There aren’t enough items in stock. Reduce the quantity.",
-        catalogTitle: "Catalog", catalogDescription: "Clothing from all brands in one place.", catalogFilteredDescription: "{{gender}} clothing from all brands.",
+        catalogTitle: "Catalog", catalogDescription: "Clothing from all brands in one place.", catalogFilteredDescription: "{{category}} from all brands.",
         enlargePhoto: "Click to enlarge", previousPhoto: "Previous photo", nextPhoto: "Next photo", photoPlaceholder: "Photo placeholder",
         model: "Style", color: "Color", size: "Size", order: "Order", orderNotConnected: "Online ordering is not available yet.",
         orderTitle: "Order request", orderSetupConnected: "Your request will be sent to GO’EL on Telegram.", orderSetupDisabled: "Order requests will be enabled once the Telegram bot is connected.",
@@ -2715,7 +2719,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
   },
   art: {
     country: "Россия",
-    title: "art.brand.jesus.saves",
+    title: "Jesus Saves",
     blurb: "",
     note: "",
     items: [
@@ -4107,11 +4111,14 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
 
-    function paintCatalog(_gender, animate) {
+    function paintCatalog(category, animate) {
       reveal(() => {
-        document.getElementById("catalog-crumb").textContent = t("catalogTitle");
-        document.getElementById("catalog-title").textContent = t("catalogTitle");
-        document.getElementById("catalog-blurb").textContent = t("catalogDescription");
+        const label = brandCategoryKeys.includes(category) ? brandCategoryLabel[category] : "";
+        document.getElementById("catalog-crumb").textContent = label || t("catalogTitle");
+        document.getElementById("catalog-title").textContent = label || t("catalogTitle");
+        document.getElementById("catalog-blurb").textContent = label
+          ? t("catalogFilteredDescription", { category: label })
+          : t("catalogDescription");
         renderCatalogFilters();
         renderCatalogBody();
         home.classList.remove("on");
@@ -4252,8 +4259,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         return;
       }
       if (first === "catalog") {
-        const gender = ["unisex", "women", "men"].includes(second) ? second : "all";
-        paintCatalog(gender, animate);
+        const category = brandCategoryKeys.includes(second) ? second : "";
+        catalogCategoryFilters = category ? [category] : [];
+        if (category) catalogColorFilters = [];
+        paintCatalog(category || "all", animate);
         return;
       }
       if (countryName[first] && !second) {
@@ -4379,7 +4388,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     document.querySelectorAll("#site-menu-list [data-catalog]").forEach((button) => {
       button.addEventListener("click", () => {
         const value = button.dataset.catalog;
-        navigate(value === "all" ? "catalog" : `catalog/${value}`);
+        navigate(brandCategoryKeys.includes(value) ? `catalog/${value}` : "catalog");
       });
     });
     document.getElementById("logo").addEventListener("click", () => navigate(""));
