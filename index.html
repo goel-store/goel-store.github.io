@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- pages-redeploy: 2026-11-12-catalog-rail-contain -->
+<!-- pages-redeploy: 2026-11-12-desktop-rail-wheel -->
 <html lang="ru">
 <head>
   <meta charset="utf-8">
@@ -4637,6 +4637,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         rail.dataset.railBound = "1";
         let drag = null;
 
+        const canScrollRail = () => rail.scrollWidth > rail.clientWidth + 2;
         const endDrag = () => {
           if (!drag) return;
           rail.classList.remove("is-rail-dragging");
@@ -4649,12 +4650,11 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
           drag = null;
         };
 
-        // Touch: native overflow-x + touch-action:pan-x.
-        // Mouse/trackpad: drag + wheel, because overflow-x alone is awkward on desktop.
+        // Phone: native touch overflow.
+        // Mac/desktop: trackpad/wheel over the row moves cards; click-drag also works with a mouse.
         rail.addEventListener("pointerdown", (event) => {
-          if (event.pointerType === "touch" || event.button !== 0) return;
-          if (event.target.closest("button")) return;
-          if (rail.scrollWidth <= rail.clientWidth + 2) return;
+          if (event.pointerType !== "mouse" || event.button !== 0) return;
+          if (event.target.closest("button") || !canScrollRail()) return;
           drag = {
             id: event.pointerId,
             startX: event.clientX,
@@ -4689,14 +4689,17 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         });
 
         rail.addEventListener("wheel", (event) => {
-          if (rail.scrollWidth <= rail.clientWidth + 2) return;
-          const mostlyHorizontal = Math.abs(event.deltaX) > Math.abs(event.deltaY);
-          const shiftWheel = event.shiftKey && Math.abs(event.deltaY) > 0;
-          if (!mostlyHorizontal && !shiftWheel) return;
-          const delta = mostlyHorizontal ? event.deltaX : event.deltaY;
+          if (!canScrollRail()) return;
+          // Trackpad sideways uses deltaX; mouse wheel / vertical trackpad over a row scrolls the row.
+          const delta = Math.abs(event.deltaX) >= Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
           if (!delta) return;
+          const nextLeft = rail.scrollLeft + delta;
+          const maxLeft = rail.scrollWidth - rail.clientWidth;
+          const atStart = rail.scrollLeft <= 0 && delta < 0;
+          const atEnd = rail.scrollLeft >= maxLeft - 1 && delta > 0;
+          if (atStart || atEnd) return;
           if (event.cancelable) event.preventDefault();
-          rail.scrollLeft += delta;
+          rail.scrollLeft = Math.max(0, Math.min(maxLeft, nextLeft));
         }, { passive: false });
       });
     }
