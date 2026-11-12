@@ -78,21 +78,7 @@
       display: flex;
       flex-direction: column;
     }
-    #stage {
-      flex: 1 0 auto;
-      display: flex;
-      flex-direction: column;
-    }
-    #stage > .view.on {
-      width: 100%;
-    }
-    #cart.on.is-empty {
-      flex: 1 0 auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-bottom: 24px;
-    }
+    #stage { flex: 1 0 auto; }
     header {
       display: flex;
       align-items: center;
@@ -3826,7 +3812,6 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       }).join("");
       window.requestAnimationFrame(() => observeScrollBlocks(list));
       document.getElementById("cart-empty").hidden = cartLines.length > 0;
-      document.getElementById("cart").classList.toggle("is-empty", cartLines.length === 0);
       document.getElementById("cart-footer").hidden = cartLines.length === 0;
       document.getElementById("cart-total").textContent = cartTotal(details.filter(Boolean));
       const checkout = document.getElementById("cart-checkout");
