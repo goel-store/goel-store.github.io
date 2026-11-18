@@ -3103,8 +3103,16 @@
       return variants.some(variantInStock);
     }
 
-    function sortItemsByAvailability(list, colors = []) {
-      return [...list].sort((left, right) => Number(itemAvailableForColors(right, colors)) - Number(itemAvailableForColors(left, colors)));
+    function sortItemsByAvailability(list, colors = [], sourceList = list) {
+      // Newer catalog entries sit later in source data — surface them (and newArrival) first.
+      const sourceIndex = new Map(sourceList.map((item, index) => [item, index]));
+      return [...list].sort((left, right) => {
+        const newDelta = Number(right.newArrival === true) - Number(left.newArrival === true);
+        if (newDelta) return newDelta;
+        const orderDelta = (sourceIndex.get(right) ?? 0) - (sourceIndex.get(left) ?? 0);
+        if (orderDelta) return orderDelta;
+        return Number(itemAvailableForColors(right, colors)) - Number(itemAvailableForColors(left, colors));
+      });
     }
 
     function filterItemsByGender(list, gender) {
@@ -3472,13 +3480,14 @@
           : data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
       );
       // Distinct photos → one card per color; shared photo (beanies) → one card for the product.
+      const productOrder = new Map(products.map(({ item }, index) => [item, index]));
       const arrivals = products.flatMap(({ id, item }) => {
         if (item.newArrival !== true) return [];
         const photos = item.variants.map((variant) => (variant.photos && variant.photos[0]) || variant.photo || "");
         const uniquePhotos = new Set(photos.filter(Boolean));
         if (uniquePhotos.size <= 1) return [{ id, item }];
         return item.variants.map((variant) => ({ id, item, variant }));
-      });
+      }).sort((left, right) => (productOrder.get(right.item) ?? 0) - (productOrder.get(left.item) ?? 0));
       const restocked = products.filter(({ item }) => itemInStock(item)).map(({ id, item }) => ({
         id,
         item,
@@ -3611,7 +3620,7 @@
     }
 
     function renderBrandItems(id, data) {
-      const list = sortItemsByAvailability(filterItemsByBrandFilters(data.items, brandCategoryFilters, brandColorFilters), brandColorFilters);
+      const list = sortItemsByAvailability(filterItemsByBrandFilters(data.items, brandCategoryFilters, brandColorFilters), brandColorFilters, data.items);
       items.innerHTML = list.length
         ? list.map((item) => itemCard(id, item, brandColorFilters)).join("")
         : `<p class="blurb">${t("noFilterItems")}</p>`;
@@ -3801,7 +3810,7 @@
 
     function renderCatalogBody() {
       const groups = catalogEntries()
-        .map(({ id, data, items: list }) => ({ id, data, items: sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters) }))
+        .map(({ id, data, items: list }) => ({ id, data, items: sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters, data.items) }))
         .filter(({ items: list }) => list.length);
       catalogBody.innerHTML = groups.length
         ? groups.map(({ id, data, items: list }) =>
