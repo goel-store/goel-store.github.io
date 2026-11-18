@@ -58,6 +58,20 @@ test("maps one-size caps and the latest arrival from stock-ledger articles", () 
   assert.equal(feed.maxOrderable["sweatshirt-17-20"]["меланж"].XL, 2);
 });
 
+test("temporarily opens beanies at quantity 1 until the sheet lists them", () => {
+  const feed = parseGodderobStock(fixtureCsv);
+
+  assert.deepEqual(feed.availableSizes["godderob-beanies"]["бордовый"], ["OS"]);
+  assert.deepEqual(feed.availableSizes["godderob-beanies"]["бежевый"], ["OS"]);
+  assert.deepEqual(feed.availableSizes["godderob-beanies"]["тёмно-зелёный"], ["OS"]);
+  assert.equal(feed.maxOrderable["godderob-beanies"]["бордовый"].OS, 1);
+  assert.equal(feed.maxOrderable["godderob-beanies"]["бежевый"].OS, 1);
+  assert.equal(feed.maxOrderable["godderob-beanies"]["тёмно-зелёный"].OS, 1);
+  assert.ok(feed.managedVariants.includes("godderob-beanies|бордовый"));
+  assert.ok(feed.managedVariants.includes("godderob-beanies|бежевый"));
+  assert.ok(feed.managedVariants.includes("godderob-beanies|темнозеленый"));
+});
+
 test("rejects malformed, unmapped, and empty stock CSVs rather than publishing empty availability", () => {
   assert.throws(() => parseGodderobStock("Артикул_размера,Размер\n"), /missing columns/);
   assert.throws(() => parseGodderobStock("Артикул_размера,Размер,Общий остаток\n\"broken,S,1\n"), /unclosed quoted field/);
@@ -128,4 +142,28 @@ test("records a managed variant returning from out of stock for 14 days", async 
   await syncGodderobStock(env, afterWindow);
   assert.deepEqual(JSON.parse(storage.values.get(keys.recentlyRestocked)), {});
   assert.deepEqual((await readFreshStock(env, afterWindow.getTime())).recentlyRestocked, {});
+});
+
+test("clears the restocked badge when a variant goes out of stock again", async () => {
+  const storage = createStorage();
+  const keys = stockStorageKeys();
+  const env = { ORDER_TRACKING: storage, GODDEROB_STOCK_CSV_URL: "https://example.test/stock.csv" };
+  const now = new Date("2026-11-06T12:00:00.000Z");
+  const unavailableCsv = "Артикул_размера,Размер,Общий остаток\nJesus lovers беж_S,S,0\nNAME графит_S,S,1\n";
+  const availableCsv = "Артикул_размера,Размер,Общий остаток\nJesus lovers беж_S,S,2\nNAME графит_S,S,1\n";
+
+  globalThis.fetch = async () => new Response(unavailableCsv, { status: 200 });
+  await syncGodderobStock(env, now);
+
+  globalThis.fetch = async () => new Response(availableCsv, { status: 200 });
+  const returnedAt = new Date(now.getTime() + 15 * 60_000);
+  await syncGodderobStock(env, returnedAt);
+  assert.deepEqual(JSON.parse(storage.values.get(keys.recentlyRestocked)), {
+    "jesus-lovers-club-men|бежевый": returnedAt.toISOString()
+  });
+
+  globalThis.fetch = async () => new Response(unavailableCsv, { status: 200 });
+  const goneAgainAt = new Date(returnedAt.getTime() + 15 * 60_000);
+  await syncGodderobStock(env, goneAgainAt);
+  assert.deepEqual(JSON.parse(storage.values.get(keys.recentlyRestocked)), {});
 });

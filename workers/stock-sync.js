@@ -234,11 +234,55 @@ export function parseGodderobStock(csvText) {
   }
 
   const mappedVariants = Object.entries(sheetPrefixes).map(([, [slug, tone]]) => `${slug}|${normalize(tone)}`);
-  return {
+  return applyTemporaryManualStock({
     schemaVersion: 2,
     managedVariants: [...new Set([...mappedVariants, ...alwaysManagedVariants])].sort(),
     availableSizes: sortedAvailableSizes,
     maxOrderable: sortedMaxOrderable
+  });
+}
+
+// Temporary openers until the sheet lists these articles; skipped once real stock maps in.
+const temporaryManualStock = [
+  { slug: "godderob-beanies", tone: "бордовый", size: "OS", quantity: 1 },
+  { slug: "godderob-beanies", tone: "бежевый", size: "OS", quantity: 1 },
+  { slug: "godderob-beanies", tone: "тёмно-зелёный", size: "OS", quantity: 1 }
+];
+
+function applyTemporaryManualStock(feed) {
+  const availableSizes = structuredClone(feed.availableSizes);
+  const maxOrderable = structuredClone(feed.maxOrderable);
+  const managedVariants = new Set(feed.managedVariants);
+
+  for (const { slug, tone, size, quantity } of temporaryManualStock) {
+    managedVariants.add(`${slug}|${normalize(tone)}`);
+    if (Array.isArray(availableSizes[slug]?.[tone]) && availableSizes[slug][tone].length) continue;
+    availableSizes[slug] ||= {};
+    availableSizes[slug][tone] = [size];
+    maxOrderable[slug] ||= {};
+    maxOrderable[slug][tone] ||= {};
+    maxOrderable[slug][tone][size] = Math.min(quantity, maxPublicOrderQuantity);
+  }
+
+  const sortSizes = (sizes) => [...sizes].sort((left, right) => (sizeOrder.get(left) ?? 999) - (sizeOrder.get(right) ?? 999));
+  const sortNested = (object) => Object.fromEntries(Object.keys(object).sort().map((key) => [
+    key,
+    object[key] && typeof object[key] === "object" && !Array.isArray(object[key])
+      ? sortNested(object[key])
+      : object[key]
+  ]));
+
+  return {
+    ...feed,
+    managedVariants: [...managedVariants].sort(),
+    availableSizes: Object.fromEntries(Object.keys(availableSizes).sort().map((slug) => [
+      slug,
+      Object.fromEntries(Object.keys(availableSizes[slug]).sort().map((tone) => [
+        tone,
+        sortSizes(availableSizes[slug][tone])
+      ]))
+    ])),
+    maxOrderable: sortNested(maxOrderable)
   };
 }
 
@@ -254,6 +298,11 @@ function activeRestocks(restocks, nowMs) {
     .sort(([left], [right]) => left.localeCompare(right)));
 }
 
+function variantHasSizes(feed, slug, tone) {
+  const sizes = feed?.availableSizes?.[slug]?.[tone];
+  return Array.isArray(sizes) && sizes.length > 0;
+}
+
 function updateRestocks(currentFeed, nextFeed, previousRestocks, now) {
   const nowMs = now.getTime();
   const restocks = activeRestocks(previousRestocks, nowMs);
@@ -261,13 +310,28 @@ function updateRestocks(currentFeed, nextFeed, previousRestocks, now) {
     return restocks;
   }
 
+  // Drop badges once a variant is out of stock again.
+  for (const key of Object.keys(restocks)) {
+    const separator = key.indexOf("|");
+    if (separator < 0) {
+      delete restocks[key];
+      continue;
+    }
+    const slug = key.slice(0, separator);
+    const toneToken = key.slice(separator + 1);
+    const tones = nextFeed.availableSizes?.[slug] || {};
+    const stillAvailable = Object.entries(tones).some(([tone, sizes]) =>
+      normalize(tone) === toneToken && Array.isArray(sizes) && sizes.length > 0);
+    if (!stillAvailable) delete restocks[key];
+  }
+
+  // Mark variants that just returned from zero stock.
   for (const [slug, tones] of Object.entries(nextFeed.availableSizes)) {
     for (const [tone, sizes] of Object.entries(tones)) {
       if (!Array.isArray(sizes) || !sizes.length) continue;
       const key = `${slug}|${normalize(tone)}`;
       if (!currentFeed.managedVariants.includes(key)) continue;
-      const previousSizes = currentFeed.availableSizes[slug]?.[tone];
-      if (!Array.isArray(previousSizes) || previousSizes.length === 0) {
+      if (!variantHasSizes(currentFeed, slug, tone)) {
         restocks[key] = now.toISOString();
       }
     }
