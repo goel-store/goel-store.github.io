@@ -304,18 +304,22 @@
     .home-collection[hidden] { display: none !important; }
     .item-badge {
       position: absolute;
-      z-index: 1;
+      z-index: 3;
       top: 10px;
       left: 10px;
       display: inline-block !important;
       max-width: calc(100% - 20px);
       margin: 0 !important;
-      padding: 6px 9px;
-      background: rgba(255, 252, 248, .94);
-      color: var(--ink) !important;
+      padding: 6px 10px;
+      border: 1px solid rgba(33, 28, 25, 0.35);
+      border-radius: 999px;
+      background: #efe6da;
+      color: #211c19 !important;
       font-size: 11px !important;
+      font-weight: 700;
       line-height: 1.2 !important;
       letter-spacing: .02em;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
     }
     .item {
       background-color: var(--paper);
@@ -3467,8 +3471,14 @@
           ? []
           : data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
       );
-      // One card per new-arrival product (not per color), so shared photos like beanies stay a single tile.
-      const arrivals = products.filter(({ item }) => item.newArrival === true);
+      // Distinct photos → one card per color; shared photo (beanies) → one card for the product.
+      const arrivals = products.flatMap(({ id, item }) => {
+        if (item.newArrival !== true) return [];
+        const photos = item.variants.map((variant) => (variant.photos && variant.photos[0]) || variant.photo || "");
+        const uniquePhotos = new Set(photos.filter(Boolean));
+        if (uniquePhotos.size <= 1) return [{ id, item }];
+        return item.variants.map((variant) => ({ id, item, variant }));
+      });
       const restocked = products.filter(({ item }) => itemInStock(item)).map(({ id, item }) => ({
         id,
         item,
@@ -3484,7 +3494,7 @@
       newItems.onfocusin = null;
       newItems.onfocusout = null;
       newItems.innerHTML = arrivals
-        .map(({ id, item }) => itemCard(id, item, [], "newArrivalBadge"))
+        .map(({ id, item, variant }) => itemCard(id, item, [], "newArrivalBadge", variant || null))
         .join("");
       restockedSection.hidden = restocked.length === 0;
       restockedSection.querySelector(".items").innerHTML = restocked
