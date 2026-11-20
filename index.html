@@ -1,9 +1,11 @@
 <!DOCTYPE html>
+<!-- pages-redeploy: 2026-11-12-equal-cards -->
 <html lang="ru">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#2a211d">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="Христианские бренды одежды в одной витрине. Выберите вещь и отправьте заявку на заказ онлайн.">
   <link rel="canonical" href="https://goel-store.github.io/">
   <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
@@ -26,10 +28,13 @@
     }
     * { box-sizing: border-box; }
     html { color-scheme: light; }
-    html, body { margin: 0; }
+    html, body { margin: 0; min-height: 100%; overflow-x: clip; }
     body {
       position: relative;
       isolation: isolate;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
       background: var(--bg);
       color: var(--ink);
       font-family: "Avenir Next", "Helvetica Neue", sans-serif;
@@ -66,7 +71,14 @@
       -webkit-appearance: none;
       appearance: none;
     }
-    .wrap { width: min(980px, calc(100% - 32px)); margin: 0 auto; }
+    .wrap {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+    #stage { flex: 1 0 auto; }
     header {
       display: flex;
       align-items: center;
@@ -112,9 +124,11 @@
     .submenu-toggle[aria-expanded="true"] { color: var(--accent); }
     .submenu-list { margin: 0 12px 6px; padding-left: 8px; border-left: 1px solid var(--line); }
     .submenu-list button { padding: 9px 12px; }
-    .language-submenu-list button { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
-    .language-submenu-list button[aria-checked="true"] { color: var(--accent); }
-    .language-code { min-width: 32px; font-weight: 600; }
+    .language-submenu-list button,
+    .currency-submenu-list button { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+    .language-submenu-list button[aria-checked="true"],
+    .currency-submenu-list button[aria-checked="true"] { color: var(--accent); }
+    .language-code, .currency-code { min-width: 32px; font-weight: 600; }
     nav.links a {
       display: inline-flex;
       align-items: center;
@@ -151,6 +165,9 @@
       margin: 28px 0 12px;
     }
     #home.filtered h2 { display: none; }
+    #home.filtered .hero,
+    #home.filtered .home-collection { display: none !important; }
+    #home.filtered #home-crumbs { margin-top: 28px; }
     .brand {
       display: grid;
       grid-template-columns: 64px 1fr auto;
@@ -298,13 +315,77 @@
     .filters .filter-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 32px; padding: 5px 9px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255, 252, 248, .8); color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
     .filters .filter-chip:hover { border-color: #cfc6bb; background: #f3efe8; color: var(--ink); }
     .filter-chip-x { color: var(--muted); font-size: 15px; line-height: 1; }
-    .catalog-group { margin-top: 8px; }
+    .catalog-group { margin-top: 8px; min-width: 0; max-width: 100%; }
     .catalog-group h2 { margin: 28px 0 0; }
+    .catalog-group .catalog-brand-link {
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .catalog-group .catalog-brand-link:hover,
+    .catalog-group .catalog-brand-link:focus {
+      color: inherit;
+      text-decoration: none;
+    }
+    .catalog-group .catalog-brand-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 4px;
+    }
     .catalog-group .items { padding-top: 14px; padding-bottom: 8px; }
+    .product-rail-stack { display: grid; gap: 8px; padding: 18px 0 36px; min-width: 0; max-width: 100%; }
+    .product-rail-block { min-width: 0; max-width: 100%; }
+    .product-rail-block h3 {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .items.product-rail {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 14px;
+      box-sizing: border-box;
+      width: calc(100% + (2 * var(--wrap-gutter, 16px)));
+      max-width: calc(100% + (2 * var(--wrap-gutter, 16px)));
+      min-width: 0;
+      margin-inline: calc(0px - var(--wrap-gutter, 16px));
+      padding: 14px var(--wrap-gutter, 16px) 20px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x proximity;
+      scroll-padding-inline: var(--wrap-gutter, 16px);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .items.product-rail::-webkit-scrollbar { display: none; }
+    .items.product-rail .item {
+      flex: 0 0 min(72vw, 240px);
+      width: min(72vw, 240px);
+      max-width: 240px;
+      height: auto;
+      align-self: stretch;
+      scroll-snap-align: start;
+      -webkit-user-drag: none;
+    }
+    .items.product-rail .cloth {
+      aspect-ratio: .82 / 1;
+      flex: 0 0 auto;
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+    .items.product-rail .cloth img {
+      -webkit-user-drag: none;
+      user-select: none;
+    }
     .home-collection[hidden] { display: none !important; }
     .item-badge {
       position: absolute;
-      z-index: 3;
+      z-index: 2;
       top: 10px;
       left: 10px;
       display: inline-block !important;
@@ -343,7 +424,6 @@
       outline-offset: -1px;
       background-color: var(--swatch);
       overflow: hidden;
-      touch-action: pan-y;
     }
     .cloth.has-photo, .product-cloth.has-photo {
       background-color: #ebe4da;
@@ -373,11 +453,26 @@
       padding: 4px 8px;
     }
     .cloth.has-photo > .ph, .product-cloth.has-photo > .ph { display: none; }
-    .item { width: 100%; }
-    .item .body { padding: 16px 16px 18px; }
-    .item b { display: block; font-size: 16px; line-height: 1.4; }
+    .item { width: 100%; height: 100%; }
+    .item .body {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 16px 16px 18px;
+    }
+    .item b {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      min-height: calc(1.4em * 2);
+      font-size: 16px;
+      line-height: 1.4;
+    }
     .item span { display: block; color: var(--muted); font-size: 14px; line-height: 1.45; margin-top: 6px; }
-    .item .price { color: var(--ink); margin-top: 10px; line-height: 1.4; }
+    .item .item-meta { display: grid; gap: 6px; margin-top: auto; padding-top: 12px; }
+    .item .price { color: var(--ink); margin-top: 0; line-height: 1.4; }
     .stock { margin: 22px 0 0; font-size: 15px; line-height: 1.5; }
     .stock[hidden] { display: none; }
     .ahead { margin: 8px 0 0; font-size: 15px; line-height: 1.5; }
@@ -404,14 +499,20 @@
     .product-options {
       display: flex;
       flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 168px;
+      flex: 0 0 auto;
+      min-height: 0;
     }
     .product-actions {
-      margin-top: auto;
-      padding-top: 22px;
+      margin-top: 22px;
+      padding-top: 0;
     }
-    .product-actions .buy { margin-top: 0; }
+    .product-actions .buy {
+      margin-top: 0;
+      width: 100%;
+      max-width: 320px;
+      justify-content: center;
+      text-align: center;
+    }
     .product-actions .order { margin-top: 12px; }
     .cart-toggle { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 4px 8px; color: var(--ink); font-size: 14px; white-space: nowrap; }
     .cart-toggle:hover { color: var(--accent); }
@@ -632,6 +733,68 @@
       cursor: pointer;
       font-size: 13px;
     }
+    .size.is-unavailable,
+    .size:disabled {
+      opacity: 0.42;
+      color: var(--muted);
+      text-decoration: line-through;
+      cursor: not-allowed;
+    }
+    .cut {
+      position: relative;
+      padding-right: 22px;
+    }
+    .cut-info {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 16px;
+      height: 16px;
+      border: 1px solid rgba(33, 28, 25, 0.35);
+      border-radius: 50%;
+      background: #efe6da;
+      color: #211c19;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    }
+    .cut.on .cut-info {
+      border-color: rgba(33, 28, 25, 0.4);
+      background: #efe6da;
+      color: #211c19;
+    }
+    .cut-info:hover, .cut-info:focus-visible {
+      background: #f5efe6;
+      color: #211c19;
+      border-color: #211c19;
+      outline: none;
+    }
+    .cut-info-pop {
+      position: absolute;
+      z-index: 40;
+      width: min(280px, calc(100vw - 32px));
+      padding: 12px 14px;
+      border: 1px solid rgba(33, 28, 25, 0.18);
+      border-radius: 12px;
+      background: #fffcf8;
+      color: #211c19;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .cut-info-pop[hidden] { display: none; }
+    .cut-info-pop strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #211c19;
+    }
+    .cut-info-pop p { margin: 0; color: #5a5048; }
     .cut.on, .size.on { background: var(--ink); color: #fff; border-color: var(--ink); }
     .product-price { margin: 16px 0 0; font-size: 18px; }
     .buy {
@@ -677,8 +840,37 @@
     .order-consent input { margin: 4px 0 0; accent-color: var(--accent); }
     .order-consent a, .site-footer a { color: var(--accent); text-underline-offset: 3px; }
     .order-process-note { margin: 0; padding: 11px 13px; border-left: 2px solid var(--accent); background: rgba(231, 164, 124, .08); color: var(--muted); font-size: 13px; line-height: 1.5; }
-    .site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; margin-top: 40px; padding: 18px 0 28px; border-top: 1px solid rgba(244, 233, 220, .12); color: var(--muted); font-size: 13px; }
-    .site-footer nav { display: flex; flex-wrap: wrap; gap: 16px; }
+    .site-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px 24px;
+      margin-top: auto;
+      padding: 24px 0;
+      border-top: 1px solid rgba(244, 233, 220, .12);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .site-footer .footer-main { display: grid; gap: 10px; min-width: 0; }
+    .site-footer .footer-brand { color: var(--ink); font-weight: 650; letter-spacing: .06em; }
+    .site-footer .footer-links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 16px; line-height: 1.45; }
+    .site-footer .footer-social {
+      display: flex;
+      align-items: center;
+      flex: 0 0 auto;
+      gap: 2px;
+    }
+    .site-footer .footer-social a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      color: var(--muted);
+    }
+    .site-footer .footer-social a:hover { color: var(--accent); }
+    .site-footer .footer-social svg { display: block; width: 17px; height: 17px; }
     .order-turnstile { min-height: 65px; }
     .order-submit { width: 100%; margin: 0; text-align: center; }
     .order-submit:disabled { opacity: 0.55; cursor: not-allowed; }
@@ -695,19 +887,19 @@
       .product { grid-template-columns: 1fr; gap: 20px; }
       .product-cloth { width: 100%; justify-self: stretch; }
       .product-copy { min-height: 0; }
-      .product-options { min-height: 140px; }
+      .product-options { min-height: 0; }
+      .product-actions .buy { max-width: none; }
       header { gap: 12px 16px; }
       .crumbs { flex-wrap: wrap; margin: 20px 0 16px; }
     }
     @media (max-width: 560px) {
       .filter-popover { max-height: min(70vh, 560px, calc(100vh - 300px)); max-height: min(70vh, 560px, calc(100dvh - 300px)); }
-      header { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; gap: 10px 14px; }
+      header { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px 14px; }
       header > #logo { grid-column: 1; grid-row: 1; }
       header > .site-nav { grid-column: 2; grid-row: 1; justify-self: end; }
       .site-menu-list { left: 50%; width: min(260px, calc(100vw - 48px)); transform: translateX(-50%); }
       header > .cart-toggle { grid-column: 3; grid-row: 1; justify-self: end; width: 36px; padding: 0; }
       .cart-toggle-label { display: none; }
-      header > nav.links { grid-column: 4; grid-row: 1; justify-self: end; margin-left: 0; }
       .wrap { width: calc(100% - 24px); }
       h1 { font-size: 24px; }
       .brand-head h1 { font-size: 22px; }
@@ -746,8 +938,13 @@
       --forest: #47332a;
       --lime: #f0cba5;
     }
-    html { color-scheme: dark; }
-    body { background: var(--bg); color: var(--ink); }
+    html { color-scheme: dark; scrollbar-gutter: stable; background: #2a211d; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      background-color: #2a211d;
+      overscroll-behavior-y: none;
+    }
     body::before { filter: blur(28px) saturate(.55); opacity: .22; }
     body::after { background: linear-gradient(180deg, rgba(42, 33, 29, .74), rgba(42, 33, 29, .94)); }
     .wrap {
@@ -761,16 +958,27 @@
       top: 0;
       z-index: 30;
       width: calc(100% + var(--wrap-gutter) + var(--wrap-gutter));
+      height: calc(64px + env(safe-area-inset-top, 0px));
       margin-inline: calc(0px - var(--wrap-gutter));
       flex-wrap: nowrap;
       gap: clamp(10px, 2.4vw, 30px);
-      padding: 13px var(--wrap-gutter);
+      padding: env(safe-area-inset-top, 0px) var(--wrap-gutter) 0;
       border-bottom: 1px solid rgba(244, 233, 220, .12);
-      background: rgba(42, 33, 29, .93);
-      -webkit-backdrop-filter: blur(16px);
-      backdrop-filter: blur(16px);
+      background: #2a211d;
+      box-sizing: border-box;
     }
-    .mark { color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: .09em; }
+    header::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -100vh;
+      height: 100vh;
+      background: #2a211d;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .mark { display: inline-flex; align-items: center; color: var(--ink); font-size: 21px; font-weight: 600; letter-spacing: .09em; line-height: 1; }
     .site-menu-toggle, .cart-toggle {
       min-height: 38px;
       padding: 7px 12px;
@@ -818,16 +1026,16 @@
       z-index: 2;
       top: 50%;
       left: max(24px, calc((100vw - 1120px) / 2));
-      width: min(520px, calc(100% - 48px));
+      width: min(560px, calc(100% - 48px));
       padding: clamp(28px, 4vw, 48px);
       transform: translateY(-50%);
-      border: 1px solid rgba(255, 255, 255, .24);
+      border: 1px solid rgba(255, 255, 255, .2);
       border-radius: 24px;
-      background: rgba(20, 18, 17, .54);
-      box-shadow: 0 28px 80px rgba(0, 0, 0, .26);
+      background: rgba(20, 18, 17, .34);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, .22);
       color: #fffaf4;
-      -webkit-backdrop-filter: blur(18px) saturate(1.2);
-      backdrop-filter: blur(18px) saturate(1.2);
+      -webkit-backdrop-filter: blur(10px) saturate(1.12);
+      backdrop-filter: blur(10px) saturate(1.12);
     }
     #home .hero-kicker {
       margin: 0 0 18px;
@@ -839,7 +1047,7 @@
       text-transform: uppercase;
     }
     #home .hero-copy h1 {
-      max-width: 460px;
+      max-width: 500px;
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
       font-size: clamp(48px, 5.5vw, 76px);
@@ -849,7 +1057,7 @@
     }
     #home .hero-copy h1 [data-i18n="heroLine2"] { color: #f2b494; }
     #home .hero-copy .verse {
-      max-width: 400px;
+      max-width: 440px;
       margin: 24px 0 0;
       color: rgba(255, 250, 244, .76);
       font-size: 15px;
@@ -863,13 +1071,13 @@
       margin-top: 28px;
       padding: 13px 15px 13px 20px;
       border-radius: 999px;
-      background: #fffaf4;
+      background: #efe6da;
       color: #211c19;
       font-size: 14px;
       font-weight: 600;
       transition: transform 180ms ease, background-color 180ms ease;
     }
-    #home .hero-cta:hover { transform: translateY(-2px); background: #f2b494; }
+    #home .hero-cta:hover { transform: translateY(-2px); background: #f5efe6; }
     #home .hero-cta > span[aria-hidden="true"] {
       display: grid;
       width: 30px;
@@ -877,10 +1085,10 @@
       place-items: center;
       border-radius: 50%;
       background: #211c19;
-      color: #fffaf4;
+      color: #efe6da;
       font-size: 16px;
     }
-    #home .hero-cta:focus-visible { outline: 2px solid #f2b494; outline-offset: 4px; }
+    #home .hero-cta:focus-visible { outline: 2px solid #efe6da; outline-offset: 4px; }
     #home .hero-slide {
       position: absolute;
       z-index: 0;
@@ -896,18 +1104,30 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 42%;
-      filter: saturate(.94) contrast(.98) brightness(.94);
-      transform: scale(1.005);
+      object-position: var(--hero-focus, 62% 40%);
+      filter: saturate(.96) contrast(1.02) brightness(.97);
+      transform: scale(1.01);
       transition: transform 10s cubic-bezier(0.22, 0.61, 0.36, 1);
     }
-    #home .hero-slide.is-active img { transform: scale(1.035); }
+    #home .hero-slide.is-active img { transform: scale(1.045); }
+    /* Large screens: keep the crop higher in the frame */
+    @media (min-width: 701px) {
+      #home .hero-slide img {
+        object-position: var(--hero-focus-desktop, var(--hero-focus, 62% 68%));
+      }
+    }
+    @media (min-width: 1200px) {
+      #home .hero-copy { width: min(600px, calc(100% - 64px)); }
+    }
+    @media (min-width: 1600px) {
+      #home .hero-copy { width: min(640px, calc(100% - 64px)); }
+    }
     #home .hero::after {
       content: "";
       position: absolute;
       z-index: 1;
       inset: 0;
-      background: linear-gradient(90deg, rgba(13, 12, 11, .38), rgba(13, 12, 11, .08) 68%), linear-gradient(0deg, rgba(13, 12, 11, .38), transparent 34%), rgba(235, 227, 215, .05);
+      background: linear-gradient(90deg, rgba(13, 12, 11, .22), rgba(13, 12, 11, .04) 58%, transparent 78%), linear-gradient(0deg, rgba(13, 12, 11, .28), transparent 42%), rgba(235, 227, 215, .03);
       pointer-events: none;
     }
     #home .hero-controls {
@@ -946,7 +1166,6 @@
       transition: width 220ms ease, background-color 220ms ease;
     }
     #home .hero-dot.is-active { width: 26px; background: #fffaf4; }
-    #home .hero-count { min-width: 38px; color: rgba(255, 250, 244, .76); font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: .08em; text-align: right; }
     @media (max-width: 700px) {
       #home .hero { min-height: min(720px, max(620px, 78svh)); margin-bottom: 38px; }
       #home .hero-copy {
@@ -957,18 +1176,17 @@
         padding: 26px 24px 28px;
         transform: none;
         border-radius: 20px;
-        background: rgba(20, 18, 17, .48);
-        -webkit-backdrop-filter: blur(16px) saturate(1.15);
-        backdrop-filter: blur(16px) saturate(1.15);
+        background: rgba(20, 18, 17, .32);
+        -webkit-backdrop-filter: blur(10px) saturate(1.1);
+        backdrop-filter: blur(10px) saturate(1.1);
       }
       #home .hero-copy h1 { font-size: clamp(46px, 11vw, 64px); }
       #home .hero-copy .verse { margin-top: 18px; font-size: 14px; }
       #home .hero-cta { margin-top: 20px; }
       #home .hero-controls { right: 20px; bottom: 22px; left: 20px; justify-content: center; gap: 10px; }
       #home .hero-arrow { width: 38px; height: 38px; }
-      #home .hero-count { min-width: 34px; }
-      #home .hero::after { background: linear-gradient(0deg, rgba(13, 12, 11, .42), rgba(13, 12, 11, .04) 72%); }
-      #home .hero-slide img { object-position: center center; }
+      #home .hero::after { background: linear-gradient(0deg, rgba(13, 12, 11, .3), rgba(13, 12, 11, .08) 36%, transparent 68%); }
+      #home .hero-slide img { object-position: var(--hero-focus-mobile, var(--hero-focus, 50% 58%)); }
     }
     @media (max-width: 380px) {
       #home .hero-copy { padding: 22px 20px 24px; }
@@ -1049,6 +1267,21 @@
     .catalog-group { margin-top: 30px; }
     .catalog-group h2 { margin: 28px 0 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 400; }
     .catalog-group .items { padding-top: 18px; }
+    .product-rail-stack { gap: 10px; padding: 22px 0 48px; }
+    .product-rail-block h3 { margin-top: 18px; color: var(--muted); letter-spacing: .08em; }
+    .items.product-rail { gap: 16px; padding-top: 16px; padding-bottom: 26px; }
+    .items.product-rail .item {
+      flex-basis: min(42vw, 260px);
+      width: min(42vw, 260px);
+      max-width: 260px;
+    }
+    @media (max-width: 720px) {
+      .items.product-rail .item {
+        flex-basis: min(72vw, 240px);
+        width: min(72vw, 240px);
+        max-width: 240px;
+      }
+    }
     .brand {
       grid-template-columns: 58px 1fr auto;
       gap: 14px;
@@ -1075,59 +1308,96 @@
     }
     .item:hover { border-color: rgba(231, 164, 124, .5); background: #403229; box-shadow: 0 12px 28px rgba(0, 0, 0, .24); }
     .cloth { aspect-ratio: .82 / 1; outline: 0; background: #473a32; }
-    .cloth.has-photo, .product-cloth.has-photo { background-color: #473a32; }
+    .cloth.has-photo, .product-cloth.has-photo { background-color: #d2c3b4; }
+    .cloth > img, .product-cloth > img { mix-blend-mode: multiply; filter: contrast(1.02) saturate(1.03) brightness(1.04); }
     .cloth > .ph, .product-cloth > .ph { border-radius: 999px; background: rgba(42, 33, 29, .88); color: var(--muted); }
-    .item .body { padding: 16px 16px 19px; color: var(--ink); }
-    .item b { color: var(--ink); font-size: 14px; font-weight: 600; }
-    .item span { color: var(--muted); }
-    .item .price { margin-top: 9px; color: var(--accent); font-weight: 600; }
-    #home-new-arrivals h2 { display: flex; align-items: center; gap: 16px; }
-    #home-new-arrivals h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
-    #home-new-arrivals .items {
+    .item { height: 100%; min-height: 100%; }
+    .item .body {
       display: flex;
-      flex-wrap: nowrap;
-      align-items: stretch;
-      gap: 14px;
-      box-sizing: border-box;
-      width: calc(100% + (2 * var(--wrap-gutter, 16px)));
-      max-width: calc(100% + (2 * var(--wrap-gutter, 16px)));
-      min-width: 0;
-      margin-inline: calc(0px - var(--wrap-gutter, 16px));
-      padding: 14px var(--wrap-gutter, 16px) 24px;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x proximity;
-      scroll-padding-inline: var(--wrap-gutter, 16px);
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-x: contain;
-      scrollbar-width: none;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      padding: 16px 16px 19px;
+      color: var(--ink);
     }
-    #home-new-arrivals .items::-webkit-scrollbar { display: none; }
-    #home-new-arrivals .item {
-      flex: 0 0 min(72vw, 240px);
-      width: min(72vw, 240px);
-      max-width: 240px;
-      height: auto;
-      align-self: stretch;
-      scroll-snap-align: start;
+    .item b {
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      min-height: calc(1.35em * 2);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
     }
-    #home-new-arrivals .cloth { aspect-ratio: .82 / 1; flex: 0 0 auto; }
-    .item .item-stock-note { margin-top: 7px; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    .item span { color: var(--muted); }
+    .item .item-color-label {
+      min-height: 20px;
+    }
+    .item .item-meta {
+      display: grid;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 12px;
+      min-height: 2.6em;
+    }
+    .item .price { margin-top: 0; color: var(--accent); font-weight: 600; }
+    .items.product-rail { align-items: stretch; }
+    .items.product-rail .item { height: auto; }
+    #home-new-arrivals h2,
+    #home-restocked h2 { display: flex; align-items: center; gap: 16px; }
+    #home-new-arrivals h2::after,
+    #home-restocked h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+    .item .item-stock-note { margin-top: 0; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
     .item .item-color-label { display: flex; align-items: center; gap: 7px; width: fit-content; margin-top: 8px; color: var(--muted); font-size: 12px; }
     .item-color-label i { width: 12px; height: 12px; flex: none; border: 1px solid rgba(244, 233, 220, .3); border-radius: 50%; background: var(--variant-color, #eee); box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .08); }
     .product { gap: clamp(28px, 6vw, 82px); align-items: start; }
-    .product-cloth { border: 0; border-radius: 18px; outline: 0; background-color: #473a32; }
+    .product-cloth { border: 0; border-radius: 18px; outline: 0; overflow: hidden; background-color: #473a32; }
     .product-copy { padding: 10px 0; }
     .product-price { color: var(--accent); font-weight: 600; }
     .cut, .size { border-color: var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease; }
     .cut.on, .size.on { border-color: var(--accent); background: var(--forest); color: var(--ink); }
+    .size.is-unavailable,
+    .size:disabled {
+      opacity: 0.38;
+      color: #9f8e80;
+      background: #3a2f29;
+      border-color: rgba(244, 233, 220, .14);
+      text-decoration: line-through;
+    }
+    .size.is-unavailable.on,
+    .size:disabled.on {
+      background: #3a2f29;
+      color: #9f8e80;
+      border-color: rgba(244, 233, 220, .14);
+    }
     .tone.on { outline-color: var(--accent); }
-    .buy { display: inline-flex; justify-content: center; width: fit-content; border-radius: 999px; background: var(--forest); color: #fffefa; font-weight: 600; transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease; }
-    .buy:hover:not(:disabled) { background: #5a4033; box-shadow: 0 8px 20px rgba(0, 0, 0, .2); }
+    .buy {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: fit-content;
+      border-radius: 999px;
+      background: #efe6da;
+      color: #211c19;
+      font-weight: 600;
+      transition: background-color 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    }
+    .buy:hover:not(:disabled) { background: #f5efe6; box-shadow: 0 8px 20px rgba(0, 0, 0, .18); transform: translateY(-1px); }
+    .buy:disabled {
+      background: rgba(239, 230, 218, .22);
+      color: rgba(244, 233, 220, .72);
+      opacity: 1;
+      font-weight: 600;
+      box-shadow: none;
+      transform: none;
+    }
     .buy:focus-visible, .cut:focus-visible, .size:focus-visible, .tone:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .cart-view > h1 { margin: 0; }
     .cart-line { border-color: rgba(244, 233, 220, .1); border-radius: 14px; background: var(--paper); }
-    .cart-image { border-radius: 9px; background: #473a32; }
+    .cart-image { border-radius: 9px; background: #d2c3b4; overflow: hidden; }
+    .cart-image img { display: block; width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; filter: contrast(1.02) saturate(1.03) brightness(1.04); }
     .cart-line-title, .cart-line-meta, .cart-line-price, .cart-quantity { color: var(--ink); }
     .cart-line-meta { color: var(--muted); }
     .cart-line-price { color: var(--accent); }
@@ -1166,12 +1436,16 @@
     }
     @media (max-width: 560px) {
       .wrap { --wrap-gutter: 14px; }
-      header { top: 0; gap: 10px 12px; padding: 10px var(--wrap-gutter); }
+      header {
+        top: 0;
+        height: calc(56px + env(safe-area-inset-top, 0px));
+        gap: 10px 12px;
+        padding: env(safe-area-inset-top, 0px) var(--wrap-gutter) 0;
+      }
       .mark { font-size: 19px; }
       .site-menu-toggle { min-height: 36px; padding: 6px 9px; font-size: 12px; }
       .cart-toggle { min-height: 36px; }
       .items { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 22px 0 36px; }
-      #home-new-arrivals .item { flex-basis: min(70vw, 220px); width: min(70vw, 220px); max-width: 220px; }
       .cloth { aspect-ratio: .72 / 1; }
       .item .body { padding: 12px 11px 14px; }
       .item b { font-size: 12px; }
@@ -1219,7 +1493,12 @@
           </div>
           <button type="button" class="submenu-toggle" id="catalog-toggle" aria-expanded="false" aria-controls="catalog-submenu"><span data-i18n="catalogMenu">Каталог</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list" id="catalog-submenu" hidden>
-            <button type="button" data-catalog="all" data-i18n="all">Всё</button>
+            <button type="button" data-catalog="tshirts" data-i18n="tshirts">Футболки</button>
+            <button type="button" data-catalog="sweatshirts" data-i18n="sweatshirts">Свитшоты</button>
+            <button type="button" data-catalog="longSleeves" data-i18n="longSleeves">Лонгсливы</button>
+            <button type="button" data-catalog="halfZips" data-i18n="halfZips">Полузипы</button>
+            <button type="button" data-catalog="caps" data-i18n="caps">Кепки</button>
+            <button type="button" data-catalog="beanies" data-i18n="beanies">Шапки</button>
           </div>
           <button type="button" class="submenu-toggle" id="language-toggle" aria-expanded="false" aria-controls="language-submenu"><span data-i18n="languageLabel">Язык</span><span aria-hidden="true">▾</span></button>
           <div class="submenu-list language-submenu-list" id="language-submenu" role="radiogroup" aria-label="Язык" data-i18n-aria="languageLabel" hidden>
@@ -1228,21 +1507,21 @@
             <button type="button" role="radio" data-language="uk" aria-checked="false" aria-label="UKR"><span aria-hidden="true">🇺🇦</span><span class="language-code">UKR</span></button>
             <button type="button" role="radio" data-language="en" aria-checked="false" aria-label="ENG"><span aria-hidden="true">🇬🇧</span><span class="language-code">ENG</span></button>
           </div>
+          <button type="button" class="submenu-toggle" id="currency-toggle" aria-expanded="false" aria-controls="currency-submenu"><span data-i18n="currencyLabel">Валюта</span><span aria-hidden="true">▾</span></button>
+          <div class="submenu-list currency-submenu-list" id="currency-submenu" role="radiogroup" aria-label="Валюта" data-i18n-aria="currencyLabel" hidden>
+            <button type="button" role="radio" data-currency="BYN" aria-checked="true" aria-label="BYN"><span aria-hidden="true">🇧🇾</span><span class="currency-code">BYN</span></button>
+            <button type="button" role="radio" data-currency="RUB" aria-checked="false" aria-label="RUB"><span aria-hidden="true">🇷🇺</span><span class="currency-code">RUB</span></button>
+            <button type="button" role="radio" data-currency="UAH" aria-checked="false" aria-label="UAH"><span aria-hidden="true">🇺🇦</span><span class="currency-code">UAH</span></button>
+            <button type="button" role="radio" data-currency="EUR" aria-checked="false" aria-label="EUR"><span aria-hidden="true">🇪🇺</span><span class="currency-code">EUR</span></button>
+            <button type="button" role="radio" data-currency="USD" aria-checked="false" aria-label="USD"><span aria-hidden="true">🇺🇸</span><span class="currency-code">USD</span></button>
+          </div>
         </div>
       </div>
       <button type="button" class="cart-toggle cart-focus" id="cart-toggle" aria-label="Корзина">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h8.4a2 2 0 0 0 1.9-1.4L21 9H6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="20" r="1" fill="currentColor"/><circle cx="18" cy="20" r="1" fill="currentColor"/></svg>
         <span class="cart-toggle-label" data-i18n="cart">Корзина</span><span class="cart-count" id="cart-count" hidden></span>
       </button>
-      <nav class="links" aria-label="Социальные сети" data-i18n-aria="socialNetworks">
-        <a href="https://t.me/JHVHGOeL" aria-label="Telegram" title="Telegram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 3.4 2.8 10.7c-1.3.5-1.3 1.2-.2 1.5l4.6 1.4 1.7 5.4c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.4-2.3 4.8 3.5c.9.5 1.5.2 1.7-.8L23.3 5c.3-1.3-.5-1.9-1.7-1.6zM8.7 13.2l9.3-5.8c.5-.3.9-.1.5.2l-7.7 7-.3 3.4-1.8-4.8z"/></svg>
-        </a>
-        <a href="https://www.instagram.com/jehovah_goel/" aria-label="Instagram" title="Instagram">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.8" cy="6.5" r="1.1" fill="currentColor"/></svg>
-        </a>
-      </nav>
-    </header>
+      </header>
 
     <div id="stage">
     <section id="home" class="view on">
@@ -1254,13 +1533,19 @@
           <a class="hero-cta" href="?catalog"><span data-i18n="exploreCatalog">Исследовать каталог</span><span aria-hidden="true">↗</span></a>
           <a class="hero-cta track-order-cta" href="tracking.html"><span data-i18n="trackOrder">Отследить заказ</span><span aria-hidden="true">↗</span></a>
         </div>
-        <div class="hero-slide is-active" data-hero-slide aria-hidden="false">
+        <div class="hero-slide is-active" data-hero-slide aria-hidden="false" style="--hero-focus: 70% 38%; --hero-focus-desktop: 70% 66%; --hero-focus-mobile: 58% 42%;">
           <img src="img/godderob/shepherd-emerald-01.jpg" alt="" fetchpriority="high">
         </div>
-        <div class="hero-slide" data-hero-slide aria-hidden="true">
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 58% 40%; --hero-focus-desktop: 58% 68%; --hero-focus-mobile: 50% 46%;">
+          <img src="img/art/women-strength-black-white-03.jpg" alt="" loading="lazy">
+        </div>
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 54% 36%; --hero-focus-desktop: 54% 64%; --hero-focus-mobile: 50% 48%;">
           <img src="img/godderob/longgrafitti-01.jpg" alt="" loading="lazy">
         </div>
-        <div class="hero-slide" data-hero-slide aria-hidden="true">
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 60% 30%; --hero-focus-desktop: 60% 60%; --hero-focus-mobile: 52% 38%;">
+          <img src="img/art/classic-victory-grey-yellow-03.jpg" alt="" loading="lazy">
+        </div>
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 40% 40%; --hero-focus-desktop: 40% 68%; --hero-focus-mobile: 42% 48%;">
           <img src="img/godderob/love-like-jesus-01.jpg" alt="" loading="lazy">
         </div>
         <div class="hero-controls" aria-hidden="true">
@@ -1268,8 +1553,9 @@
             <span class="hero-dot is-active" data-hero-dot></span>
             <span class="hero-dot" data-hero-dot></span>
             <span class="hero-dot" data-hero-dot></span>
+            <span class="hero-dot" data-hero-dot></span>
+            <span class="hero-dot" data-hero-dot></span>
           </div>
-          <span class="hero-count" data-hero-count>01 / 03</span>
         </div>
       </div>
       <div class="crumbs" id="home-crumbs" hidden>
@@ -1289,7 +1575,7 @@
         <h2 data-i18n="belarus">Беларусь</h2>
         <a class="brand" href="?godderob" data-brand="godderob">
           <img class="swatch" src="img/godderob/avatar.jpg" alt="" width="64" height="64">
-          <span><b>godderob</b></span>
+          <span><b>Godderob</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
         </a>
       </div>
@@ -1318,7 +1604,7 @@
       <p class="stock" id="note"></p>
       <p class="ahead" data-i18n="chooseItemHint">Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.</p>
       <div class="filters" id="brand-filters" hidden></div>
-      <div class="items" id="items"></div>
+      <div class="product-rail-stack" id="items"></div>
     </section>
 
     <section id="catalog" class="view">
@@ -1336,7 +1622,7 @@
     </section>
 
     <section id="product" class="view">
-      <div class="crumbs">
+      <div class="crumbs" id="product-crumbs-standard">
         <button type="button" id="product-all" data-i18n="allBrands">Все бренды</button>
         <span>›</span>
         <button type="button" id="product-country"></button>
@@ -1344,6 +1630,11 @@
         <button type="button" id="product-brand"></button>
         <span>›</span>
         <span class="here" id="product-crumb"></span>
+      </div>
+      <div class="crumbs" id="product-crumbs-new" hidden>
+        <button type="button" id="product-from-new" data-i18n="newArrivalsTitle">Новинки</button>
+        <span>›</span>
+        <span class="here" id="product-crumb-new"></span>
       </div>
       <article class="product">
         <div class="product-cloth" id="product-cloth" role="button" tabindex="-1" aria-label="Нажмите, чтобы увеличить" data-i18n-aria="enlargePhoto">
@@ -1405,9 +1696,9 @@
           <input name="customerName" autocomplete="name" maxlength="80" required>
         </label>
         <label><span data-i18n="phone">Телефон</span>
-          <input name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="32" placeholder="+375…" required>
+          <input name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="32" required>
         </label>
-        <label><span data-i18n="deliveryAddress">Город и адрес или пункт выдачи</span>
+        <label><span data-i18n="deliveryAddress">Адрес пункта выдачи или личный адрес для доставки</span>
           <textarea name="delivery" autocomplete="street-address" maxlength="500" required></textarea>
         </label>
         <label><span data-i18n="comment">Комментарий</span> <span data-i18n="optional">(необязательно)</span>
@@ -1426,7 +1717,24 @@
       </form>
     </section>
     </div>
-    <footer class="site-footer"><span>GO’EL</span><nav aria-label="Информация" data-i18n-aria="footerNavigation"><a href="privacy.html" data-i18n="privacyLink">Политика обработки данных</a><a href="delivery.html" data-i18n="deliveryPayment">Оплата и доставка</a><a href="tracking.html" data-i18n="trackOrder">Отследить заказ</a></nav></footer>
+    <footer class="site-footer">
+      <div class="footer-main">
+        <span class="footer-brand">GO’EL</span>
+        <nav class="footer-links" aria-label="Информация" data-i18n-aria="footerNavigation">
+          <a href="privacy.html" data-i18n="privacyLink">Политика обработки данных</a>
+          <a href="delivery.html" data-i18n="deliveryPayment">Оплата и доставка</a>
+          <a href="tracking.html" data-i18n="trackOrder">Отследить заказ</a>
+        </nav>
+      </div>
+      <nav class="footer-social" aria-label="Социальные сети" data-i18n-aria="socialNetworks">
+        <a href="https://t.me/JHVHGOeL" target="_blank" rel="noopener noreferrer" aria-label="Telegram" title="Telegram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 3.4 2.8 10.7c-1.3.5-1.3 1.2-.2 1.5l4.6 1.4 1.7 5.4c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.4-2.3 4.8 3.5c.9.5 1.5.2 1.7-.8L23.3 5c.3-1.3-.5-1.9-1.7-1.6zM8.7 13.2l9.3-5.8c.5-.3.9-.1.5.2l-7.7 7-.3 3.4-1.8-4.8z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/jehovah_goel/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.1" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.8" cy="6.5" r="1.1" fill="currentColor"/></svg>
+        </a>
+      </nav>
+    </footer>
   </div>
   <div class="lightbox" id="lightbox" hidden>
     <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Закрыть" data-i18n-aria="close">×</button>
@@ -1435,20 +1743,21 @@
     <button type="button" class="lightbox-nav next" id="lightbox-next" hidden aria-label="Следующее фото" data-i18n-aria="nextPhoto">›</button>
     <div class="lightbox-count" id="lightbox-count" hidden></div>
   </div>
+  <div class="cut-info-pop" id="cut-info-pop" hidden role="dialog" aria-modal="false"></div>
   <script>
     const translations = {
       ru: {
         pageTitle: "GO'EL — христианские бренды одежды", countries: "Страны", countriesTitle: "Страны", mobileMenu: "Меню", belarus: "Беларусь", russia: "Россия", catalogMenu: "Каталог",
-        all: "Всё", unisex: "Унисекс", women: "Женское", men: "Мужское", tshirts: "Футболки", sweatshirts: "Свитшоты", longSleeves: "Лонгсливы", halfZips: "Полузипы", caps: "Кепки", beanies: "Шапки", categoryFilter: "Категория одежды", filters: "Фильтры", clearFilters: "Сбросить", selectedCount: "Выбрано: {{count}}", removeFilter: "Убрать фильтр «{{category}}»", languageLabel: "Язык", socialNetworks: "Социальные сети",
+        all: "Всё", unisex: "Унисекс", women: "Женское", men: "Мужское", classicFit: "Classic", womenFit: "Women", tshirts: "Футболки", sweatshirts: "Свитшоты", longSleeves: "Лонгсливы", halfZips: "Полузипы", caps: "Кепки", beanies: "Шапки", categoryFilter: "Категория одежды", filters: "Фильтры", clearFilters: "Сбросить", selectedCount: "Выбрано: {{count}}", removeFilter: "Убрать фильтр «{{category}}»", languageLabel: "Язык", currencyLabel: "Валюта", socialNetworks: "Социальные сети",
         heroKicker: "Независимые бренды · одна витрина", heroLine1: "Носи то,", heroLine2: "во что веришь.", exploreCatalog: "Исследовать каталог", trackOrder: "Отследить заказ", trackOrderCode: "Проверить статус заказа · {{code}}", verseLine1: "Искупитель наш — Господь Саваоф", verseLine2: "имя Ему, Святый Израилев.", verseReference: "Ис. 47:4",
         allBrands: "Все бренды", view: "Смотреть", chooseItemHint: "Выберите вещь и вариант — заявку можно будет оставить прямо на сайте.", cart: "Корзина", cartTitle: "Корзина", cartCount: "Корзина, товаров: {{count}}", cartEmpty: "Корзина пока пуста. Добавьте товары из каталога.", continueShopping: "Продолжить покупки", addToCart: "В корзину", addedToCart: "Добавлено в корзину.", cartCheckout: "Оформить заявку", cartTotal: "Итого: {{total}}", cartTotalOnRequest: "Итого: стоимость уточняется", cartUnavailable: "Этот вариант больше недоступен. Удалите его из корзины, чтобы продолжить.", removeCartItem: "Удалить товар", decreaseQuantity: "Уменьшить количество", increaseQuantity: "Увеличить количество", checkoutTitle: "Контактные данные",
         cartLimit: "В корзине может быть не больше 25 разных товаров.",
         cartInsufficientStock: "В наличии меньше выбранного количества. Уменьшите количество.",
-        catalogTitle: "Каталог", catalogDescription: "Одежда всех брендов в одном месте.", catalogFilteredDescription: "{{gender}} от всех брендов.",
+        catalogTitle: "Каталог", catalogDescription: "Одежда всех брендов в одном месте.", catalogFilteredDescription: "{{category}} от всех брендов.",
         enlargePhoto: "Нажмите, чтобы увеличить", previousPhoto: "Предыдущее фото", nextPhoto: "Следующее фото", photoPlaceholder: "Место под фото",
         model: "Модель", color: "Цвет", size: "Размер", order: "Заказать", orderNotConnected: "Оформление заказа ещё не включено.",
         orderTitle: "Заявка на заказ", orderSetupConnected: "После отправки заявка придёт GO’EL в Telegram.", orderSetupDisabled: "Приём заявок включится после подключения Telegram-бота.",
-        close: "Закрыть", closeForm: "Закрыть форму", customerName: "Имя", phone: "Телефон", deliveryAddress: "Город и адрес или пункт выдачи",
+        close: "Закрыть", closeForm: "Закрыть форму", customerName: "Имя", phone: "Телефон", deliveryAddress: "Адрес пункта выдачи или личный адрес для доставки",
         comment: "Комментарий", optional: "(необязательно)", consent: "Согласен(на), что GO’EL использует мои данные, чтобы связаться со мной по поводу этого заказа.",
         honeypot: "Не заполняйте это поле", submitOrder: "Отправить заявку", sendingOrder: "Отправляем…", orderSent: "Заявка отправлена",
         formNotReady: "Форма пока не подключена к Telegram. Заявка не отправлена.", waitBeforeResend: "Подождите секунду и попробуйте отправить заявку ещё раз.",
@@ -1467,16 +1776,16 @@
       },
       be: {
         pageTitle: "GO'EL — хрысціянскія брэнды адзення", countries: "Краіны", countriesTitle: "Краіны", mobileMenu: "Меню", belarus: "Беларусь", russia: "Расія", catalogMenu: "Каталог",
-        all: "Усё", unisex: "Унісекс", women: "Жаночае", men: "Мужчынскае", tshirts: "Футболкі", sweatshirts: "Світшоты", longSleeves: "Лонгслівы", halfZips: "Паўзіпы", caps: "Кепкі", beanies: "Шапкі", categoryFilter: "Катэгорыя адзення", filters: "Фільтры", clearFilters: "Скінуць", selectedCount: "Выбрана: {{count}}", removeFilter: "Выдаліць фільтр «{{category}}»", languageLabel: "Мова", socialNetworks: "Сацыяльныя сеткі",
+        all: "Усё", unisex: "Унісекс", women: "Жаночае", men: "Мужчынскае", classicFit: "Classic", womenFit: "Women", tshirts: "Футболкі", sweatshirts: "Світшоты", longSleeves: "Лонгслівы", halfZips: "Паўзіпы", caps: "Кепкі", beanies: "Шапкі", categoryFilter: "Катэгорыя адзення", filters: "Фільтры", clearFilters: "Скінуць", selectedCount: "Выбрана: {{count}}", removeFilter: "Выдаліць фільтр «{{category}}»", languageLabel: "Мова", currencyLabel: "Валюта", socialNetworks: "Сацыяльныя сеткі",
         heroKicker: "Незалежныя брэнды · адна вітрына", heroLine1: "Насі тое,", heroLine2: "у што верыш.", exploreCatalog: "Даследаваць каталог", trackOrder: "Адсачыць замову", trackOrderCode: "Праверыць статус замовы · {{code}}", verseLine1: "Збаўца наш — Гасподзь Саваоф", verseLine2: "імя Яму — Святы Ізраілеў.", verseReference: "Іс. 47:4",
         allBrands: "Усе брэнды", view: "Глядзець", chooseItemHint: "Выберыце рэч і варыянт — заяўку можна будзе пакінуць проста на сайце.", cart: "Кошык", cartTitle: "Кошык", cartCount: "Кошык, тавараў: {{count}}", cartEmpty: "Кошык пакуль пусты. Дадайце тавары з каталога.", continueShopping: "Працягнуць пакупкі", addToCart: "У кошык", addedToCart: "Дададзена ў кошык.", cartCheckout: "Аформіць заяўку", cartTotal: "Разам: {{total}}", cartTotalOnRequest: "Разам: кошт удакладняецца", cartUnavailable: "Гэты варыянт больш недаступны. Выдаліце яго з кошыка, каб працягнуць.", removeCartItem: "Выдаліць тавар", decreaseQuantity: "Паменшыць колькасць", increaseQuantity: "Павялічыць колькасць", checkoutTitle: "Кантактныя даныя",
         cartLimit: "У кошыку можа быць не больш за 25 розных тавараў.",
         cartInsufficientStock: "У наяўнасці менш выбранай колькасці. Паменшыце колькасць.",
-        catalogTitle: "Каталог", catalogDescription: "Адзенне ўсіх брэндаў у адным месцы.", catalogFilteredDescription: "{{gender}} ад усіх брэндаў.",
+        catalogTitle: "Каталог", catalogDescription: "Адзенне ўсіх брэндаў у адным месцы.", catalogFilteredDescription: "{{category}} ад усіх брэндаў.",
         enlargePhoto: "Націсніце, каб павялічыць", previousPhoto: "Папярэдняе фота", nextPhoto: "Наступнае фота", photoPlaceholder: "Месца для фота",
         model: "Мадэль", color: "Колер", size: "Памер", order: "Замовіць", orderNotConnected: "Афармленне замовы яшчэ не ўключана.",
         orderTitle: "Заяўка на замову", orderSetupConnected: "Пасля адпраўкі заяўка прыйдзе GO’EL у Telegram.", orderSetupDisabled: "Прыём заявак уключыцца пасля падключэння Telegram-бота.",
-        close: "Закрыць", closeForm: "Закрыць форму", customerName: "Імя", phone: "Тэлефон", deliveryAddress: "Горад і адрас або пункт выдачы",
+        close: "Закрыць", closeForm: "Закрыць форму", customerName: "Імя", phone: "Тэлефон", deliveryAddress: "Адрас пункта выдачы або асабісты адрас для дастаўкі",
         comment: "Каментарый", optional: "(неабавязкова)", consent: "Пагаджаюся, што GO’EL будзе выкарыстоўваць мае даныя, каб звязацца са мной наконт гэтай замовы.",
         honeypot: "Не запаўняйце гэтае поле", submitOrder: "Адправіць заяўку", sendingOrder: "Адпраўляем…", orderSent: "Заяўка адпраўлена",
         formNotReady: "Форма пакуль не падключана да Telegram. Заяўка не адпраўлена.", waitBeforeResend: "Пачакайце секунду і паспрабуйце адправіць заяўку яшчэ раз.",
@@ -1495,16 +1804,16 @@
       },
       uk: {
         pageTitle: "GO'EL — християнські бренди одягу", countries: "Країни", countriesTitle: "Країни", mobileMenu: "Меню", belarus: "Білорусь", russia: "Росія", catalogMenu: "Каталог",
-        all: "Усе", unisex: "Унісекс", women: "Жіноче", men: "Чоловіче", tshirts: "Футболки", sweatshirts: "Світшоти", longSleeves: "Лонгсліви", halfZips: "Півзіпи", caps: "Кепки", beanies: "Шапки", categoryFilter: "Категорія одягу", filters: "Фільтри", clearFilters: "Скинути", selectedCount: "Обрано: {{count}}", removeFilter: "Видалити фільтр «{{category}}»", languageLabel: "Мова", socialNetworks: "Соціальні мережі",
+        all: "Усе", unisex: "Унісекс", women: "Жіноче", men: "Чоловіче", classicFit: "Classic", womenFit: "Women", tshirts: "Футболки", sweatshirts: "Світшоти", longSleeves: "Лонгсліви", halfZips: "Півзіпи", caps: "Кепки", beanies: "Шапки", categoryFilter: "Категорія одягу", filters: "Фільтри", clearFilters: "Скинути", selectedCount: "Обрано: {{count}}", removeFilter: "Видалити фільтр «{{category}}»", languageLabel: "Мова", currencyLabel: "Валюта", socialNetworks: "Соціальні мережі",
         heroKicker: "Незалежні бренди · одна вітрина", heroLine1: "Носи те,", heroLine2: "у що віриш.", exploreCatalog: "Дослідити каталог", trackOrder: "Відстежити замовлення", trackOrderCode: "Перевірити статус замовлення · {{code}}", verseLine1: "Викупитель наш — Господь Саваот", verseLine2: "ім’я Йому — Святий Ізраїлів.", verseReference: "Іс. 47:4",
         allBrands: "Усі бренди", view: "Переглянути", chooseItemHint: "Оберіть річ і варіант — заявку можна буде залишити просто на сайті.", cart: "Кошик", cartTitle: "Кошик", cartCount: "Кошик, товарів: {{count}}", cartEmpty: "Кошик поки порожній. Додайте товари з каталогу.", continueShopping: "Продовжити покупки", addToCart: "До кошика", addedToCart: "Додано до кошика.", cartCheckout: "Оформити заявку", cartTotal: "Разом: {{total}}", cartTotalOnRequest: "Разом: вартість уточнюється", cartUnavailable: "Цей варіант більше недоступний. Видаліть його з кошика, щоб продовжити.", removeCartItem: "Видалити товар", decreaseQuantity: "Зменшити кількість", increaseQuantity: "Збільшити кількість", checkoutTitle: "Контактні дані",
         cartLimit: "У кошику може бути не більше 25 різних товарів.",
         cartInsufficientStock: "У наявності менше вибраної кількості. Зменште кількість.",
-        catalogTitle: "Каталог", catalogDescription: "Одяг усіх брендів в одному місці.", catalogFilteredDescription: "{{gender}} від усіх брендів.",
+        catalogTitle: "Каталог", catalogDescription: "Одяг усіх брендів в одному місці.", catalogFilteredDescription: "{{category}} від усіх брендів.",
         enlargePhoto: "Натисніть, щоб збільшити", previousPhoto: "Попереднє фото", nextPhoto: "Наступне фото", photoPlaceholder: "Місце для фото",
         model: "Модель", color: "Колір", size: "Розмір", order: "Замовити", orderNotConnected: "Оформлення замовлення ще не ввімкнено.",
         orderTitle: "Заявка на замовлення", orderSetupConnected: "Після надсилання заявка надійде GO’EL у Telegram.", orderSetupDisabled: "Приймання заявок увімкнеться після підключення Telegram-бота.",
-        close: "Закрити", closeForm: "Закрити форму", customerName: "Ім’я", phone: "Телефон", deliveryAddress: "Місто й адреса або пункт видачі",
+        close: "Закрити", closeForm: "Закрити форму", customerName: "Ім’я", phone: "Телефон", deliveryAddress: "Адреса пункту видачі або особиста адреса для доставки",
         comment: "Коментар", optional: "(необов’язково)", consent: "Погоджуюся, що GO’EL використовуватиме мої дані, щоб зв’язатися зі мною щодо цього замовлення.",
         honeypot: "Не заповнюйте це поле", submitOrder: "Надіслати заявку", sendingOrder: "Надсилаємо…", orderSent: "Заявку надіслано",
         formNotReady: "Форму ще не підключено до Telegram. Заявку не надіслано.", waitBeforeResend: "Зачекайте секунду й спробуйте надіслати заявку ще раз.",
@@ -1523,16 +1832,16 @@
       },
       en: {
         pageTitle: "GO'EL — Christian clothing brands", countries: "Countries", countriesTitle: "Countries", mobileMenu: "Menu", belarus: "Belarus", russia: "Russia", catalogMenu: "Catalog",
-        all: "All", unisex: "Unisex", women: "Women", men: "Men", tshirts: "T-shirts", sweatshirts: "Sweatshirts", longSleeves: "Long sleeves", halfZips: "Half-zips", caps: "Caps", beanies: "Beanies", categoryFilter: "Clothing type", filters: "Filters", clearFilters: "Clear", selectedCount: "Selected: {{count}}", removeFilter: "Remove {{category}} filter", languageLabel: "Language", socialNetworks: "Social media",
+        all: "All", unisex: "Unisex", women: "Women", men: "Men", classicFit: "Classic", womenFit: "Women", tshirts: "T-shirts", sweatshirts: "Sweatshirts", longSleeves: "Long sleeves", halfZips: "Half-zips", caps: "Caps", beanies: "Beanies", categoryFilter: "Clothing type", filters: "Filters", clearFilters: "Clear", selectedCount: "Selected: {{count}}", removeFilter: "Remove {{category}} filter", languageLabel: "Language", currencyLabel: "Currency", socialNetworks: "Social media",
         heroKicker: "Independent brands · one storefront", heroLine1: "Wear what", heroLine2: "you believe in.", exploreCatalog: "Explore the catalog", trackOrder: "Track your order", trackOrderCode: "Check order status · {{code}}", verseLine1: "Our Redeemer is the Lord of hosts", verseLine2: "is His name, the Holy One of Israel.", verseReference: "Isa 47:4",
         allBrands: "All brands", view: "Browse", chooseItemHint: "Choose an item and a variant — you can submit a request right here on the site.", cart: "Cart", cartTitle: "Your cart", cartCount: "Cart, items: {{count}}", cartEmpty: "Your cart is empty. Add items from the catalog.", continueShopping: "Continue shopping", addToCart: "Add to cart", addedToCart: "Added to cart.", cartCheckout: "Submit request", cartTotal: "Total: {{total}}", cartTotalOnRequest: "Total: price to be confirmed", cartUnavailable: "This option is no longer available. Remove it from your cart to continue.", removeCartItem: "Remove item", decreaseQuantity: "Decrease quantity", increaseQuantity: "Increase quantity", checkoutTitle: "Contact details",
         cartLimit: "Your cart can contain up to 25 different items.",
         cartInsufficientStock: "There aren’t enough items in stock. Reduce the quantity.",
-        catalogTitle: "Catalog", catalogDescription: "Clothing from all brands in one place.", catalogFilteredDescription: "{{gender}} clothing from all brands.",
+        catalogTitle: "Catalog", catalogDescription: "Clothing from all brands in one place.", catalogFilteredDescription: "{{category}} from all brands.",
         enlargePhoto: "Click to enlarge", previousPhoto: "Previous photo", nextPhoto: "Next photo", photoPlaceholder: "Photo placeholder",
         model: "Style", color: "Color", size: "Size", order: "Order", orderNotConnected: "Online ordering is not available yet.",
         orderTitle: "Order request", orderSetupConnected: "Your request will be sent to GO’EL on Telegram.", orderSetupDisabled: "Order requests will be enabled once the Telegram bot is connected.",
-        close: "Close", closeForm: "Close form", customerName: "Name", phone: "Phone", deliveryAddress: "City and address or pickup point",
+        close: "Close", closeForm: "Close form", customerName: "Name", phone: "Phone", deliveryAddress: "Pickup point address or personal delivery address",
         comment: "Comment", optional: "(optional)", consent: "I agree that GO’EL may use my information to contact me about this order.",
         honeypot: "Leave this field empty", submitOrder: "Submit request", sendingOrder: "Sending…", orderSent: "Request sent",
         formNotReady: "The form is not connected to Telegram yet. Your request was not sent.", waitBeforeResend: "Please wait a moment and try submitting your request again.",
@@ -1556,28 +1865,40 @@
       footerNavigation: "Информация", privacyLink: "Политика обработки данных", deliveryPayment: "Оплата и доставка",
       orderProcessNote: "Это заявка, а не оплата. Мы свяжемся с вами, подтвердим наличие и согласуем дальнейшие условия заказа.",
       tshirtType: "Футболка", sweatshirtType: "Свитшот", longsleeveType: "Лонгслив", halfzipType: "Полузип", capType: "Кепка", beanieType: "Шапка", hoodieType: "Худи",
-      light: "светлый", dark: "тёмный", green: "зелёный", sky: "голубой", gray: "серый", whiteBurgundy: "белый и бордовый", whiteSky: "белый и голубой", whiteSand: "белый и песочный", milkBrown: "молочный и коричневый", grayWhite: "серый и белый", grayYellow: "серый и жёлтый", grayPink: "серый и розовый", blackWhite: "чёрный и белый", coffee: "кофейный", emerald: "изумрудный"
+light: "светлый", dark: "тёмный", green: "зелёный", sky: "голубой", gray: "серый", whiteBurgundy: "белый и бордовый", whiteSky: "белый и голубой", whiteSand: "белый и песочный", whiteBrown: "белый и коричневый", whiteRed: "белый и красный", whitePeach: "белый и персиковый", whitePink: "белый и розовый", whiteBlue: "белый и синий", milkBrown: "молочный и коричневый", milkBlue: "молочный и голубой", milkNavy: "молочный и синий", grayWhite: "серый и белый", grayYellow: "серый и жёлтый", grayPink: "серый и розовый", blackWhite: "чёрный и белый", blackYellow: "чёрный и жёлтый", coffee: "кофейный", emerald: "изумрудный",
+      cutInfoLabel: "О модели {{cut}}",
+      classicFitInfo: "Универсальный вариант для мужчин и женщин. Единый размер — оверсайз.",
+      womenFitInfo: "Модель для женщин. Отличия от Classic: чуть длиннее рукав, необработанный край (низ и рукав), форма ближе к трапеции."
     });
     Object.assign(translations.be, {
       pageDescription: "Хрысціянскія брэнды адзення ў адной вітрыне. Выберыце рэч і адпраўце заяўку на заказ анлайн.",
       footerNavigation: "Інфармацыя", privacyLink: "Палітыка апрацоўкі даных", deliveryPayment: "Аплата і дастаўка",
       orderProcessNote: "Гэта заяўка, а не аплата. Мы звяжамся з вамі, пацвердзім наяўнасць і ўзгоднім далейшыя ўмовы замовы.",
       tshirtType: "Футболка", sweatshirtType: "Світашот", longsleeveType: "Лонгсліў", halfzipType: "Паўзіп", capType: "Кепка", beanieType: "Шапка", hoodieType: "Худи",
-      light: "светлы", dark: "цёмны", green: "зялёны", sky: "блакітны", gray: "шэры", whiteBurgundy: "белы і бардовы", whiteSky: "белы і блакітны", whiteSand: "белы і пясочны", milkBrown: "малочны і карычневы", grayWhite: "шэры і белы", grayYellow: "шэры і жоўты", grayPink: "шэры і ружовы", blackWhite: "чорны і белы", coffee: "кававы", emerald: "смарагдавы"
+      light: "светлы", dark: "цёмны", green: "зялёны", sky: "блакітны", gray: "шэры", whiteBurgundy: "белы і бардовы", whiteSky: "белы і блакітны", whiteSand: "белы і пясочны", whiteBrown: "белы і карычневы", whiteRed: "белы і чырвоны", whitePeach: "белы і персікавы", whitePink: "белы і ружовы", whiteBlue: "белы і сіні", milkBrown: "малочны і карычневы", milkBlue: "малочны і блакітны", milkNavy: "малочны і сіні", grayWhite: "шэры і белы", grayYellow: "шэры і жоўты", grayPink: "шэры і ружовы", blackWhite: "чорны і белы", blackYellow: "чорны і жоўты", coffee: "кававы", emerald: "смарагдавы",
+      cutInfoLabel: "Пра мадэль {{cut}}",
+      classicFitInfo: "Універсальны варыянт для мужчын і жанчын. Адзіны памер — оверсайз.",
+      womenFitInfo: "Мадэль для жанчын. Адрозненні ад Classic: трохі даўжэйшы рукаў, неапрацаваны край (ніз і рукаў), форма бліжэй да трапецыі."
     });
     Object.assign(translations.uk, {
       pageDescription: "Християнські бренди одягу в одній вітрині. Оберіть річ і надішліть заявку на замовлення онлайн.",
       footerNavigation: "Інформація", privacyLink: "Політика обробки даних", deliveryPayment: "Оплата й доставка",
       orderProcessNote: "Це заявка, а не оплата. Ми зв’яжемося з вами, підтвердимо наявність і погодимо подальші умови замовлення.",
       tshirtType: "Футболка", sweatshirtType: "Світшот", longsleeveType: "Лонгслів", halfzipType: "Напівзип", capType: "Кепка", beanieType: "Шапка", hoodieType: "Худі",
-      light: "світлий", dark: "темний", green: "зелений", sky: "блакитний", gray: "сірий", whiteBurgundy: "білий і бордовий", whiteSky: "білий і блакитний", whiteSand: "білий і пісочний", milkBrown: "молочний і коричневий", grayWhite: "сірий і білий", grayYellow: "сірий і жовтий", grayPink: "сірий і рожевий", blackWhite: "чорний і білий", coffee: "кавовий", emerald: "смарагдовий"
+      light: "світлий", dark: "темний", green: "зелений", sky: "блакитний", gray: "сірий", whiteBurgundy: "білий і бордовий", whiteSky: "білий і блакитний", whiteSand: "білий і пісочний", whiteBrown: "білий і коричневий", whiteRed: "білий і червоний", whitePeach: "білий і персиковий", whitePink: "білий і рожевий", whiteBlue: "білий і синій", milkBrown: "молочний і коричневий", milkBlue: "молочний і блакитний", milkNavy: "молочний і синій", grayWhite: "сірий і білий", grayYellow: "сірий і жовтий", grayPink: "сірий і рожевий", blackWhite: "чорний і білий", blackYellow: "чорний і жовтий", coffee: "кавовий", emerald: "смарагдовий",
+      cutInfoLabel: "Про модель {{cut}}",
+      classicFitInfo: "Універсальний варіант для чоловіків і жінок. Єдиний розмір — оверсайз.",
+      womenFitInfo: "Модель для жінок. Відмінності від Classic: трохи довший рукав, необроблений край (низ і рукав), форма ближче до трапеції."
     });
     Object.assign(translations.en, {
       pageDescription: "Christian clothing brands in one storefront. Browse the collection and send an order request online.",
       footerNavigation: "Information", privacyLink: "Privacy notice", deliveryPayment: "Payment & delivery",
       orderProcessNote: "This is an order request, not a payment. We’ll contact you to confirm availability and agree on the next steps.",
       tshirtType: "T-shirt", sweatshirtType: "Sweatshirt", longsleeveType: "Long-sleeve top", halfzipType: "Half-zip", capType: "Cap", beanieType: "Beanie", hoodieType: "Hoodie",
-      light: "light", dark: "dark", green: "green", sky: "sky blue", gray: "gray", whiteBurgundy: "white / burgundy", whiteSky: "white / blue", whiteSand: "white / sand", milkBrown: "cream / brown", grayWhite: "gray / white", grayYellow: "gray / yellow", grayPink: "gray / pink", blackWhite: "black / white", coffee: "coffee brown", emerald: "emerald", milk: "milky"
+      light: "light", dark: "dark", green: "green", sky: "sky blue", gray: "gray", whiteBurgundy: "white / burgundy", whiteSky: "white / blue", whiteSand: "white / sand", whiteBrown: "white / brown", whiteRed: "white / red", whitePeach: "white / peach", whitePink: "white / pink", whiteBlue: "white / blue", milkBrown: "cream / brown", milkBlue: "cream / sky blue", milkNavy: "cream / navy", grayWhite: "gray / white", grayYellow: "gray / yellow", grayPink: "gray / pink", blackWhite: "black / white", blackYellow: "black / yellow", coffee: "coffee brown", emerald: "emerald", milk: "milky",
+      cutInfoLabel: "About {{cut}}",
+      classicFitInfo: "A unisex option for men and women. One size — oversized.",
+      womenFitInfo: "A women’s cut. Unlike Classic: slightly longer sleeves, raw hem and cuffs, and a more trapezoid shape."
     });
     let currentLanguage = "ru";
     try {
@@ -1601,11 +1922,17 @@
     };
     Object.assign(toneTranslationKeys, {
       "светлый": "light", "тёмный": "dark", "зелёный": "green", "голубой": "sky", "серый": "gray",
-      "белый-бордо": "whiteBurgundy", "белый-голубой": "whiteSky", "белый-песок": "whiteSand", "молоко-коричневый": "milkBrown",
-      "серый-белый": "grayWhite", "серый-жёлтый": "grayYellow", "серый-розовый": "grayPink", "чёрный-белый": "blackWhite", "меланж": "melange", "сливовый": "plum"
+      "белый-бордо": "whiteBurgundy", "белый-голубой": "whiteSky", "белый-песок": "whiteSand",
+      "белый-коричневый": "whiteBrown", "белый-красный": "whiteRed", "белый-персик": "whitePeach", "белый-розовый": "whitePink", "белый-синий": "whiteBlue",
+      "молоко-коричневый": "milkBrown", "молоко-голубой": "milkBlue", "молоко-синий": "milkNavy",
+      "серый-белый": "grayWhite", "серый-жёлтый": "grayYellow", "серый-розовый": "grayPink",
+      "чёрный-белый": "blackWhite", "чёрный-жёлтый": "blackYellow", "меланж": "melange", "сливовый": "plum"
     });
     function localizedTone(tone) { return toneTranslationKeys[tone] ? t(toneTranslationKeys[tone]) : tone; }
-    const garmentTypeTranslation = { "футболка": "tshirtType", "свитшот": "sweatshirtType", "лонгслив": "longsleeveType", "полузип": "halfzipType", "кепка": "capType", "шапка": "beanieType", "худи": "hoodieType", "лонг": "longsleeveType" };
+    const garmentTypeTranslation = {
+      "футболка": "tshirtType", "свитшот": "sweatshirtType", "лонгслив": "longsleeveType", "полузип": "halfzipType", "кепка": "capType", "шапка": "beanieType", "худи": "hoodieType", "лонг": "longsleeveType",
+      "classic": "classicFit", "women": "womenFit"
+    };
     const englishItemTitle = {
       "бог есть любовь": "GOD IS LOVE", "всегда радуйтесь": "ALWAYS REJOICE", "зажги своё сердце": "SET YOUR HEART ABLAZE",
       "любовь это": "LOVE IS", "мир меняется твоим примером": "THE WORLD CHANGES THROUGH YOUR EXAMPLE", "то, что ты хочешь зажечь": "WHAT YOU WANT TO IGNITE",
@@ -1616,6 +1943,41 @@
       "божий цветочек": "GOD'S LITTLE FLOWER", "из божьего сада": "FROM GOD'S GARDEN", "сосуды": "VESSELS", "плоды духа": "FRUIT OF THE SPIRIT",
       "будьте как дети": "BE LIKE CHILDREN", "jesus (леопард)": "JESUS (LEOPARD)"
     };
+    function cutInfoKey(cut) {
+      const key = String(cut || "").trim().toLowerCase();
+      if (key === "classic") return "classicFitInfo";
+      if (key === "women") return "womenFitInfo";
+      return "";
+    }
+    function hideCutInfoPop() {
+      const pop = document.getElementById("cut-info-pop");
+      if (!pop) return;
+      pop.hidden = true;
+      pop.innerHTML = "";
+      pop.removeAttribute("style");
+    }
+    function showCutInfoPop(anchor, cut) {
+      const infoKey = cutInfoKey(cut);
+      const pop = document.getElementById("cut-info-pop");
+      if (!infoKey || !pop || !anchor) return;
+      const label = localizedGarmentType(cut);
+      pop.innerHTML = `<strong>${label}</strong><p>${t(infoKey)}</p>`;
+      pop.hidden = false;
+      const rect = anchor.getBoundingClientRect();
+      const width = Math.min(280, window.innerWidth - 32);
+      let left = rect.right - width;
+      left = Math.max(16, Math.min(left, window.innerWidth - width - 16));
+      let top = rect.bottom + 8;
+      pop.style.position = "fixed";
+      pop.style.width = `${width}px`;
+      pop.style.left = `${left}px`;
+      pop.style.top = `${top}px`;
+      const popRect = pop.getBoundingClientRect();
+      if (popRect.bottom > window.innerHeight - 12) {
+        top = Math.max(12, rect.top - popRect.height - 8);
+        pop.style.top = `${top}px`;
+      }
+    }
     function localizedGarmentType(type) {
       const key = String(type || "").trim().toLocaleLowerCase("ru");
       return garmentTypeTranslation[key] ? t(garmentTypeTranslation[key]) : type;
@@ -1627,8 +1989,71 @@
       const model = englishItemTitle[rawModel.toLocaleLowerCase("ru")] || rawModel;
       return match ? `${localizedGarmentType(match[1])}${model ? ` ${model}` : ""}` : model;
     }
-    function localizedCountry(country) { return country === "Беларусь" ? t("belarus") : country; }
+    function localizedCountry(country) {
+      if (country === "Беларусь") return t("belarus");
+      if (country === "Россия") return t("russia");
+      return country;
+    }
     function localizedPrice(price) { return price === "Уточняется" ? t("pricePending") : price; }
+
+    // Display FX: USD value of 1 unit. Defaults until /fx loads live rates. Checkout is a request, not payment.
+    const FX_API_URL = "https://goel-order-api.o-el.workers.dev/fx";
+    const CURRENCY_RATES = { USD: 1, EUR: 1.08, BYN: 0.307, RUB: 0.011, UAH: 0.024 };
+    const CURRENCY_LABELS = { BYN: "BYN", RUB: "RUB", UAH: "UAH", EUR: "EUR", USD: "USD" };
+    const CURRENCY_CODES = Object.keys(CURRENCY_RATES);
+    let currentCurrency = "BYN";
+    let fxRatesLoaded = false;
+    try {
+      const savedCurrency = localStorage.getItem("goel-currency");
+      if (savedCurrency && CURRENCY_RATES[savedCurrency]) currentCurrency = savedCurrency;
+    } catch (error) {}
+
+    function normalizeCurrency(raw) {
+      const token = String(raw || "").trim().toLowerCase().replace(/\s+/g, "");
+      if (!token) return "";
+      if (token === "byn" || token === "бр" || token === "br") return "BYN";
+      if (token === "rub" || token === "rur" || token === "₽" || token === "руб" || token === "руб." || token.includes("руб")) return "RUB";
+      if (token === "uah" || token === "грн" || token === "грн." || token === "₴" || token.includes("грн")) return "UAH";
+      if (token === "eur" || token === "€" || token === "euro") return "EUR";
+      if (token === "usd" || token === "$" || token === "us$") return "USD";
+      return "";
+    }
+
+    function priceParts(price) {
+      const match = String(price || "").trim().match(/^(\d+(?:[.,]\d+)?)\s*(.*)$/);
+      if (!match) return null;
+      const currency = normalizeCurrency(match[2]);
+      if (!currency || !CURRENCY_RATES[currency]) return null;
+      return { amount: Number(match[1].replace(",", ".")), currency };
+    }
+
+    function convertAmount(amount, fromCurrency, toCurrency) {
+      if (!CURRENCY_RATES[fromCurrency] || !CURRENCY_RATES[toCurrency]) return null;
+      return amount * (CURRENCY_RATES[fromCurrency] / CURRENCY_RATES[toCurrency]);
+    }
+
+    function formatMoney(amount, currency) {
+      if (!Number.isFinite(amount)) return "";
+      const rounded = (currency === "EUR" || currency === "USD")
+        ? Math.round(amount * 100) / 100
+        : Math.round(amount * 100) / 100;
+      const formatted = Number.isInteger(rounded)
+        ? String(rounded)
+        : rounded.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+      return `${formatted} ${CURRENCY_LABELS[currency] || currency}`.trim();
+    }
+
+    function displayPrice(rawPrice) {
+      const source = String(rawPrice || "").trim();
+      if (!source) return "";
+      if (source === "Уточняется") return t("pricePending");
+      const parts = priceParts(source);
+      if (!parts) return localizedPrice(source);
+      if (parts.currency === currentCurrency) return formatMoney(parts.amount, currentCurrency);
+      const converted = convertAmount(parts.amount, parts.currency, currentCurrency);
+      return converted == null ? localizedPrice(source) : formatMoney(converted, currentCurrency);
+    }
+
     function applyStaticTranslations() {
       document.documentElement.lang = currentLanguage;
       document.title = t("pageTitle");
@@ -1641,6 +2066,9 @@
       document.querySelectorAll("#language-submenu [data-language]").forEach((option) => {
         option.setAttribute("aria-checked", String(option.dataset.language === currentLanguage));
       });
+      document.querySelectorAll("#currency-submenu [data-currency]").forEach((option) => {
+        option.setAttribute("aria-checked", String(option.dataset.currency === currentCurrency));
+      });
       const productCloth = document.getElementById("product-cloth");
       if (productCloth) productCloth.dataset.zoomLabel = t("enlargePhoto");
       const setupNote = document.getElementById("order-setup-note");
@@ -1652,7 +2080,7 @@
     const brands = {
   godderob: {
     country: "Беларусь",
-    title: "godderob",
+    title: "Godderob",
     blurb: "",
     note: "",
     items: [
@@ -2493,53 +2921,47 @@
     country: "Россия",
     title: "Jesus Saves",
     blurb: "",
-    note: "Единый размер Oversize. Classic — унисекс, Women — женская посадка. Цена с канала Telegram.",
+    note: "",
     items: [
       {
-        name: "Футболка Classic STRENGTH",
-        slug: "classic-strength",
+        name: "Футболка STRENGTH",
+        slug: "strength",
         gender: "unisex",
         variants: [
-          { tone: "белый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-01.jpg", "img/art/classic-strength-white-02.jpg", "img/art/classic-strength-white-03.jpg", "img/art/classic-strength-white-04.jpg", "img/art/classic-strength-white-05.jpg"], photo: "img/art/classic-strength-white-01.jpg" },
-          { tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-white-01.jpg", "img/art/classic-strength-grey-white-02.jpg"], photo: "img/art/classic-strength-grey-white-01.jpg" },
-          { tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-yellow-01.jpg", "img/art/classic-strength-grey-yellow-02.jpg"], photo: "img/art/classic-strength-grey-yellow-01.jpg" }
+          { cut: "Classic", tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-white-01.jpg", "img/art/classic-strength-grey-white-02.jpg", "img/art/classic-strength-grey-white-03.jpg"], photo: "img/art/classic-strength-grey-white-01.jpg" },
+          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-grey-yellow-01.jpg", "img/art/classic-strength-grey-yellow-02.jpg", "img/art/classic-strength-grey-yellow-03.jpg"], photo: "img/art/classic-strength-grey-yellow-01.jpg" },
+          { cut: "Classic", tone: "белый-синий", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-blue-01.jpg", "img/art/classic-strength-white-blue-02.jpg"], photo: "img/art/classic-strength-white-blue-01.jpg" },
+          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-strength-white-brown-back-01.jpg", "img/art/classic-strength-white-brown-card-01.jpg", "img/art/classic-strength-white-brown-wear-01.jpg"], photo: "img/art/classic-strength-white-brown-back-01.jpg" },
+          { cut: "Women", tone: "белый-синий", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-blue-01.jpg", "img/art/women-strength-white-blue-02.jpg", "img/art/women-strength-white-blue-03.jpg"], photo: "img/art/women-strength-white-blue-01.jpg" },
+          { cut: "Women", tone: "белый-голубой", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-lightblue-01.jpg", "img/art/women-strength-white-lightblue-02.jpg", "img/art/women-strength-white-lightblue-03.jpg"], photo: "img/art/women-strength-white-lightblue-01.jpg" },
+          { cut: "Women", tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-black-white-01.jpg", "img/art/women-strength-black-white-02.jpg", "img/art/women-strength-black-white-03.jpg"], photo: "img/art/women-strength-black-white-01.jpg" },
+          { cut: "Women", tone: "чёрный-жёлтый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-black-yellow-01.jpg", "img/art/women-strength-black-yellow-02.jpg"], photo: "img/art/women-strength-black-yellow-01.jpg" },
+          { cut: "Women", tone: "белый-песок", color: "#f3efe6", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-sand-01.jpg", "img/art/women-strength-white-sand-02.jpg", "img/art/women-strength-white-sand-03.jpg"], photo: "img/art/women-strength-white-sand-01.jpg" },
+          { cut: "Women", tone: "молоко-голубой", color: "#f0ebe3", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-blue-01.jpg", "img/art/women-strength-milk-blue-02.jpg"], photo: "img/art/women-strength-milk-blue-01.jpg" },
+          { cut: "Women", tone: "молоко-коричневый", color: "#efe6da", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-brown-01.jpg", "img/art/women-strength-milk-brown-02.jpg"], photo: "img/art/women-strength-milk-brown-01.jpg" },
+          { cut: "Women", tone: "молоко-синий", color: "#ebe4d8", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-milk-navy-01.jpg", "img/art/women-strength-milk-navy-02.jpg"], photo: "img/art/women-strength-milk-navy-01.jpg" }
+
         ]
       },
       {
-        name: "Футболка Classic VICTORY",
-        slug: "classic-victory",
+        name: "Футболка VICTORY",
+        slug: "victory",
         gender: "unisex",
         variants: [
-          { tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-grey-yellow-01.jpg", "img/art/classic-victory-grey-yellow-02.jpg"], photo: "img/art/classic-victory-grey-yellow-01.jpg" }
+          { cut: "Classic", tone: "серый-жёлтый", color: "#45403a", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-grey-yellow-01.jpg", "img/art/classic-victory-grey-yellow-02.jpg", "img/art/classic-victory-grey-yellow-03.jpg"], photo: "img/art/classic-victory-grey-yellow-01.jpg" },
+          { cut: "Classic", tone: "белый-коричневый", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-brown-v2-01.jpg", "img/art/classic-victory-white-brown-v2-02.jpg"], photo: "img/art/classic-victory-white-brown-v2-01.jpg" },
+          { cut: "Classic", tone: "белый-красный", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-victory-white-red-v2-01.jpg", "img/art/classic-victory-white-red-v2-02.jpg", "img/art/classic-victory-white-red-v2-03.jpg"], photo: "img/art/classic-victory-white-red-v2-01.jpg" }
+
         ]
       },
       {
-        name: "Футболка Classic SKATEBOARD",
-        slug: "classic-skateboard",
+        name: "Футболка SKATEBOARD",
+        slug: "skateboard",
         gender: "unisex",
         variants: [
-          { tone: "серый-белый", color: "#3f3f3f", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-white-01.jpg", "img/art/classic-skateboard-grey-white-02.jpg"], photo: "img/art/classic-skateboard-grey-white-01.jpg" },
-          { tone: "серый-розовый", color: "#433c40", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-pink-01.jpg", "img/art/classic-skateboard-grey-pink-02.jpg"], photo: "img/art/classic-skateboard-grey-pink-01.jpg" }
-        ]
-      },
-      {
-        name: "Футболка Women STRENGTH",
-        slug: "women-strength",
-        gender: "women",
-        variants: [
-          { tone: "белый-голубой", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-blue-01.jpg", "img/art/women-strength-white-blue-02.jpg"], photo: "img/art/women-strength-white-blue-01.jpg" },
-          { tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-black-white-01.jpg", "img/art/women-strength-black-white-02.jpg"], photo: "img/art/women-strength-black-white-01.jpg" },
-          { tone: "белый-песок", color: "#f3efe6", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-strength-white-sand-01.jpg", "img/art/women-strength-white-sand-02.jpg"], photo: "img/art/women-strength-white-sand-01.jpg" }
-        ]
-      },
-      {
-        name: "Футболка Women VICTORY",
-        slug: "women-victory",
-        gender: "women",
-        variants: [
-          { tone: "белый-бордо", color: "#f4f1ea", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-white-bordo-01.jpg", "img/art/women-victory-white-bordo-02.jpg"], photo: "img/art/women-victory-white-bordo-01.jpg" },
-          { tone: "молоко-коричневый", color: "#f0ebe3", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-milk-brown-01.jpg", "img/art/women-victory-milk-brown-02.jpg"], photo: "img/art/women-victory-milk-brown-01.jpg" },
-          { tone: "чёрный-белый", color: "#1c1c1c", size: "Oversize", price: "2000 ₽", photos: ["img/art/women-victory-black-white-01.jpg", "img/art/women-victory-black-white-02.jpg"], photo: "img/art/women-victory-black-white-01.jpg" }
+          { cut: "Classic", tone: "серый-розовый", color: "#433c40", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-grey-pink-01.jpg", "img/art/classic-skateboard-grey-pink-02.jpg"], photo: "img/art/classic-skateboard-grey-pink-01.jpg" },
+          { cut: "Classic", tone: "белый-розовый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-skateboard-white-pink-v2-01.jpg", "img/art/classic-skateboard-white-pink-v2-02.jpg"], photo: "img/art/classic-skateboard-white-pink-v2-01.jpg" }
+
         ]
       },
       {
@@ -2547,7 +2969,8 @@
         slug: "defender",
         gender: "unisex",
         variants: [
-          { tone: "белый", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/defender-white-01.jpg", "img/art/defender-white-02.jpg", "img/art/defender-white-03.jpg", "img/art/defender-white-04.jpg"], photo: "img/art/defender-white-01.jpg" }
+          { cut: "Classic", tone: "белый-персик", color: "#f7f4ee", size: "Oversize", price: "2000 ₽", photos: ["img/art/classic-defender-white-peach-v2-01.jpg", "img/art/classic-defender-white-peach-v2-02.jpg", "img/art/classic-defender-white-peach-v2-03.jpg"], photo: "img/art/classic-defender-white-peach-v2-01.jpg" }
+
         ]
       }
     ]
@@ -2575,6 +2998,11 @@
     let brandColorFilters = [];
     let catalogCategoryFilters = [];
     let catalogColorFilters = [];
+    const VIEW_STORAGE_KEY = "goel-view-v1";
+    let syncFiltersFromRoute = true;
+    let restoreScrollY = null;
+    let ignoreScrollSave = false;
+    let scrollSaveTimer = 0;
     const CART_STORAGE_KEY = "goel-cart-v1";
     const ORDER_IDEMPOTENCY_STORAGE_KEY = "goel-order-request-v1";
     const ORDER_API_URL = "https://goel-order-api.o-el.workers.dev/order";
@@ -2617,22 +3045,40 @@
       }
       return orderTurnstileLoadPromise;
     }
+    function turnstileLanguage() {
+      // Turnstile has no Belarusian locale; Russian is the closest match for this shop.
+      if (currentLanguage === "be") return "ru";
+      return currentLanguage;
+    }
     function resetOrderTurnstile() {
       orderTurnstileToken = "";
       if (window.turnstile && orderTurnstileWidgetId !== null) window.turnstile.reset(orderTurnstileWidgetId);
       updateOrderSubmitState();
     }
-    async function activateOrderTurnstile() {
+    function destroyOrderTurnstile() {
+      orderTurnstileToken = "";
+      if (window.turnstile && orderTurnstileWidgetId !== null) {
+        window.turnstile.remove(orderTurnstileWidgetId);
+        orderTurnstileWidgetId = null;
+      }
+      if (orderTurnstileContainer) orderTurnstileContainer.innerHTML = "";
+      updateOrderSubmitState();
+    }
+    async function activateOrderTurnstile({ remount = false } = {}) {
       try {
         const turnstile = await loadTurnstileApi();
         if (orderTurnstileWidgetId !== null) {
-          resetOrderTurnstile();
-          return;
+          if (!remount) {
+            resetOrderTurnstile();
+            return;
+          }
+          destroyOrderTurnstile();
         }
         orderTurnstileWidgetId = turnstile.render(orderTurnstileContainer, {
           sitekey: TURNSTILE_SITE_KEY,
           action: "order",
           theme: "light",
+          language: turnstileLanguage(),
           callback: (token) => {
             orderTurnstileToken = token;
             updateOrderSubmitState();
@@ -2701,12 +3147,11 @@
           });
         }, { threshold: 0.14, rootMargin: "0px 0px -36px 0px" })
       : null;
-    const scrollRevealSelector = ".hero-copy, [data-country-group] > h2, .brand, .item, .product, .cart-line, .checkout-form";
+    const scrollRevealSelector = ".hero-copy, [data-country-group] > h2, .brand, .product, .cart-line, .checkout-form";
     const heroCarousel = document.querySelector("#home .hero");
     if (heroCarousel) {
       const heroSlides = Array.from(heroCarousel.querySelectorAll("[data-hero-slide]"));
       const heroDots = Array.from(heroCarousel.querySelectorAll("[data-hero-dot]"));
-      const heroCount = heroCarousel.querySelector("[data-hero-count]");
       let activeHeroSlide = 0;
       let heroAutoplayTimer = null;
       let heroInViewport = true;
@@ -2721,7 +3166,6 @@
         heroDots.forEach((dot, dotIndex) => {
           dot.classList.toggle("is-active", dotIndex === activeHeroSlide);
         });
-        if (heroCount) heroCount.textContent = `${String(activeHeroSlide + 1).padStart(2, "0")} / ${String(heroSlides.length).padStart(2, "0")}`;
       }
 
       function syncHeroAutoplay() {
@@ -2742,6 +3186,23 @@
       }
       if (scrollMotionPreference.addEventListener) scrollMotionPreference.addEventListener("change", syncHeroAutoplay);
       else if (scrollMotionPreference.addListener) scrollMotionPreference.addListener(syncHeroAutoplay);
+      let heroSwipe = null;
+      heroCarousel.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0 || event.target.closest("a, button")) return;
+        heroSwipe = { id: event.pointerId, x: event.clientX, y: event.clientY };
+      });
+      heroCarousel.addEventListener("pointerup", (event) => {
+        if (!heroSwipe || event.pointerId !== heroSwipe.id) return;
+        const dx = event.clientX - heroSwipe.x;
+        const dy = event.clientY - heroSwipe.y;
+        heroSwipe = null;
+        if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+        showHeroSlide(activeHeroSlide + (dx < 0 ? 1 : -1));
+        syncHeroAutoplay();
+      });
+      heroCarousel.addEventListener("pointercancel", (event) => {
+        if (heroSwipe?.id === event.pointerId) heroSwipe = null;
+      });
       showHeroSlide(0);
       syncHeroAutoplay();
     }
@@ -2800,7 +3261,9 @@
     const catalogSubmenu = document.getElementById("catalog-submenu");
     const languageToggle = document.getElementById("language-toggle");
     const languageSubmenu = document.getElementById("language-submenu");
-    const menuSubmenus = [[countriesToggle, countriesSubmenu], [catalogToggle, catalogSubmenu], [languageToggle, languageSubmenu]];
+    const currencyToggle = document.getElementById("currency-toggle");
+    const currencySubmenu = document.getElementById("currency-submenu");
+    const menuSubmenus = [[countriesToggle, countriesSubmenu], [catalogToggle, catalogSubmenu], [languageToggle, languageSubmenu], [currencyToggle, currencySubmenu]];
     let genderLabel = { all: t("all"), unisex: t("unisex"), women: t("women"), men: t("men") };
     function stockToken(value) {
       return String(value || "")
@@ -2822,6 +3285,16 @@
 
     function itemInStock(item) {
       return item.variants.some(variantInStock);
+    }
+
+    function preserveSizeCharts() {
+      Object.values(brands).forEach((data) => {
+        data.items.forEach((item) => {
+          item.variants.forEach((variant) => {
+            if (variant.sizeChart == null) variant.sizeChart = String(variant.size || "");
+          });
+        });
+      });
     }
 
     function closeUnlistedGodderobStock() {
@@ -2860,6 +3333,25 @@
         });
       } catch (error) {
         console.warn("Could not load live stock; Godderob variants remain unavailable.", error);
+      }
+    }
+
+    async function loadFxRates() {
+      try {
+        const response = await fetch(FX_API_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`FX feed returned ${response.status}`);
+        const feed = await response.json();
+        if (feed.schemaVersion !== 1 || !feed.rates || typeof feed.rates !== "object") {
+          throw new Error("Unsupported FX feed format");
+        }
+        for (const code of CURRENCY_CODES) {
+          const value = Number(feed.rates[code]);
+          if (!Number.isFinite(value) || value <= 0) throw new Error(`Invalid FX rate for ${code}`);
+          CURRENCY_RATES[code] = value;
+        }
+        fxRatesLoaded = true;
+      } catch (error) {
+        console.warn("Could not load live FX rates; using defaults.", error);
       }
     }
 
@@ -3045,9 +3537,23 @@
 
     function itemMatchesGender(item, gender) {
       if (!gender || gender === "all") return true;
+      if (gender === "women") {
+        if (item.gender === "women") return true;
+        return Boolean(item.variants?.some((variant) => variant.cut === "Women" || variant.gender === "women"));
+      }
+      if (gender === "men") return item.gender === "men";
       const itemGender = item.gender === "women" || item.gender === "men" ? item.gender : "unisex";
       return itemGender === gender;
     }
+
+    const artSlugAliases = {
+      "classic-strength": "strength",
+      "women-strength": "strength",
+      "classic-victory": "victory",
+      "women-victory": "victory",
+      "classic-skateboard": "skateboard",
+      "classic-defender": "defender"
+    };
 
     const brandCategoryKeys = ["tshirts", "sweatshirts", "longSleeves", "halfZips", "caps", "beanies"];
     let brandCategoryLabel = {
@@ -3163,6 +3669,31 @@
       return parts.length > 1 ? parts : [];
     }
 
+    function contiguousSizeRun(sizes) {
+      const indexes = [...new Set(sizes.map((size) => sizeScale.indexOf(size)).filter((index) => index >= 0))]
+        .sort((left, right) => left - right);
+      if (!indexes.length) return sizes.filter(Boolean);
+      return sizeScale.slice(indexes[0], indexes[indexes.length - 1] + 1);
+    }
+
+    const apparelSizeChart = ["XS", "S", "M", "L", "XL", "2XL"];
+
+    function sizeChartForVariant(item, variant) {
+      if (itemCategory(item) === "caps" || itemCategory(item) === "beanies") return ["OS"];
+      const rawChart = String(variant.sizeChart || "").trim();
+      if (/^(oversize|оверсайз)$/i.test(rawChart)) return [];
+      const chart = listedSizes(rawChart);
+      // Keep explicit wider charts (e.g. art XS–5XL); Godderob apparel is always XS–2XL.
+      if (chart.some((size) => ["3XL", "4XL", "5XL"].includes(size))) return contiguousSizeRun(chart);
+      if (!variant.stockManaged && chart.length) return contiguousSizeRun(chart);
+      return apparelSizeChart;
+    }
+
+    function availableSizeSet(variant) {
+      if (!variant.stockManaged) return new Set(listedSizes(variant.sizeChart || variant.size));
+      return new Set(listedSizes(variant.size));
+    }
+
     function rangeLabel(size) {
       if (!size) return "";
       if (/^oversize$/i.test(size.trim())) return t("oversizeFit");
@@ -3230,7 +3761,7 @@
         tone: variant.tone || "",
         color: variant.tone ? localizedTone(variant.tone) : t("colorUnknown"),
         size: displaySize,
-        price: variant.price ? localizedPrice(variant.price) : t("priceUnknown"),
+        price: variant.price ? displayPrice(variant.price) : t("priceUnknown"),
         quantity: line.quantity,
         maxOrderQuantity,
         photo: variantPhotos(variant)[0] || variant.photo || "",
@@ -3255,17 +3786,16 @@
       document.getElementById("cart-toggle").setAttribute("aria-label", count ? t("cartCount", { count }) : t("cart"));
     }
 
-    function priceParts(price) {
-      const match = String(price).match(/(\d+(?:[.,]\d+)?)\s*(.*)/);
-      return match ? { amount: Number(match[1].replace(",", ".")), currency: match[2].trim() } : null;
-    }
-
     function cartTotal(details) {
-      const parts = details.map((detail) => priceParts(detail.rawPrice));
-      if (!parts.length || parts.some((part) => !part) || new Set(parts.map((part) => part.currency)).size !== 1) return t("cartTotalOnRequest");
-      const amount = details.reduce((sum, detail, index) => sum + parts[index].amount * detail.quantity, 0);
-      const formatted = Number.isInteger(amount) ? String(amount) : amount.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
-      return t("cartTotal", { total: `${formatted} ${parts[0].currency}`.trim() });
+      const converted = details.map((detail) => {
+        const parts = priceParts(detail.rawPrice);
+        if (!parts) return null;
+        const amount = convertAmount(parts.amount, parts.currency, currentCurrency);
+        return amount == null ? null : amount * detail.quantity;
+      });
+      if (!converted.length || converted.some((amount) => amount == null)) return t("cartTotalOnRequest");
+      const amount = converted.reduce((sum, value) => sum + value, 0);
+      return t("cartTotal", { total: formatMoney(amount, currentCurrency) });
     }
 
     function renderCartContents() {
@@ -3306,13 +3836,18 @@
     function addCurrentToCart() {
       if (!currentBrand || !currentItem) return;
       const variant = currentItem.variants[currentTone] || currentItem.variants[0];
-      const sizes = listedSizes(variant.size);
-      const selectedSize = document.querySelector("#size-options .size.on")?.textContent.trim() || "";
+      const sizes = sizeChartForVariant(currentItem, variant);
+      const available = availableSizeSet(variant);
+      const selectedSize = document.querySelector("#size-options .size.on:not(:disabled)")?.dataset.size
+        || document.querySelector("#size-options .size.on:not(:disabled)")?.textContent.trim()
+        || "";
       if (sizes.length && !selectedSize) {
+        document.getElementById("choice").hidden = false;
         document.getElementById("choice").textContent = t("firstChooseSize");
         document.getElementById("size-options").scrollIntoView({ behavior: "smooth", block: "center" });
         return;
       }
+      if (selectedSize && !available.has(selectedSize)) return;
       if (!variantInStock(variant)) return;
       const line = { brand: currentBrand, slug: currentItem.slug, tone: variant.tone || "", cut: variant.cut || "", size: selectedSize || variant.size || "", variantIndex: currentTone, quantity: 1 };
       const existing = cartLines.find((item) => cartLineKey(item) === cartLineKey(line));
@@ -3471,22 +4006,54 @@
     });
 
     function cardPrice(item, selectedVariant = null) {
-      const prices = (selectedVariant ? [selectedVariant] : item.variants).filter(variantInStock).map((variant) => localizedPrice(variant.price || "")).filter(Boolean);
-      if (!prices.length) return "";
-      const unique = [...new Set(prices)];
-      if (unique.length === 1) return unique[0];
-      const numbers = unique.map((price) => parseFloat(price)).filter((n) => !Number.isNaN(n));
-      if (!numbers.length) return unique[0];
-      const min = Math.min(...numbers);
-      const unit = unique[0].replace(/[\d.,\s]+/, "").trim();
-      return `${t("from")} ${min} ${unit}`.trim();
+      const variants = (selectedVariant ? [selectedVariant] : item.variants).filter(variantInStock);
+      const amounts = variants.map((variant) => {
+        const parts = priceParts(variant.price || "");
+        if (!parts) return null;
+        return convertAmount(parts.amount, parts.currency, currentCurrency);
+      }).filter((amount) => amount != null);
+      if (!amounts.length) {
+        const fallback = variants.map((variant) => displayPrice(variant.price || "")).filter(Boolean);
+        return fallback.length === 1 ? fallback[0] : (fallback[0] || "");
+      }
+      const min = Math.min(...amounts);
+      const max = Math.max(...amounts);
+      if (min === max) return formatMoney(min, currentCurrency);
+      return `${t("from")} ${formatMoney(min, currentCurrency)}`.trim();
+    }
+
+    function renderProductRail(cardsHtml) {
+      return `<div class="items product-rail" role="list">${cardsHtml}</div>`;
+    }
+
+    function groupItemsByCategory(list) {
+      const known = brandCategoryKeys
+        .map((category) => ({
+          category,
+          items: list.filter((item) => itemCategory(item) === category)
+        }))
+        .filter(({ items: rows }) => rows.length);
+      const other = list.filter((item) => !itemCategory(item));
+      if (other.length) known.push({ category: "", items: other });
+      return known;
     }
 
     function renderHomeCollections(country = "all") {
+      const newSection = document.getElementById("home-new-arrivals");
+      const restockedSection = document.getElementById("home-restocked");
+      const newItems = newSection.querySelector(".items");
+      const restockedItems = restockedSection.querySelector(".items");
+      // New arrivals / restocked rails stay on the main home only.
+      if (country !== "all") {
+        newSection.hidden = true;
+        restockedSection.hidden = true;
+        newItems.innerHTML = "";
+        restockedItems.innerHTML = "";
+        window.requestAnimationFrame(() => observeScrollBlocks(home));
+        return;
+      }
       const products = Object.entries(brands).flatMap(([id, data]) =>
-        country !== "all" && data.country !== country
-          ? []
-          : data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
+        data.items.filter((item) => item && item.slug && Array.isArray(item.variants)).map((item) => ({ id, item }))
       );
       // Distinct photos → one card per color; shared photo (beanies) → one card for the product.
       const productOrder = new Map(products.map(({ item }, index) => [item, index]));
@@ -3502,20 +4069,14 @@
         item,
         tones: item.variants.filter((variant) => variantInStock(variant) && recentlyRestockedKeys.has(stockKey(item, variant))).map((variant) => variant.tone)
       })).filter(({ tones }) => tones.length);
-      const newSection = document.getElementById("home-new-arrivals");
-      const restockedSection = document.getElementById("home-restocked");
       newSection.hidden = arrivals.length === 0;
-      const newItems = newSection.querySelector(".items");
-      newItems.onpointerenter = null;
-      newItems.onpointermove = null;
-      newItems.onpointerleave = null;
-      newItems.onfocusin = null;
-      newItems.onfocusout = null;
+      newItems.classList.add("product-rail");
       newItems.innerHTML = arrivals
-        .map(({ id, item, variant }) => itemCard(id, item, [], "newArrivalBadge", variant || null))
+        .map(({ id, item, variant }) => itemCard(id, item, [], "newArrivalBadge", variant, "new"))
         .join("");
       restockedSection.hidden = restocked.length === 0;
-      restockedSection.querySelector(".items").innerHTML = restocked
+      restockedItems.classList.add("product-rail");
+      restockedItems.innerHTML = restocked
         .map(({ id, item, tones }) => itemCard(id, item, tones, "restockedBadge"))
         .join("");
       window.requestAnimationFrame(() => observeScrollBlocks(home));
@@ -3535,7 +4096,7 @@
       }, animate);
     }
 
-    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, stackIndex = -1, stackCount = 0) {
+    function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, fromSource = "") {
       const matchingVariant = featuredVariant || (preferredColors.length
         ? item.variants.find((variant) => variantInStock(variant) && preferredColors.includes(variant.tone))
           || item.variants.find((variant) => preferredColors.includes(variant.tone))
@@ -3545,20 +4106,14 @@
       const price = cardPrice(item, matchingVariant);
       const photos = variantPhotos(first);
       const photo = photos[0] || first.photo || "";
-      const cardPhotos = photos.length ? photos : photo ? [photo] : [];
       const color = first.color;
       const clothStyle = `--swatch:${color}`;
       const cardStyle = photo
         ? `--swatch:${color}`
         : `--swatch:${color};background-image:linear-gradient(${color},${color})`;
       const photoClass = photo ? " has-photo" : "";
-      const galleryClass = cardPhotos.length > 1 ? " has-gallery" : "";
-      const galleryData = cardPhotos.length > 1 ? ` data-gallery-photos="${encodeURIComponent(JSON.stringify(cardPhotos))}" data-photo-index="0"` : "";
       const photoTag = photo
         ? `<img src="${photo}" alt="${localizedItemName(item.name)}" loading="lazy" decoding="async">`
-        : "";
-      const galleryDots = cardPhotos.length > 1
-        ? `<div class="item-gallery-dots" aria-hidden="true">${cardPhotos.map((_, index) => `<span class="${index === 0 ? "on" : ""}"></span>`).join("")}</div>`
         : "";
       const activeBadge = badgeKey || (item.newArrival ? "newArrivalBadge" : "");
       const badge = activeBadge ? `<span class="item-badge">${t(activeBadge)}</span>` : "";
@@ -3568,12 +4123,13 @@
       const stockNote = !variantInStock(first)
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
         : "";
-      const centeredIndex = stackCount ? stackIndex - (stackCount - 1) / 2 : 0;
-      const stackStyle = featuredVariant
-        ? `;--stack-layer:${stackIndex + 1};--stack-shift:${Math.round(centeredIndex * 56)}px;--stack-rotation:${Math.max(-6, Math.min(6, centeredIndex * 3))}deg;--stack-lift:${Math.round(Math.abs(centeredIndex) * 2)}px`
-        : "";
       const variantRoute = matchingVariant ? `&variant=${variantIndex}` : "";
-      return `<a class="item${featuredVariant ? " home-arrival-card" : ""}" href="?${id}/${item.slug}${variantRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}" style="${cardStyle}${stackStyle}"><div class="cloth${photoClass}${galleryClass}" style="${clothStyle}"${galleryData}>${photoTag}${galleryDots}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span></a>`;
+      const fromRoute = fromSource ? `&from=${encodeURIComponent(fromSource)}` : "";
+      const fromAttr = fromSource ? ` data-from="${fromSource}"` : "";
+      const meta = (stockNote || price)
+        ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
+        : "";
+      return `<a class="item" href="?${id}/${item.slug}${variantRoute}${fromRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}"${fromAttr} style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
@@ -3630,9 +4186,19 @@
 
     function renderBrandItems(id, data) {
       const list = sortItemsByAvailability(filterItemsByBrandFilters(data.items, brandCategoryFilters, brandColorFilters), brandColorFilters, data.items);
-      items.innerHTML = list.length
-        ? list.map((item) => itemCard(id, item, brandColorFilters)).join("")
-        : `<p class="blurb">${t("noFilterItems")}</p>`;
+      if (!list.length) {
+        items.innerHTML = `<p class="blurb">${t("noFilterItems")}</p>`;
+        window.requestAnimationFrame(() => observeScrollBlocks(items));
+        return;
+      }
+      const showCategoryTitles = brandCategoryFilters.length !== 1;
+      const groups = showCategoryTitles ? groupItemsByCategory(list) : [{ category: "", items: list }];
+      items.innerHTML = groups.map(({ category, items: rows }) => {
+        const title = category && showCategoryTitles && groups.length > 1
+          ? `<h3>${brandCategoryLabel[category] || category}</h3>`
+          : "";
+        return `<div class="product-rail-block">${title}${renderProductRail(rows.map((item) => itemCard(id, item, brandColorFilters)).join(""))}</div>`;
+      }).join("");
       window.requestAnimationFrame(() => observeScrollBlocks(items));
     }
 
@@ -3818,22 +4384,60 @@
     }
 
     function renderCatalogBody() {
+      const splitByCategory = catalogCategoryFilters.length > 1;
       const groups = catalogEntries()
-        .map(({ id, data, items: list }) => ({ id, data, items: sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters, data.items) }))
-        .filter(({ items: list }) => list.length);
+        .map(({ id, data, items: list }) => {
+          const matching = sortItemsByAvailability(list.filter(itemMatchesCatalogFilters), catalogColorFilters, data.items);
+          if (!matching.length) return null;
+          if (!splitByCategory) return { id, data, items: matching };
+          const rows = brandCategoryKeys
+            .filter((category) => catalogCategoryFilters.includes(category))
+            .map((category) => {
+              const itemsForCategory = matching.filter((item) => itemCategory(item) === category);
+              return itemsForCategory.length ? { category, items: itemsForCategory } : null;
+            })
+            .filter(Boolean);
+          return rows.length ? { id, data, rows } : null;
+        })
+        .filter(Boolean);
+      catalogBody.classList.add("product-rail-stack");
       catalogBody.innerHTML = groups.length
-        ? groups.map(({ id, data, items: list }) =>
-            `<div class="catalog-group"><h2>${data.title}</h2><div class="items">${list.map((item) => itemCard(id, item, catalogColorFilters)).join("")}</div></div>`
-          ).join("")
+        ? groups.map((group) => {
+            const brandTitle = `<h2><a class="catalog-brand-link" href="?${group.id}" data-brand="${group.id}">${group.data.title}</a></h2>`;
+            if (group.rows) {
+              const rows = group.rows.map(({ category, items: list }) =>
+                `<div class="product-rail-block"><h3>${brandCategoryLabel[category]}</h3>${renderProductRail(list.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`
+              ).join("");
+              return `<div class="catalog-group">${brandTitle}${rows}</div>`;
+            }
+            return `<div class="catalog-group">${brandTitle}${renderProductRail(group.items.map((item) => itemCard(group.id, item, catalogColorFilters)).join(""))}</div>`;
+          }).join("")
         : `<p class="blurb">${t("noCatalogItems")}</p>`;
       window.requestAnimationFrame(() => observeScrollBlocks(catalogBody));
     }
 
-    function paintCatalog(_gender, animate) {
+    function updateCatalogChrome(category = "") {
+      const key = brandCategoryKeys.includes(category) ? category : "";
+      const label = key ? brandCategoryLabel[key] : "";
+      document.getElementById("catalog-crumb").textContent = label || t("catalogTitle");
+      document.getElementById("catalog-title").textContent = label || t("catalogTitle");
+      document.getElementById("catalog-blurb").textContent = label
+        ? t("catalogFilteredDescription", { category: label })
+        : t("catalogDescription");
+    }
+
+    function syncCatalogUrlFromFilters() {
+      const category = catalogCategoryFilters.length === 1 ? catalogCategoryFilters[0] : "";
+      const desired = category ? `catalog/${category}` : "catalog";
+      if (currentRoute() !== desired) {
+        history.replaceState(null, "", `${location.pathname}?${desired}`);
+      }
+      updateCatalogChrome(category);
+    }
+
+    function paintCatalog(category, animate) {
       reveal(() => {
-        document.getElementById("catalog-crumb").textContent = t("catalogTitle");
-        document.getElementById("catalog-title").textContent = t("catalogTitle");
-        document.getElementById("catalog-blurb").textContent = t("catalogDescription");
+        updateCatalogChrome(category);
         renderCatalogFilters();
         renderCatalogBody();
         home.classList.remove("on");
@@ -3876,11 +4480,19 @@
       const cutsEl = document.getElementById("product-cuts");
       cutsEl.hidden = cuts.length < 2;
       document.getElementById("cut-options").innerHTML = cuts.length > 1
-        ? cuts.map((cut) =>
-            `<button type="button" class="cut${cut === variant.cut ? " on" : ""}" data-cut="${cut}">${localizedGarmentType(cut)}</button>`
-          ).join("")
+        ? cuts.map((cut) => {
+            const label = localizedGarmentType(cut);
+            const infoKey = cutInfoKey(cut);
+            const info = infoKey
+              ? `<span class="cut-info" data-cut-info="${cut}" role="button" tabindex="0" aria-label="${t("cutInfoLabel", { cut: label })}">i</span>`
+              : "";
+            return `<button type="button" class="cut${cut === variant.cut ? " on" : ""}" data-cut="${cut}">${label}${info}</button>`;
+          }).join("")
         : "";
-      const colorPool = variantsForCut(item, variant.cut);
+      hideCutInfoPop();
+      const colorPool = [...variantsForCut(item, variant.cut)].sort((left, right) =>
+        Number(variantInStock(right)) - Number(variantInStock(left))
+      );
       const colors = document.getElementById("product-colors");
       const many = colorPool.length > 1;
       colors.hidden = !many;
@@ -3893,27 +4505,31 @@
             return `<button type="button" class="tone${index === currentTone ? " on" : ""}" data-tone="${index}" style="--tone:${option.color}" aria-label="${localizedTone(option.tone) || t("color")}"></button>`;
           }).join("")
         : "";
-      const options = listedSizes(variant.size);
+      const chart = sizeChartForVariant(item, variant);
+      const available = availableSizeSet(variant);
       const range = document.getElementById("size-range");
       const sizes = document.getElementById("product-sizes");
       const unavailable = !variantInStock(variant);
-      range.hidden = !unavailable && (options.length > 0 || !variant.size);
+      range.hidden = !unavailable && (chart.length > 0 || !(variant.sizeChart || variant.size));
       range.textContent = unavailable
         ? t("nowUnavailable")
-        : options.length || !variant.size ? "" : rangeLabel(variant.size);
-      sizes.hidden = unavailable || options.length === 0;
-      document.getElementById("size-options").innerHTML = options.map((option) =>
-        `<button type="button" class="size">${option}</button>`
-      ).join("");
+        : chart.length || !(variant.sizeChart || variant.size) ? "" : rangeLabel(variant.sizeChart || variant.size);
+      sizes.hidden = unavailable || chart.length === 0;
+      document.getElementById("size-options").innerHTML = chart.map((option) => {
+        const isAvailable = available.has(option);
+        return `<button type="button" class="size${isAvailable ? "" : " is-unavailable"}" data-size="${option}"${isAvailable ? "" : " disabled aria-disabled=\"true\""}>${option}</button>`;
+      }).join("");
       const priceEl = document.getElementById("product-price");
       priceEl.hidden = !variant.price;
-      priceEl.textContent = localizedPrice(variant.price || "");
+      priceEl.textContent = displayPrice(variant.price || "");
       const buyButton = document.getElementById("add-to-cart");
       buyButton.disabled = unavailable;
       buyButton.textContent = unavailable ? t("unavailable") : t("addToCart");
-      document.getElementById("choice").textContent = unavailable
-        ? t("nowUnavailable")
-        : options.length ? t("chooseSize") : t("pressOrderToRequest");
+      const choice = document.getElementById("choice");
+      choice.hidden = unavailable;
+      choice.textContent = unavailable
+        ? ""
+        : chart.length ? t("chooseSize") : t("pressOrderToRequest");
     }
 
     function paintProduct(id, index, animate) {
@@ -3922,10 +4538,18 @@
       currentBrand = id;
       currentItem = item;
       reveal(() => {
+        const itemName = localizedItemName(item.name);
+        const fromNew = new URLSearchParams(location.search).get("from") === "new";
+        const standardCrumbs = document.getElementById("product-crumbs-standard");
+        const newCrumbs = document.getElementById("product-crumbs-new");
+        standardCrumbs.hidden = fromNew;
+        newCrumbs.hidden = !fromNew;
         document.getElementById("product-country").textContent = localizedCountry(data.country);
         document.getElementById("product-brand").textContent = data.title;
-        document.getElementById("product-crumb").textContent = localizedItemName(item.name);
-        document.getElementById("product-title").textContent = localizedItemName(item.name);
+        document.getElementById("product-crumb").textContent = itemName;
+        document.getElementById("product-crumb-new").textContent = itemName;
+        document.getElementById("product-from-new").textContent = t("newArrivalsTitle");
+        document.getElementById("product-title").textContent = itemName;
         const requestedVariant = new URLSearchParams(location.search).get("variant");
         const requestedIndex = requestedVariant !== null && /^\d+$/.test(requestedVariant)
           ? Number(requestedVariant)
@@ -3956,6 +4580,60 @@
       return location.hash.replace(/^#/, "");
     }
 
+    function readViewState() {
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(VIEW_STORAGE_KEY) || "null");
+        return saved && typeof saved === "object" ? saved : null;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function saveViewState() {
+      if (ignoreScrollSave) return;
+      try {
+        sessionStorage.setItem(VIEW_STORAGE_KEY, JSON.stringify({
+          route: currentRoute(),
+          scrollY: Math.max(0, Math.round(window.scrollY || 0)),
+          catalogCategoryFilters,
+          catalogColorFilters,
+          brandCategoryFilters,
+          brandColorFilters
+        }));
+      } catch (error) {}
+    }
+
+    function hydrateViewStateFromSession() {
+      const saved = readViewState();
+      if (!saved || saved.route !== currentRoute()) return false;
+      if (Array.isArray(saved.catalogCategoryFilters)) catalogCategoryFilters = saved.catalogCategoryFilters.filter(Boolean);
+      if (Array.isArray(saved.catalogColorFilters)) catalogColorFilters = saved.catalogColorFilters.filter(Boolean);
+      if (Array.isArray(saved.brandCategoryFilters)) brandCategoryFilters = saved.brandCategoryFilters.filter(Boolean);
+      if (Array.isArray(saved.brandColorFilters)) brandColorFilters = saved.brandColorFilters.filter(Boolean);
+      if (typeof saved.scrollY === "number" && saved.scrollY > 0) restoreScrollY = saved.scrollY;
+      return true;
+    }
+
+    function finishScrollRestore() {
+      if (restoreScrollY == null) {
+        saveViewState();
+        return;
+      }
+      const y = restoreScrollY;
+      restoreScrollY = null;
+      ignoreScrollSave = true;
+      const applyScroll = () => window.scrollTo(0, y);
+      applyScroll();
+      requestAnimationFrame(() => {
+        applyScroll();
+        requestAnimationFrame(() => {
+          applyScroll();
+          ignoreScrollSave = false;
+          saveViewState();
+        });
+      });
+    }
+
     function apply(animate) {
       const [first, second] = currentRoute().split("/").filter(Boolean);
       closeMenus();
@@ -3968,8 +4646,14 @@
         return;
       }
       if (first === "catalog") {
-        const gender = ["unisex", "women", "men"].includes(second) ? second : "all";
-        paintCatalog(gender, animate);
+        const category = brandCategoryKeys.includes(second) ? second : "";
+        if (syncFiltersFromRoute) {
+          catalogCategoryFilters = category ? [category] : [];
+          if (category) catalogColorFilters = [];
+        }
+        const titleCategory = category
+          || (catalogCategoryFilters.length === 1 ? catalogCategoryFilters[0] : "");
+        paintCatalog(titleCategory || "all", animate);
         return;
       }
       if (countryName[first] && !second) {
@@ -3977,17 +4661,55 @@
         return;
       }
       if (brands[first] && !second) {
+        if (syncFiltersFromRoute && currentBrand !== first) {
+          brandCategoryFilters = [];
+          brandColorFilters = [];
+        }
         paintBrand(first, animate);
         return;
       }
       if (brands[first] && second) {
-        const index = brands[first].items.findIndex((item) => item.slug === second);
+        const resolvedSlug = (first === "art" && artSlugAliases[second]) || second;
+        const index = brands[first].items.findIndex((item) => item.slug === resolvedSlug);
         if (index !== -1) {
           paintProduct(first, index, animate);
+          if (first === "art" && /^women-/i.test(second)) {
+            const womenIndex = brands[first].items[index].variants.findIndex((variant) => variant.cut === "Women");
+            if (womenIndex !== -1) fillVariant(brands[first], brands[first].items[index], womenIndex);
+          }
           return;
         }
       }
       paintCountry("all", animate);
+    }
+
+    function refreshActivePrices() {
+      const [routeBrand, routeProduct] = currentRoute().split("/").filter(Boolean);
+      const isProductRoute = Boolean(routeProduct && brands[routeBrand]);
+      const savedItemSlug = currentItem?.slug;
+      const savedTone = currentTone;
+      const savedPhoto = currentPhotoIndex;
+      const savedSize = document.querySelector("#size-options .size.on")?.textContent.trim() || "";
+      closeLightbox();
+      const previousSync = syncFiltersFromRoute;
+      syncFiltersFromRoute = false;
+      apply(false);
+      syncFiltersFromRoute = previousSync;
+      if (isProductRoute && currentItem?.slug === savedItemSlug) {
+        fillVariant(brands[currentBrand], currentItem, savedTone);
+        showProductPhoto(savedPhoto);
+        if (savedSize) {
+          const sizeButton = [...document.querySelectorAll("#size-options .size")].find((button) =>
+            !button.disabled && (button.dataset.size || button.textContent.trim()) === savedSize
+          );
+          if (sizeButton) {
+            sizeButton.classList.add("on");
+            writeChoice(savedSize);
+            document.getElementById("choice").hidden = false;
+          }
+        }
+      }
+      if (cartPage.classList.contains("on")) renderCartContents();
     }
 
     function setLanguage(language, refresh = true) {
@@ -3997,38 +4719,34 @@
       brandCategoryLabel = { all: t("all"), tshirts: t("tshirts"), sweatshirts: t("sweatshirts"), longSleeves: t("longSleeves"), halfZips: t("halfZips"), caps: t("caps"), beanies: t("beanies") };
       applyStaticTranslations();
       updateCartBadge();
+      if (orderTurnstileWidgetId !== null) void activateOrderTurnstile({ remount: true });
       if (!refresh) return;
+      refreshActivePrices();
+    }
 
-      const [routeBrand, routeProduct] = currentRoute().split("/").filter(Boolean);
-      const isProductRoute = Boolean(routeProduct && brands[routeBrand]);
-      const savedItemSlug = currentItem?.slug;
-      const savedTone = currentTone;
-      const savedPhoto = currentPhotoIndex;
-      const savedSize = document.querySelector("#size-options .size.on")?.textContent.trim() || "";
-      closeLightbox();
-      apply(false);
-      if (isProductRoute && currentItem?.slug === savedItemSlug) {
-        fillVariant(brands[currentBrand], currentItem, savedTone);
-        showProductPhoto(savedPhoto);
-        if (savedSize) {
-          const sizeButton = [...document.querySelectorAll("#size-options .size")].find((button) => button.textContent.trim() === savedSize);
-          if (sizeButton) {
-            sizeButton.classList.add("on");
-            writeChoice(savedSize);
-          }
-        }
-      }
+    function setCurrency(currency, refresh = true) {
+      currentCurrency = CURRENCY_RATES[currency] ? currency : "BYN";
+      try { localStorage.setItem("goel-currency", currentCurrency); } catch (error) {}
+      document.querySelectorAll("#currency-submenu [data-currency]").forEach((option) => {
+        option.setAttribute("aria-checked", String(option.dataset.currency === currentCurrency));
+      });
+      if (!refresh) return;
+      refreshActivePrices();
     }
 
     function navigate(route) {
       const next = String(route).replace(/^#/, "");
       closeLightbox();
+      syncFiltersFromRoute = true;
+      restoreScrollY = null;
       if (currentRoute() === next) {
         apply(true);
+        saveViewState();
         return;
       }
       history.pushState(null, "", next ? location.pathname + "?" + next : location.pathname);
       apply(true);
+      saveViewState();
     }
 
     menuBtn.addEventListener("click", (event) => {
@@ -4047,12 +4765,23 @@
       event.stopPropagation();
       toggleSubmenu(languageToggle, languageSubmenu);
     });
+    currencyToggle.addEventListener("click", (event) => {
+      event.stopPropagation();
+      toggleSubmenu(currencyToggle, currencySubmenu);
+    });
     menuList.addEventListener("click", (event) => event.stopPropagation());
     document.addEventListener("click", closeMenus);
 
     languageSubmenu.querySelectorAll("[data-language]").forEach((option) => {
       option.addEventListener("click", () => {
         setLanguage(option.dataset.language);
+        closeMenus();
+        menuBtn.focus();
+      });
+    });
+    currencySubmenu.querySelectorAll("[data-currency]").forEach((option) => {
+      option.addEventListener("click", () => {
+        setCurrency(option.dataset.currency);
         closeMenus();
         menuBtn.focus();
       });
@@ -4064,7 +4793,7 @@
     document.querySelectorAll("#site-menu-list [data-catalog]").forEach((button) => {
       button.addEventListener("click", () => {
         const value = button.dataset.catalog;
-        navigate(value === "all" ? "catalog" : `catalog/${value}`);
+        navigate(brandCategoryKeys.includes(value) ? `catalog/${value}` : "catalog");
       });
     });
     document.getElementById("logo").addEventListener("click", () => navigate(""));
@@ -4113,109 +4842,31 @@
         }, 50);
       }, { passive: false });
     }
-    let suppressItemCardClickUntil = 0;
-    const itemCardPhotoTransitions = new WeakMap();
-    function setItemCardPhoto(cloth, source) {
-      const image = cloth.querySelector("img");
-      if (!image || image.src === new URL(source, document.baseURI).href) return;
-      const previous = itemCardPhotoTransitions.get(cloth);
-      if (previous) {
-        window.clearTimeout(previous.timer);
-        window.clearTimeout(previous.revealTimer);
-        if (previous.preload) {
-          previous.preload.onload = null;
-          previous.preload.onerror = null;
-        }
-      }
-      const transition = { timer: 0, revealTimer: 0, preload: null, started: false };
-      itemCardPhotoTransitions.set(cloth, transition);
-      const showPhoto = () => {
-        if (transition.started || itemCardPhotoTransitions.get(cloth) !== transition) return;
-        transition.started = true;
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          image.classList.remove("is-fading");
-          image.src = source;
-          itemCardPhotoTransitions.delete(cloth);
-          return;
-        }
-        image.classList.add("is-fading");
-        transition.timer = window.setTimeout(() => {
-          if (itemCardPhotoTransitions.get(cloth) !== transition) return;
-          image.src = source;
-          transition.revealTimer = window.setTimeout(() => {
-            if (itemCardPhotoTransitions.get(cloth) !== transition) return;
-            image.classList.remove("is-fading");
-            itemCardPhotoTransitions.delete(cloth);
-          }, 32);
-        }, 180);
-      };
-      const preload = new Image();
-      transition.preload = preload;
-      preload.onload = showPhoto;
-      preload.onerror = showPhoto;
-      preload.src = source;
-      if (preload.complete) showPhoto();
-    }
-    function enableItemCardSwipe(container) {
-      let pointerStart = null;
-      container.addEventListener("pointerdown", (event) => {
-        if (event.pointerType === "mouse") return;
-        const cloth = event.target.closest(".cloth[data-gallery-photos]");
-        if (!cloth) return;
-        const photos = JSON.parse(decodeURIComponent(cloth.dataset.galleryPhotos));
-        if (photos.length < 2) return;
-        pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY, cloth, photos };
-      });
-      window.addEventListener("pointerup", (event) => {
-        if (!pointerStart || event.pointerId !== pointerStart.id) return;
-        const deltaX = event.clientX - pointerStart.x;
-        const deltaY = event.clientY - pointerStart.y;
-        const { cloth, photos } = pointerStart;
-        pointerStart = null;
-        if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
-        const nextIndex = (Number(cloth.dataset.photoIndex) + (deltaX < 0 ? 1 : -1) + photos.length) % photos.length;
-        cloth.dataset.photoIndex = String(nextIndex);
-        setItemCardPhoto(cloth, photos[nextIndex]);
-        cloth.querySelectorAll(".item-gallery-dots span").forEach((dot, index) => {
-          dot.classList.toggle("on", index === nextIndex);
-        });
-        suppressItemCardClickUntil = Date.now() + 500;
-      });
-      window.addEventListener("pointercancel", (event) => {
-        if (pointerStart?.id === event.pointerId) pointerStart = null;
-      });
-      enableTrackpadSwipe(container, (direction, event) => {
-        const cloth = event.target.closest(".cloth[data-gallery-photos]");
-        if (!cloth) return;
-        const photos = JSON.parse(decodeURIComponent(cloth.dataset.galleryPhotos));
-        if (photos.length < 2) return;
-        const nextIndex = (Number(cloth.dataset.photoIndex) + (direction > 0 ? 1 : -1) + photos.length) % photos.length;
-        cloth.dataset.photoIndex = String(nextIndex);
-        setItemCardPhoto(cloth, photos[nextIndex]);
-        cloth.querySelectorAll(".item-gallery-dots span").forEach((dot, index) => {
-          dot.classList.toggle("on", index === nextIndex);
-        });
-      }, (event) => Boolean(event.target.closest(".cloth[data-gallery-photos]")));
-    }
-    enableItemCardSwipe(items);
-    enableItemCardSwipe(catalogBody);
     function openItemCard(event) {
       const card = event.target.closest("a.item");
       if (!card) return;
-      if (Date.now() < suppressItemCardClickUntil) {
-        suppressItemCardClickUntil = 0;
-        event.preventDefault();
-        event.stopPropagation();
-        return;
-      }
       if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
       event.preventDefault();
       const brandId = card.dataset.brand || currentBrand;
       const variant = card.dataset.variant;
-      navigate(`${brandId}/${card.dataset.slug}${variant === undefined ? "" : `&variant=${variant}`}`);
+      const from = card.dataset.from;
+      navigate(`${brandId}/${card.dataset.slug}${variant === undefined ? "" : `&variant=${variant}`}${from ? `&from=${from}` : ""}`);
     }
     items.addEventListener("click", openItemCard);
-    catalogBody.addEventListener("click", openItemCard);
+    catalogBody.addEventListener("click", (event) => {
+      const brandLink = event.target.closest("a.catalog-brand-link");
+      if (brandLink) {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        event.preventDefault();
+        brandCategoryFilters = [];
+        brandColorFilters = [];
+        navigate(brandLink.dataset.brand);
+        return;
+      }
+      openItemCard(event);
+    });
+    document.getElementById("home-new-arrivals").addEventListener("click", openItemCard);
+    document.getElementById("home-restocked").addEventListener("click", openItemCard);
     document.getElementById("brand-filters").addEventListener("click", (event) => {
       const toggle = event.target.closest("#brand-filter-toggle");
       if (toggle) {
@@ -4242,6 +4893,7 @@
         document.querySelectorAll("#brand-filter-panel [data-brand-category], #brand-filter-panel [data-brand-color]").forEach((checkbox) => { checkbox.checked = false; });
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
         return;
       }
       const chip = event.target.closest("[data-remove-brand-category]");
@@ -4253,6 +4905,7 @@
         if (checkbox) checkbox.checked = false;
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
         return;
       }
       const colorChip = event.target.closest("[data-remove-brand-color]");
@@ -4264,6 +4917,7 @@
         if (checkbox) checkbox.checked = false;
         updateBrandFilterSummary();
         renderBrandItems(currentBrand, brands[currentBrand]);
+        saveViewState();
       }
     });
     document.getElementById("brand-filters").addEventListener("change", (event) => {
@@ -4275,6 +4929,7 @@
         .map((option) => option.dataset.brandColor);
       updateBrandFilterSummary();
       renderBrandItems(currentBrand, brands[currentBrand]);
+      saveViewState();
     });
     document.addEventListener("click", (event) => {
       if (!event.target.closest("#brand-filters .category-filter")) setBrandFilterPanelOpen(false);
@@ -4306,6 +4961,8 @@
         document.querySelectorAll("#catalog-filter-panel [data-catalog-category], #catalog-filter-panel [data-catalog-color]").forEach((checkbox) => { checkbox.checked = false; });
         updateCatalogFilterSummary();
         renderCatalogBody();
+        syncCatalogUrlFromFilters();
+        saveViewState();
         return;
       }
       const categoryChip = event.target.closest("[data-remove-catalog-category]");
@@ -4317,6 +4974,8 @@
         if (checkbox) checkbox.checked = false;
         updateCatalogFilterSummary();
         renderCatalogBody();
+        syncCatalogUrlFromFilters();
+        saveViewState();
         return;
       }
       const colorChip = event.target.closest("[data-remove-catalog-color]");
@@ -4328,6 +4987,7 @@
         if (checkbox) checkbox.checked = false;
         updateCatalogFilterSummary();
         renderCatalogBody();
+        saveViewState();
       }
     });
     document.getElementById("catalog-filters").addEventListener("change", (event) => {
@@ -4339,8 +4999,16 @@
         .map((option) => option.dataset.catalogColor);
       updateCatalogFilterSummary();
       renderCatalogBody();
+      syncCatalogUrlFromFilters();
+      saveViewState();
     });
     document.getElementById("product-all").addEventListener("click", () => navigate(""));
+    document.getElementById("product-from-new").addEventListener("click", () => {
+      navigate("");
+      window.requestAnimationFrame(() => {
+        document.getElementById("home-new-arrivals")?.scrollIntoView({ block: "start", behavior: "smooth" });
+      });
+    });
     document.getElementById("product-country").addEventListener("click", () => {
       navigate(countrySlug[brands[currentBrand]?.country] || "");
     });
@@ -4350,14 +5018,47 @@
       navigate(currentBrand);
     });
     document.getElementById("cut-options").addEventListener("click", (event) => {
+      const info = event.target.closest("[data-cut-info]");
+      if (info) {
+        event.preventDefault();
+        event.stopPropagation();
+        const cut = info.dataset.cutInfo;
+        const pop = document.getElementById("cut-info-pop");
+        if (pop && !pop.hidden && pop.dataset.cut === cut) {
+          hideCutInfoPop();
+          return;
+        }
+        showCutInfoPop(info, cut);
+        if (pop) pop.dataset.cut = cut;
+        return;
+      }
       const button = event.target.closest(".cut");
       if (!button || !currentItem || !currentBrand) return;
+      hideCutInfoPop();
       const cut = button.dataset.cut;
       const current = currentItem.variants[currentTone] || currentItem.variants[0];
       const sameTone = currentItem.variants.findIndex((variant) => variant.cut === cut && variant.tone === current.tone);
       const fallback = currentItem.variants.findIndex((variant) => variant.cut === cut);
       fillVariant(brands[currentBrand], currentItem, sameTone !== -1 ? sameTone : fallback);
     });
+    document.getElementById("cut-options").addEventListener("keydown", (event) => {
+      const info = event.target.closest("[data-cut-info]");
+      if (!info || (event.key !== "Enter" && event.key !== " ")) return;
+      event.preventDefault();
+      event.stopPropagation();
+      info.click();
+    });
+    document.addEventListener("pointerdown", (event) => {
+      const pop = document.getElementById("cut-info-pop");
+      if (!pop || pop.hidden) return;
+      if (event.target.closest("#cut-info-pop") || event.target.closest("[data-cut-info]")) return;
+      hideCutInfoPop();
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") hideCutInfoPop();
+    });
+    window.addEventListener("resize", hideCutInfoPop);
+    window.addEventListener("scroll", hideCutInfoPop, true);
     document.getElementById("color-options").addEventListener("click", (event) => {
       const button = event.target.closest(".tone");
       if (!button || !currentItem || !currentBrand) return;
@@ -4365,9 +5066,10 @@
     });
     document.getElementById("size-options").addEventListener("click", (event) => {
       const button = event.target.closest(".size");
-      if (!button) return;
+      if (!button || button.disabled) return;
       document.querySelectorAll("#size-options .size").forEach((item) => item.classList.toggle("on", item === button));
-      writeChoice(button.textContent);
+      writeChoice(button.dataset.size || button.textContent);
+      document.getElementById("choice").hidden = false;
     });
 
     const lightbox = document.getElementById("lightbox");
@@ -4498,17 +5200,37 @@
     });
 
     setLanguage(currentLanguage, false);
+    setCurrency(currentCurrency, false);
+    preserveSizeCharts();
     closeUnlistedGodderobStock();
     renderCartContents();
-    loadAvailabilityFeed().finally(() => apply(false));
+    try { history.scrollRestoration = "manual"; } catch (error) {}
+    if (hydrateViewStateFromSession()) syncFiltersFromRoute = false;
+    Promise.all([loadAvailabilityFeed(), loadFxRates()]).finally(() => {
+      apply(false);
+      syncFiltersFromRoute = true;
+      finishScrollRestore();
+    });
+    window.addEventListener("scroll", () => {
+      if (ignoreScrollSave) return;
+      window.clearTimeout(scrollSaveTimer);
+      scrollSaveTimer = window.setTimeout(saveViewState, 120);
+    }, { passive: true });
+    window.addEventListener("pagehide", saveViewState);
     window.addEventListener("popstate", () => {
       closeLightbox();
+      syncFiltersFromRoute = true;
+      restoreScrollY = null;
       apply(true);
+      saveViewState();
     });
     window.addEventListener("hashchange", () => {
       if (!location.search) {
         closeLightbox();
+        syncFiltersFromRoute = true;
+        restoreScrollY = null;
         apply(true);
+        saveViewState();
       }
     });
   </script>
