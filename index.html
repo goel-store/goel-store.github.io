@@ -3619,14 +3619,17 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     }
 
     function sortItemsByAvailability(list, colors = [], sourceList = list) {
-      // Newer catalog entries sit later in source data — surface them (and newArrival) first.
+      // Keep in-stock items first, then prioritize new arrivals and newer catalog entries.
       const sourceIndex = new Map(sourceList.map((item, index) => [item, index]));
       return [...list].sort((left, right) => {
+        const availabilityDelta = Number(itemAvailableForColors(right, colors))
+          - Number(itemAvailableForColors(left, colors));
+        if (availabilityDelta) return availabilityDelta;
         const newDelta = Number(right.newArrival === true) - Number(left.newArrival === true);
         if (newDelta) return newDelta;
         const orderDelta = (sourceIndex.get(right) ?? 0) - (sourceIndex.get(left) ?? 0);
         if (orderDelta) return orderDelta;
-        return Number(itemAvailableForColors(right, colors)) - Number(itemAvailableForColors(left, colors));
+        return 0;
       });
     }
 
