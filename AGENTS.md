@@ -5,3 +5,4 @@
 - Catalog and brand lists use `sortItemsByAvailability` in `index.html`. Keep in-stock items ahead of unavailable items, then prioritize `newArrival`, then newer catalog entries. Apply the same ordering in both catalog views.
 - Before removing or renaming product images, verify that no active catalog item references them.
 - Before publishing, run `git diff --check`, validate the inline JavaScript syntax, and confirm the GitHub Pages workflow completes successfully.
+- GitHub Pages serves this site from the `gh-pages` branch, which `.github/workflows/publish-site.yml` syncs from `main`. Do not add an `actions/deploy-pages` artifact deployment; it duplicates publishing and fails intermittently with "Found 0 artifact(s)".
