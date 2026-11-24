@@ -1586,6 +1586,11 @@
           <span><b>Jesus Saves</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
         </a>
+        <a class="brand" href="?amenshop" data-brand="amenshop">
+          <img class="swatch" src="img/amenshop/avatar.jpg" alt="" width="64" height="64">
+          <span><b>AMENSHOP</b></span>
+          <span class="go" data-i18n="view">Смотреть</span>
+        </a>
       </div>
     </section>
 
@@ -2974,11 +2979,51 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         ]
       }
     ]
+  },
+  amenshop: {
+    country: "Россия",
+    title: "AMENSHOP",
+    blurb: "",
+    note: "",
+    items: [
+      {
+        name: "Свитшот ПРИТЧИ",
+        slug: "proverbs-sweatshirt",
+        gender: "unisex",
+        variants: [
+          { tone: "бежевый", color: "#ded3bb", size: "S, M, L, XL, 2XL", price: "3700 ₽", photos: ["img/amenshop/proverbs-sweatshirt-beige-01.jpg"], photo: "img/amenshop/proverbs-sweatshirt-beige-01.jpg" }
+        ]
+      },
+      {
+        name: "Футболка ПСАЛОМ 150",
+        slug: "psalm-150",
+        gender: "unisex",
+        variants: [
+          { tone: "чёрный", color: "#161616", size: "S, M, L, XL, 2XL", price: "3300 ₽", photos: ["img/amenshop/psalm150-black-01.jpg", "img/amenshop/psalm150-black-02.jpg", "img/amenshop/psalm150-black-03.jpg"], photo: "img/amenshop/psalm150-black-01.jpg" }
+        ]
+      },
+      {
+        name: "Футболка ПСАЛОМ 90",
+        slug: "psalm-90",
+        gender: "unisex",
+        variants: [
+          { tone: "белый", color: "#f7f4ee", size: "S, M, L, XL, 2XL", price: "3300 ₽", photos: ["img/amenshop/psalm90-white-01.jpg", "img/amenshop/psalm90-white-02.jpg", "img/amenshop/psalm90-white-03.jpg", "img/amenshop/psalm90-white-04.jpg", "img/amenshop/psalm90-white-05.jpg"], photo: "img/amenshop/psalm90-white-01.jpg" }
+        ]
+      },
+      {
+        name: "Футболка ПСАЛТИРЬ",
+        slug: "psalter",
+        gender: "unisex",
+        variants: [
+          { tone: "бежевый", color: "#e6dcc8", size: "S, M, L, XL, 2XL", price: "2700 ₽", photos: ["img/amenshop/psalm-page-beige-01.jpg", "img/amenshop/psalm-page-beige-02.jpg"], photo: "img/amenshop/psalm-page-beige-01.jpg" }
+        ]
+      }
+    ]
   }
 };
 
     Object.keys(brands).forEach((id) => {
-      if (id !== "godderob" && id !== "art") delete brands[id];
+      if (id !== "godderob" && id !== "art" && id !== "amenshop") delete brands[id];
     });
 
     const home = document.getElementById("home");
