@@ -842,6 +842,10 @@
     .order-consent input { margin: 4px 0 0; accent-color: var(--accent); }
     .order-consent a, .site-footer a { color: var(--accent); text-underline-offset: 3px; }
     .order-process-note { margin: 0; padding: 11px 13px; border-left: 2px solid var(--accent); background: rgba(231, 164, 124, .08); color: var(--muted); font-size: 13px; line-height: 1.5; }
+    .order-confirm-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .order-confirm-actions .buy { flex: 1 1 220px; margin-top: 0; border-radius: 999px; }
+    .order-edit { flex: 1 1 160px; padding: 12px 18px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+    .order-edit:hover { border-color: var(--accent); color: var(--accent); }
     .site-footer {
       display: flex;
       align-items: center;
@@ -1552,9 +1556,13 @@
         <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 40% 40%; --hero-focus-desktop: 40% 68%; --hero-focus-mobile: 42% 48%;">
           <img src="img/godderob/love-like-jesus-01.jpg" alt="" loading="lazy">
         </div>
+        <div class="hero-slide" data-hero-slide aria-hidden="true" style="--hero-focus: 58% 45%; --hero-focus-desktop: 58% 58%; --hero-focus-mobile: 60% 48%;">
+          <img src="img/sote/jesus-01.jpg" alt="" loading="lazy">
+        </div>
         <div class="hero-controls" aria-hidden="true">
           <div class="hero-dots">
             <span class="hero-dot is-active" data-hero-dot></span>
+            <span class="hero-dot" data-hero-dot></span>
             <span class="hero-dot" data-hero-dot></span>
             <span class="hero-dot" data-hero-dot></span>
             <span class="hero-dot" data-hero-dot></span>
@@ -1732,6 +1740,23 @@
       </form>
     </section>
     </div>
+    <dialog class="order-dialog" id="order-confirm">
+      <div class="order-form">
+        <div class="order-form-head">
+          <div>
+            <h2 data-i18n="confirmTitle">Проверьте заявку</h2>
+            <p class="order-status" data-i18n="confirmHint">Проверьте данные — заявка придёт в Telegram в таком виде.</p>
+          </div>
+          <button type="button" class="order-close" id="order-confirm-close" aria-label="Закрыть" data-i18n-aria="close">×</button>
+        </div>
+        <p class="order-summary" id="order-confirm-body"></p>
+        <p class="order-status" id="order-confirm-status" role="status" aria-live="polite"></p>
+        <div class="order-confirm-actions">
+          <button type="button" class="order-edit" id="order-confirm-edit" data-i18n="confirmEdit">Изменить данные</button>
+          <button type="button" class="buy" id="order-confirm-send" data-i18n="confirmSend">Подтвердить и отправить</button>
+        </div>
+      </div>
+    </dialog>
     <footer class="site-footer">
       <div class="footer-main">
         <span class="footer-brand">GO’EL</span>
@@ -1933,6 +1958,10 @@ Object.assign(translations.ru, { hoodies: "Худи", orange: "оранжевы�
 Object.assign(translations.be, { hoodies: "Худзі", orange: "аранжавы", yellow: "жоўты", purple: "фіялетавы" });
 Object.assign(translations.uk, { hoodies: "Худі", orange: "помаранчевий", yellow: "жовтий", purple: "фіолетовий" });
 Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "yellow", purple: "purple" });
+Object.assign(translations.ru, { confirmTitle: "Проверьте заявку", confirmHint: "Проверьте данные — заявка придёт в Telegram в таком виде.", confirmSend: "Подтвердить и отправить", confirmEdit: "Изменить данные", confirmBuyer: "Покупатель", confirmQuantity: "Количество", confirmDelivery: "Доставка", confirmPage: "Страница" });
+Object.assign(translations.be, { confirmTitle: "Праверце заяўку", confirmHint: "Праверце даныя — заяўка прыйдзе ў Telegram у такім выглядзе.", confirmSend: "Пацвердзіць і адправіць", confirmEdit: "Змяніць даныя", confirmBuyer: "Пакупнік", confirmQuantity: "Колькасць", confirmDelivery: "Дастаўка", confirmPage: "Старонка" });
+Object.assign(translations.uk, { confirmTitle: "Перевірте заявку", confirmHint: "Перевірте дані — заявка надійде в Telegram у такому вигляді.", confirmSend: "Підтвердити й надіслати", confirmEdit: "Змінити дані", confirmBuyer: "Покупець", confirmQuantity: "Кількість", confirmDelivery: "Доставка", confirmPage: "Сторінка" });
+Object.assign(translations.en, { confirmTitle: "Review your request", confirmHint: "Check the details — the request will be sent to Telegram like this.", confirmSend: "Confirm and send", confirmEdit: "Edit details", confirmBuyer: "Customer", confirmQuantity: "Quantity", confirmDelivery: "Delivery", confirmPage: "Page" });
     const toneTranslationKeys = {
       "тёмно-синий": "darkBlue", "розовый": "pink", "небесный": "skyBlue", "светло-жёлтый": "lightYellow", "белый": "white",
       "горчичный": "mustard", "коричневый": "brown", "травяной": "grassGreen", "графитовый": "graphite", "бордовый": "burgundy",
@@ -4046,7 +4075,34 @@ Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "
       orderForm.elements.customerName.focus({ preventScroll: true });
     });
 
-    orderForm.addEventListener("submit", async (event) => {
+    let pendingOrderPayload = null;
+
+    function orderPreviewText(payload) {
+      const itemsText = payload.items.map((item, index) => [
+        `${index + 1}. ${item.brand} — ${item.product}`,
+        item.model ? `${t("summaryModel")}: ${item.model}` : "",
+        `${t("summaryColor")}: ${item.color || t("colorUnknown")}`,
+        `${t("summarySize")}: ${item.size || t("sizeUnknown")}`,
+        `${t("confirmQuantity")}: ${item.quantity}`,
+        `${t("summaryPrice")}: ${item.price || t("priceUnknown")}`
+      ].filter(Boolean).join("\n")).join("\n\n");
+      const buyerText = [
+        `${t("confirmBuyer")}: ${payload.customerName}`,
+        `${t("phone")}: ${payload.phone}`,
+        `${t("confirmDelivery")}: ${payload.delivery}`,
+        payload.comment ? `${t("comment")}: ${payload.comment}` : "",
+        `${t("confirmPage")}: ${payload.page}`
+      ].filter(Boolean).join("\n");
+      return `${itemsText}\n\n${buyerText}`;
+    }
+
+    function setConfirmStatus(message, isError) {
+      const el = document.getElementById("order-confirm-status");
+      el.textContent = message || "";
+      el.className = `order-status${isError ? " error" : ""}`;
+    }
+
+    orderForm.addEventListener("submit", (event) => {
       event.preventDefault();
       if (orderSubmissionInProgress) return;
       const details = cartLines.map(resolveCartLine);
@@ -4055,18 +4111,8 @@ Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "
         orderStatus.className = "order-status error";
         return;
       }
-      if (!orderTurnstileToken) {
-        orderStatus.textContent = t("humanVerificationFailed");
-        orderStatus.className = "order-status error";
-        return;
-      }
-      if (orderStartedAt && Date.now() - orderStartedAt < 1200) {
-        orderStatus.textContent = t("waitBeforeResend");
-        orderStatus.className = "order-status error";
-        return;
-      }
       const values = new FormData(orderForm);
-      const payload = {
+      pendingOrderPayload = {
         items: details.map((detail) => ({
           brand: detail.brand,
           inventoryBrandId: detail.inventoryBrandId,
@@ -4089,11 +4135,48 @@ Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "
         startedAt: orderStartedAt,
         page: location.href
       };
+      document.getElementById("order-confirm-body").textContent = orderPreviewText(pendingOrderPayload);
+      setConfirmStatus("");
+      const sendButton = document.getElementById("order-confirm-send");
+      sendButton.disabled = false;
+      sendButton.textContent = t("confirmSend");
+      const dialog = document.getElementById("order-confirm");
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+      sendButton.focus({ preventScroll: true });
+    });
+
+    document.getElementById("order-confirm-close").addEventListener("click", () => {
+      document.getElementById("order-confirm").close();
+    });
+
+    document.getElementById("order-confirm-edit").addEventListener("click", () => {
+      document.getElementById("order-confirm").close();
+      orderForm.elements.customerName.focus({ preventScroll: true });
+    });
+
+    document.getElementById("order-confirm-send").addEventListener("click", async () => {
+      if (orderSubmissionInProgress || !pendingOrderPayload) return;
+      const details = cartLines.map(resolveCartLine);
+      if (!orderApiConfigured || !details.length || details.some((detail) => !detail?.available)) {
+        setConfirmStatus(t("formNotReady"), true);
+        return;
+      }
+      if (!orderTurnstileToken) {
+        setConfirmStatus(t("humanVerificationFailed"), true);
+        return;
+      }
+      if (orderStartedAt && Date.now() - orderStartedAt < 1200) {
+        setConfirmStatus(t("waitBeforeResend"), true);
+        return;
+      }
+      const payload = pendingOrderPayload;
+      const confirmSend = document.getElementById("order-confirm-send");
       orderSubmissionInProgress = true;
       orderSubmit.disabled = true;
-      orderSubmit.textContent = t("sendingOrder");
-      orderStatus.textContent = "";
-      orderStatus.className = "order-status";
+      confirmSend.disabled = true;
+      confirmSend.textContent = t("sendingOrder");
+      setConfirmStatus("");
       try {
         payload.idempotencyKey = await getOrderIdempotencyKey(payload);
         payload.turnstileToken = orderTurnstileToken;
@@ -4110,6 +4193,8 @@ Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "
         saveCart();
         checkoutVisible = false;
         cartSuccessVisible = true;
+        pendingOrderPayload = null;
+        document.getElementById("order-confirm").close();
         const cartSuccess = document.getElementById("cart-success");
         cartSuccess.textContent = t("orderSuccess");
         if (result?.trackingCode) {
@@ -4133,11 +4218,12 @@ Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "
           rate_limited: "rateLimited",
           request_in_progress: "requestInProgress"
         }[error.message];
-        orderStatus.textContent = t(errorMessage || "orderFailure");
-        orderStatus.className = "order-status error";
+        setConfirmStatus(t(errorMessage || "orderFailure"), true);
       } finally {
         orderSubmissionInProgress = false;
         resetOrderTurnstile();
+        confirmSend.disabled = false;
+        confirmSend.textContent = t("confirmSend");
         if (cartLines.length) orderSubmit.textContent = t("submitOrder");
       }
     });
