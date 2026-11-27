@@ -798,7 +798,7 @@
     .cut-info-pop p { margin: 0; color: #5a5048; }
     .cut.on, .size.on { background: var(--ink); color: #fff; border-color: var(--ink); }
     .product-price { margin: 16px 0 0; font-size: 18px; }
-    .product-color-note { margin: 8px 0 0; color: var(--accent); font-size: 12px; letter-spacing: .04em; }
+    .product-color-note { margin: 14px 0 0; color: var(--accent); font-size: 13px; line-height: 1.45; letter-spacing: .02em; }
     .buy {
       display: inline-block;
       margin-top: 22px;
@@ -1659,7 +1659,6 @@
         </div>
         <div class="product-copy">
           <h1 id="product-title"></h1>
-          <p class="product-color-note" id="product-color-note" hidden></p>
           <div class="product-options">
             <div class="cuts" id="product-cuts" hidden>
               <p data-i18n="model">Модель</p>
@@ -1674,6 +1673,7 @@
               <p data-i18n="size">Размер</p>
               <div id="size-options"></div>
             </div>
+            <p class="product-color-note" id="product-color-note" hidden></p>
             <p class="product-price" id="product-price" hidden></p>
           </div>
           <div class="product-actions">
@@ -4697,7 +4697,9 @@ Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "
         document.getElementById("product-title").textContent = itemName;
         const colorNoteEl = document.getElementById("product-color-note");
         colorNoteEl.hidden = !item.colorNote;
-        colorNoteEl.textContent = item.colorNote || "";
+        colorNoteEl.textContent = item.colorNote
+          ? `${item.colorNote} — укажите желаемый цвет при оформлении заказа.`
+          : "";
         const requestedVariant = new URLSearchParams(location.search).get("variant");
         const requestedIndex = requestedVariant !== null && /^\d+$/.test(requestedVariant)
           ? Number(requestedVariant)
