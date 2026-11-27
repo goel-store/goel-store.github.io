@@ -798,6 +798,7 @@
     .cut-info-pop p { margin: 0; color: #5a5048; }
     .cut.on, .size.on { background: var(--ink); color: #fff; border-color: var(--ink); }
     .product-price { margin: 16px 0 0; font-size: 18px; }
+    .product-color-note { margin: 8px 0 0; color: var(--accent); font-size: 12px; letter-spacing: .04em; }
     .buy {
       display: inline-block;
       margin-top: 22px;
@@ -1658,6 +1659,7 @@
         </div>
         <div class="product-copy">
           <h1 id="product-title"></h1>
+          <p class="product-color-note" id="product-color-note" hidden></p>
           <div class="product-options">
             <div class="cuts" id="product-cuts" hidden>
               <p data-i18n="model">Модель</p>
@@ -4693,6 +4695,9 @@ Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "
         document.getElementById("product-crumb-new").textContent = itemName;
         document.getElementById("product-from-new").textContent = t("newArrivalsTitle");
         document.getElementById("product-title").textContent = itemName;
+        const colorNoteEl = document.getElementById("product-color-note");
+        colorNoteEl.hidden = !item.colorNote;
+        colorNoteEl.textContent = item.colorNote || "";
         const requestedVariant = new URLSearchParams(location.search).get("variant");
         const requestedIndex = requestedVariant !== null && /^\d+$/.test(requestedVariant)
           ? Number(requestedVariant)
