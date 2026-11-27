@@ -1926,10 +1926,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     Object.assign(translations.be, { newArrivalsTitle: "Навінкі", newArrivalBadge: "Навінка", restockedTitle: "Зноў у наяўнасці", restockedBadge: "Зноў у наяўнасці" });
     Object.assign(translations.uk, { newArrivalsTitle: "Новинки", newArrivalBadge: "Новинка", restockedTitle: "Знову в наявності", restockedBadge: "Знову в наявності" });
     Object.assign(translations.en, { newArrivalsTitle: "New arrivals", newArrivalBadge: "New", restockedTitle: "Back in stock", restockedBadge: "Back in stock" });
-Object.assign(translations.ru, { orange: "оранжевый", yellow: "жёлтый", purple: "фиолетовый" });
-Object.assign(translations.be, { orange: "аранжавы", yellow: "жоўты", purple: "фіялетавы" });
-Object.assign(translations.uk, { orange: "помаранчевий", yellow: "жовтий", purple: "фіолетовий" });
-Object.assign(translations.en, { orange: "orange", yellow: "yellow", purple: "purple" });
+Object.assign(translations.ru, { hoodies: "Худи", orange: "оранжевый", yellow: "жёлтый", purple: "фиолетовый" });
+Object.assign(translations.be, { hoodies: "Худзі", orange: "аранжавы", yellow: "жоўты", purple: "фіялетавы" });
+Object.assign(translations.uk, { hoodies: "Худі", orange: "помаранчевий", yellow: "жовтий", purple: "фіолетовий" });
+Object.assign(translations.en, { hoodies: "Hoodies", orange: "orange", yellow: "yellow", purple: "purple" });
     const toneTranslationKeys = {
       "тёмно-синий": "darkBlue", "розовый": "pink", "небесный": "skyBlue", "светло-жёлтый": "lightYellow", "белый": "white",
       "горчичный": "mustard", "коричневый": "brown", "травяной": "grassGreen", "графитовый": "graphite", "бордовый": "burgundy",
@@ -3638,10 +3638,10 @@ Object.assign(translations.en, { orange: "orange", yellow: "yellow", purple: "pu
       "classic-defender": "defender"
     };
 
-    const brandCategoryKeys = ["tshirts", "sweatshirts", "longSleeves", "halfZips", "caps", "beanies"];
+    const brandCategoryKeys = ["tshirts", "sweatshirts", "hoodies", "longSleeves", "halfZips", "caps", "beanies"];
     let brandCategoryLabel = {
       all: t("all"), tshirts: t("tshirts"), sweatshirts: t("sweatshirts"),
-      longSleeves: t("longSleeves"), halfZips: t("halfZips"), caps: t("caps"), beanies: t("beanies")
+      longSleeves: t("longSleeves"), hoodies: t("hoodies"), halfZips: t("halfZips"), caps: t("caps"), beanies: t("beanies")
     };
 
     function itemCategory(item) {
@@ -3649,7 +3649,7 @@ Object.assign(translations.en, { orange: "orange", yellow: "yellow", purple: "pu
       const categories = [
         [/^футболка(?:\s|$)/i, "tshirts"],
         [/^свитшот(?:\s|$)/i, "sweatshirts"],
-        [/^худи(?:\s|$)/i, "sweatshirts"],
+        [/^худи(?:\s|$)/i, "hoodies"],
         [/^лонгслив(?:\s|$)/i, "longSleeves"],
         [/^полузип(?:\s|$)/i, "halfZips"],
         [/^кепка(?:\s|$)/i, "caps"],
@@ -4858,7 +4858,7 @@ Object.assign(translations.en, { orange: "orange", yellow: "yellow", purple: "pu
       currentLanguage = translations[language] ? language : "ru";
       try { localStorage.setItem("goel-language", currentLanguage); } catch (error) {}
       genderLabel = { all: t("all"), unisex: t("unisex"), women: t("women"), men: t("men") };
-      brandCategoryLabel = { all: t("all"), tshirts: t("tshirts"), sweatshirts: t("sweatshirts"), longSleeves: t("longSleeves"), halfZips: t("halfZips"), caps: t("caps"), beanies: t("beanies") };
+      brandCategoryLabel = { all: t("all"), tshirts: t("tshirts"), sweatshirts: t("sweatshirts"), longSleeves: t("longSleeves"), hoodies: t("hoodies"), halfZips: t("halfZips"), caps: t("caps"), beanies: t("beanies") };
       applyStaticTranslations();
       updateCartBadge();
       if (orderTurnstileWidgetId !== null) void activateOrderTurnstile({ remount: true });
