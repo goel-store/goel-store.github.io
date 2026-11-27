@@ -4359,13 +4359,16 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
       const stockNote = !variantInStock(first)
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
         : "";
-      const variantRoute = matchingVariant ? `&variant=${variantIndex}` : "";
-      const fromRoute = fromSource ? `&from=${encodeURIComponent(fromSource)}` : "";
+      const cardParams = new URLSearchParams();
+      if (matchingVariant) cardParams.set("variant", String(variantIndex));
+      if (fromSource) cardParams.set("from", fromSource);
+      const cardQuery = cardParams.toString();
+      const cardHref = `/${id}/${item.slug}/${cardQuery ? `?${cardQuery}` : ""}`;
       const fromAttr = fromSource ? ` data-from="${fromSource}"` : "";
       const meta = (stockNote || price)
         ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
         : "";
-      return `<a class="item" href="?${id}/${item.slug}${variantRoute}${fromRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}"${fromAttr} style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${colorNote}${meta}</span></a>`;
+      return `<a class="item" href="${cardHref}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}"${fromAttr} style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${colorNote}${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
@@ -4813,6 +4816,10 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
     }
 
     function currentRoute() {
+      const segments = location.pathname.split("/").filter(Boolean).map((part) => decodeURIComponent(part));
+      if (segments.length && Object.prototype.hasOwnProperty.call(brands, segments[0])) {
+        return segments.slice(0, 2).join("/");
+      }
       const query = location.search.replace(/^\?/, "");
       if (query) {
         const params = new URLSearchParams(query);
@@ -4822,11 +4829,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
         const path = query.split("&").find((part) => part && !part.includes("="));
         if (path) return decodeURIComponent(path);
       }
-      const hash = location.hash.replace(/^#/, "");
-      if (hash) return hash;
-      const segment = decodeURIComponent(location.pathname.replace(/\/+$/, "").split("/").pop() || "");
-      if (segment && Object.prototype.hasOwnProperty.call(brands, segment)) return segment;
-      return "";
+      return location.hash.replace(/^#/, "");
     }
 
     function readViewState() {
@@ -4883,6 +4886,17 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
       });
     }
 
+    function normalizeLegacyUrl(brandId, itemSlug = "") {
+      if (location.pathname !== "/" || window.__brandSharePage) return;
+      const params = new URLSearchParams(location.search);
+      [...params.keys()].forEach((key) => {
+        if (params.get(key) === "") params.delete(key);
+      });
+      const query = params.toString();
+      const path = `/${brandId}/${itemSlug ? `${itemSlug}/` : ""}`;
+      history.replaceState(null, "", query ? `${path}?${query}` : path);
+    }
+
     function apply(animate) {
       const [first, second] = currentRoute().split("/").filter(Boolean);
       closeMenus();
@@ -4914,6 +4928,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
           brandCategoryFilters = [];
           brandColorFilters = [];
         }
+        normalizeLegacyUrl(first);
         paintBrand(first, animate);
         return;
       }
@@ -4921,6 +4936,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
         const resolvedSlug = (first === "art" && artSlugAliases[second]) || second;
         const index = brands[first].items.findIndex((item) => item.slug === resolvedSlug);
         if (index !== -1) {
+          normalizeLegacyUrl(first, brands[first].items[index].slug);
           paintProduct(first, index, animate);
           if (first === "art" && /^women-/i.test(second)) {
             const womenIndex = brands[first].items[index].variants.findIndex((variant) => variant.cut === "Women");
@@ -4993,8 +5009,18 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
         saveViewState();
         return;
       }
-      const stayOnBrandPage = next && window.__brandSharePage === next;
-      const url = next ? (stayOnBrandPage ? `/${next}/` : `/?${next}`) : "/";
+      const [pathPart, paramsPart] = next.split("&");
+      const segments = pathPart.split("/").filter(Boolean);
+      let url;
+      if (!next) {
+        url = "/";
+      } else if (segments.length && Object.prototype.hasOwnProperty.call(brands, segments[0])) {
+        const hasItem = segments[1] && brands[segments[0]].items.some((item) => item.slug === segments[1]);
+        const cleanPath = `/${segments.slice(0, hasItem ? 2 : 1).join("/")}/`;
+        url = paramsPart ? `${cleanPath}?${paramsPart}` : cleanPath;
+      } else {
+        url = `/?${next}`;
+      }
       history.pushState(null, "", url);
       apply(true);
       saveViewState();
