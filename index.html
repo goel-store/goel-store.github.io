@@ -1352,6 +1352,7 @@
     #home-restocked h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
     .item .item-stock-note { margin-top: 0; color: var(--accent); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
     .item .item-color-label { display: flex; align-items: center; gap: 7px; width: fit-content; margin-top: 8px; color: var(--muted); font-size: 12px; }
+    .item .item-color-note { display: block; margin-top: 6px; color: var(--accent); font-size: 11px; letter-spacing: .04em; }
     .item-color-label i { width: 12px; height: 12px; flex: none; border: 1px solid rgba(244, 233, 220, .3); border-radius: 50%; background: var(--variant-color, #eee); box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .08); }
     .product { gap: clamp(28px, 6vw, 82px); align-items: start; }
     .product-cloth { border: 0; border-radius: 18px; outline: 0; overflow: hidden; background-color: #473a32; }
@@ -1925,11 +1926,16 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     Object.assign(translations.be, { newArrivalsTitle: "Навінкі", newArrivalBadge: "Навінка", restockedTitle: "Зноў у наяўнасці", restockedBadge: "Зноў у наяўнасці" });
     Object.assign(translations.uk, { newArrivalsTitle: "Новинки", newArrivalBadge: "Новинка", restockedTitle: "Знову в наявності", restockedBadge: "Знову в наявності" });
     Object.assign(translations.en, { newArrivalsTitle: "New arrivals", newArrivalBadge: "New", restockedTitle: "Back in stock", restockedBadge: "Back in stock" });
+Object.assign(translations.ru, { orange: "оранжевый", yellow: "жёлтый", purple: "фиолетовый" });
+Object.assign(translations.be, { orange: "аранжавы", yellow: "жоўты", purple: "фіялетавы" });
+Object.assign(translations.uk, { orange: "помаранчевий", yellow: "жовтий", purple: "фіолетовий" });
+Object.assign(translations.en, { orange: "orange", yellow: "yellow", purple: "purple" });
     const toneTranslationKeys = {
       "тёмно-синий": "darkBlue", "розовый": "pink", "небесный": "skyBlue", "светло-жёлтый": "lightYellow", "белый": "white",
       "горчичный": "mustard", "коричневый": "brown", "травяной": "grassGreen", "графитовый": "graphite", "бордовый": "burgundy",
       "синий": "blue", "чёрный": "black", "бежевый": "beige", "красный": "red", "кофе": "coffee", "изумруд": "emerald",
-      "молочный": "milk", "песочный": "sand", "рыжий": "ginger", "тёмно-зелёный": "darkGreen"
+      "молочный": "milk", "песочный": "sand", "рыжий": "ginger", "тёмно-зелёный": "darkGreen",
+      "оранжевый": "orange", "жёлтый": "yellow", "фиолетовый": "purple"
     };
     Object.assign(toneTranslationKeys, {
       "светлый": "light", "тёмный": "dark", "зелёный": "green", "голубой": "sky", "серый": "gray",
@@ -2300,8 +2306,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     country: "Беларусь",
     title: "Sote_m",
     blurb: "",
-    note: "Доступны разные цвета футболок, включая пастельные. Цвет и дизайн можно обсудить.",
-    colorNote: "Можно сделать любого цвета — уточните при заказе.",
+    note: "",
     items: [
       {
         name: "Футболка ДОВЕРЯЙ БОГУ",
@@ -2309,7 +2314,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "85 BYN", photos: ["img/sote/doveryai-bogu-01.jpg", "img/sote/doveryai-bogu-02.jpg", "img/sote/doveryai-bogu-03.jpg"], photo: "img/sote/doveryai-bogu-01.jpg" }
         ],
-        gender: "men"
+        gender: "men",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка ЛЮБОВЬ ЭТО",
@@ -2317,7 +2323,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "84 BYN", photos: ["img/sote/lyubov-eto-01.jpg", "img/sote/lyubov-eto-02.jpg", "img/sote/lyubov-eto-03.jpg", "img/sote/lyubov-eto-04.jpg"], photo: "img/sote/lyubov-eto-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка ВСЕГДА РАДУЙТЕСЬ",
@@ -2325,7 +2332,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "87 BYN", photos: ["img/sote/vsegda-raduites-01.jpg", "img/sote/vsegda-raduites-02.jpg", "img/sote/vsegda-raduites-03.jpg", "img/sote/vsegda-raduites-04.jpg"], photo: "img/sote/vsegda-raduites-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Чистое сердце",
@@ -2333,7 +2341,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "чёрный", color: "#161616", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "84 BYN", photos: ["img/sote/chistoe-serdce-01.jpg", "img/sote/chistoe-serdce-02.jpg", "img/sote/chistoe-serdce-03.jpg"], photo: "img/sote/chistoe-serdce-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Мир меняется твоим примером",
@@ -2341,7 +2350,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "85 BYN", photos: ["img/sote/mir-menyaetsya-01.jpg", "img/sote/mir-menyaetsya-02.jpg", "img/sote/mir-menyaetsya-03.jpg"], photo: "img/sote/mir-menyaetsya-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Зажги своё сердце",
@@ -2349,7 +2359,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "83 BYN", photos: ["img/sote/zazhgi-01.jpg", "img/sote/zazhgi-02.jpg", "img/sote/zazhgi-03.jpg", "img/sote/zazhgi-04.jpg"], photo: "img/sote/zazhgi-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка We love Him",
@@ -2357,7 +2368,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "87 BYN", photos: ["img/sote/we-love-him-01.jpg"], photo: "img/sote/we-love-him-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Радуйтесь",
@@ -2365,7 +2377,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "93 BYN", photos: ["img/sote/raduites-01.jpg"], photo: "img/sote/raduites-01.jpg" }
         ],
-        gender: "men"
+        gender: "men",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Perfect love",
@@ -2373,7 +2386,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "91 BYN", photos: ["img/sote/perfect-love-01.jpg"], photo: "img/sote/perfect-love-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Оставил 99",
@@ -2381,15 +2395,17 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "чёрный", color: "#161616", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "93 BYN", photos: ["img/sote/ostavil-99-01.jpg"], photo: "img/sote/ostavil-99-01.jpg" }
         ],
-        gender: "men"
+        gender: "men",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Дитя Царя",
         slug: "ditya-carya",
         variants: [
-          { tone: "оливковый", color: "#7d8464", size: "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "90 BYN", photos: ["img/sote/ditya-carya-01.jpg", "img/sote/ditya-carya-02.jpg", "img/sote/ditya-carya-03.jpg", "img/sote/ditya-carya-04.jpg", "img/sote/ditya-carya-05.jpg", "img/sote/ditya-carya-06.jpg"], photo: "img/sote/ditya-carya-01.jpg" }
+          { tone: "зелёный", color: "#7d8464", size: "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "90 BYN", photos: ["img/sote/ditya-carya-01.jpg", "img/sote/ditya-carya-02.jpg", "img/sote/ditya-carya-03.jpg", "img/sote/ditya-carya-04.jpg", "img/sote/ditya-carya-05.jpg", "img/sote/ditya-carya-06.jpg"], photo: "img/sote/ditya-carya-01.jpg" }
         ],
-        gender: "men"
+        gender: "men",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Футболка Jesus",
@@ -2397,7 +2413,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f7f4ee", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "93 BYN", photos: ["img/sote/jesus-01.jpg", "img/sote/jesus-02.jpg"], photo: "img/sote/jesus-01.jpg" }
         ],
-        gender: "unisex"
+        gender: "unisex",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Лонгслив God's Word",
@@ -2405,7 +2422,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "белый", color: "#f4efe4", size: "XS, S, M, L, XL, 2XL, 3XL", price: "110 BYN", photos: ["img/sote/gods-word-01.jpg", "img/sote/gods-word-02.jpg"], photo: "img/sote/gods-word-01.jpg" }
         ],
-        gender: "unisex"
+        gender: "unisex",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Худи Stay Calm",
@@ -2413,7 +2431,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "голубой", color: "#9ec0de", size: "XS, S, M, L, XL, 2XL, 3XL", price: "142 BYN", photos: ["img/sote/stay-calm-01.jpg", "img/sote/stay-calm-02.jpg", "img/sote/stay-calm-03.jpg"], photo: "img/sote/stay-calm-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Худи Спасибо Богу",
@@ -2421,7 +2440,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "чёрный", color: "#1c212e", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "149 BYN", photos: ["img/sote/spasibo-bogu-01.jpg", "img/sote/spasibo-bogu-02.jpg", "img/sote/spasibo-bogu-03.jpg"], photo: "img/sote/spasibo-bogu-01.jpg" }
         ],
-        gender: "men"
+        gender: "men",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Худи Lion",
@@ -2429,7 +2449,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "чёрный", color: "#1d2530", size: "XS, S, M, L, XL, 2XL, 3XL, 4XL, 5XL", price: "135 BYN", photos: ["img/sote/lion-01.jpg"], photo: "img/sote/lion-01.jpg" }
         ],
-        gender: "men"
+        gender: "men",
+        colorNote: "Любой цвет на выбор"
       },
       {
         name: "Худи ЛЮБОВЬ",
@@ -2437,7 +2458,8 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
         variants: [
           { tone: "бежевый", color: "#d8cbb6", size: "XS, S, M, L, XL, 2XL, 3XL", price: "147 BYN", photos: ["img/sote/lyubov-01.jpg", "img/sote/lyubov-02.jpg", "img/sote/lyubov-03.jpg"], photo: "img/sote/lyubov-01.jpg" }
         ],
-        gender: "women"
+        gender: "women",
+        colorNote: "Любой цвет на выбор"
       }
     ]
   },
@@ -3643,29 +3665,74 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       return brandCategoryKeys.filter((category) => available.has(category));
     }
 
+    const standardColorHex = {
+      "белый": "#f7f4ee", "чёрный": "#1c1c1c", "серый": "#8a8a8a", "бежевый": "#e2d3b8",
+      "коричневый": "#6b4a35", "бордовый": "#6e3c41", "красный": "#c0392b", "розовый": "#f0b8c4",
+      "оранжевый": "#e08a3c", "жёлтый": "#e0c341", "зелёный": "#6f7f4e", "голубой": "#9ec0de",
+      "синий": "#2a4570", "фиолетовый": "#7d5a8f"
+    };
+    const standardToneAliases = {
+      "белый": "белый", "светлый": "белый", "молочный": "белый", "молоко": "белый",
+      "чёрный": "чёрный", "черный": "чёрный", "графитовый": "чёрный", "тёмный": "чёрный", "темный": "чёрный",
+      "серый": "серый", "светло-серый": "серый", "меланж": "серый", "серебристый": "серый",
+      "бежевый": "бежевый", "песок": "бежевый", "песочный": "бежевый", "карамельный": "бежевый", "молочный-бежевый": "бежевый",
+      "коричневый": "коричневый", "кофе": "коричневый", "шоколадный": "коричневый", "терракотовый": "коричневый",
+      "бордовый": "бордовый", "бордо": "бордовый", "винный": "бордовый",
+      "красный": "красный", "алый": "красный",
+      "розовый": "розовый", "пудровый": "розовый",
+      "оранжевый": "оранжевый", "персик": "оранжевый", "персиковый": "оранжевый", "рыжий": "оранжевый",
+      "жёлтый": "жёлтый", "желтый": "жёлтый", "горчичный": "жёлтый", "светло-жёлтый": "жёлтый",
+      "зелёный": "зелёный", "зеленый": "зелёный", "оливковый": "зелёный", "травяной": "зелёный",
+      "хаки": "зелёный", "изумрудный": "зелёный", "изумруд": "зелёный", "тёмно-зелёный": "зелёный",
+      "голубой": "голубой", "небесный": "голубой", "светло-голубой": "голубой",
+      "синий": "синий", "тёмно-синий": "синий", "темно-синий": "синий", "navy": "синий",
+      "фиолетовый": "фиолетовый", "лиловый": "фиолетовый", "сиреневый": "фиолетовый", "сливовый": "фиолетовый"
+    };
+    function standardColorName(part) {
+      const raw = String(part || "").trim().toLowerCase();
+      const base = raw.replace(/^(?:светло|тёмно|темно|нежно|ярко|бледно)[-\s]*/, "");
+      return standardToneAliases[raw] || standardToneAliases[base] || base;
+    }
+    function toneColorKeys(rawTone) {
+      const tone = String(rawTone || "").trim();
+      if (!tone) return [];
+      const whole = standardToneAliases[tone.toLowerCase()];
+      if (whole) return [whole];
+      const parts = tone.split(/\s*(?:[-/–—]|,|\s+и\s+|\s+с\s+)\s*/).filter(Boolean);
+      return [...new Set(parts.map(standardColorName).filter(Boolean))];
+    }
+    function variantColorKeys(variant) {
+      return variant ? toneColorKeys(variant.tone) : [];
+    }
+    function itemMatchesColors(item, colors) {
+      return !colors.length || item.variants.some((variant) =>
+        variantColorKeys(variant).some((key) => colors.includes(key))
+      );
+    }
+
     function brandColorOptions(data) {
       const available = new Map();
       data.items.forEach((item) => item.variants.forEach((variant) => {
-        if (variant.tone && !available.has(variant.tone)) available.set(variant.tone, variant.color || "#eee");
+        variantColorKeys(variant).forEach((key) => {
+          if (!available.has(key)) available.set(key, standardColorHex[key] || variant.color || "#eee");
+        });
       }));
       return [...available].map(([tone, color]) => ({ tone, color }));
     }
 
     function itemMatchesBrandFilters(item, categories = brandCategoryFilters, colors = brandColorFilters) {
       if (categories.length && !categories.includes(itemCategory(item))) return false;
-      if (colors.length && !item.variants.some((variant) => colors.includes(variant.tone))) return false;
+      if (!itemMatchesColors(item, colors)) return false;
       return true;
     }
 
     function countItemsForCategory(data, category, colors = brandColorFilters) {
-      return data.items.filter((item) => itemCategory(item) === category
-        && (!colors.length || item.variants.some((variant) => colors.includes(variant.tone)))
-      ).length;
+      return data.items.filter((item) => itemCategory(item) === category && itemMatchesColors(item, colors)).length;
     }
 
     function countItemsForColor(data, tone, categories = brandCategoryFilters) {
       return data.items.filter((item) => (!categories.length || categories.includes(itemCategory(item)))
-        && item.variants.some((variant) => variant.tone === tone)
+        && item.variants.some((variant) => variantColorKeys(variant).includes(tone))
       ).length;
     }
 
@@ -3674,7 +3741,9 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     }
 
     function itemAvailableForColors(item, colors = []) {
-      const variants = colors.length ? item.variants.filter((variant) => colors.includes(variant.tone)) : item.variants;
+      const variants = colors.length
+        ? item.variants.filter((variant) => variantColorKeys(variant).some((key) => colors.includes(key)))
+        : item.variants;
       return variants.some(variantInStock);
     }
 
@@ -4160,9 +4229,11 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
     }
 
     function itemCard(id, item, preferredColors = [], badgeKey = "", featuredVariant = null, fromSource = "") {
+      const matchesPreferred = (variant) => preferredColors.includes(variant.tone)
+        || variantColorKeys(variant).some((key) => preferredColors.includes(key));
       const matchingVariant = featuredVariant || (preferredColors.length
-        ? item.variants.find((variant) => variantInStock(variant) && preferredColors.includes(variant.tone))
-          || item.variants.find((variant) => preferredColors.includes(variant.tone))
+        ? item.variants.find((variant) => variantInStock(variant) && matchesPreferred(variant))
+          || item.variants.find(matchesPreferred)
         : null);
       const first = matchingVariant || item.variants.find(variantInStock) || item.variants[0];
       const variantIndex = item.variants.indexOf(first);
@@ -4183,6 +4254,9 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       const colorLabel = featuredVariant && featuredVariant.tone
         ? `<span class="item-color-label"><i style="--variant-color:${featuredVariant.color}" aria-hidden="true"></i>${localizedTone(featuredVariant.tone)}</span>`
         : "";
+      const colorNote = item.colorNote
+        ? `<span class="item-color-note">${item.colorNote}</span>`
+        : "";
       const stockNote = !variantInStock(first)
         ? `<span class="item-stock-note">${t("unavailable")}</span>`
         : "";
@@ -4192,7 +4266,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       const meta = (stockNote || price)
         ? `<span class="item-meta">${stockNote}${price ? `<span class="price">${price}</span>` : ""}</span>`
         : "";
-      return `<a class="item" href="?${id}/${item.slug}${variantRoute}${fromRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}"${fromAttr} style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${meta}</span></a>`;
+      return `<a class="item" href="?${id}/${item.slug}${variantRoute}${fromRoute}" data-brand="${id}" data-slug="${item.slug}" data-variant="${variantIndex}"${fromAttr} style="${cardStyle}"><div class="cloth${photoClass}" style="${clothStyle}">${photoTag}${badge}<span class="ph">${t("photoPlaceholder")}</span></div><span class="body"><b>${localizedItemName(item.name)}</b>${colorLabel}${colorNote}${meta}</span></a>`;
     }
 
     function renderBrandFilters(data) {
@@ -4282,10 +4356,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       ["#brand-category-submenu .filter-options", "#brand-color-submenu .filter-options"].forEach((selector) => {
         const options = document.querySelector(selector);
         if (!options) return;
-        [...options.children]
+        [...options.querySelectorAll(".filter-option")]
           .sort((left, right) => {
-            const leftAvailable = Number(left.querySelector(".filter-option-count").textContent) > 0;
-            const rightAvailable = Number(right.querySelector(".filter-option-count").textContent) > 0;
+            const leftAvailable = Number(left.querySelector(".filter-option-count")?.textContent) > 0;
+            const rightAvailable = Number(right.querySelector(".filter-option-count")?.textContent) > 0;
             return Number(rightAvailable) - Number(leftAvailable)
               || Number(left.dataset.filterOrder) - Number(right.dataset.filterOrder);
           })
@@ -4344,7 +4418,7 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
 
     function itemMatchesCatalogFilters(item) {
       if (catalogCategoryFilters.length && !catalogCategoryFilters.includes(itemCategory(item))) return false;
-      if (catalogColorFilters.length && !item.variants.some((variant) => catalogColorFilters.includes(variant.tone))) return false;
+      if (!itemMatchesColors(item, catalogColorFilters)) return false;
       return true;
     }
 
@@ -4395,10 +4469,10 @@ light: "светлый", dark: "тёмный", green: "зелёный", sky: "г
       ["#catalog-category-submenu .filter-options", "#catalog-color-submenu .filter-options"].forEach((selector) => {
         const options = document.querySelector(selector);
         if (!options) return;
-        [...options.children]
+        [...options.querySelectorAll(".filter-option")]
           .sort((left, right) => {
-            const leftAvailable = Number(left.querySelector(".filter-option-count").textContent) > 0;
-            const rightAvailable = Number(right.querySelector(".filter-option-count").textContent) > 0;
+            const leftAvailable = Number(left.querySelector(".filter-option-count")?.textContent) > 0;
+            const rightAvailable = Number(right.querySelector(".filter-option-count")?.textContent) > 0;
             return Number(rightAvailable) - Number(leftAvailable)
               || Number(left.dataset.filterOrder) - Number(right.dataset.filterOrder);
           })
