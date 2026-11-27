@@ -1585,12 +1585,12 @@
       </section>
       <div data-country-group="Беларусь">
         <h2 data-i18n="belarus">Беларусь</h2>
-        <a class="brand" href="?godderob" data-brand="godderob">
+        <a class="brand" href="/godderob/" data-brand="godderob">
           <img class="swatch" src="img/godderob/avatar.jpg" alt="" width="64" height="64">
           <span><b>Godderob</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
         </a>
-        <a class="brand" href="?sote" data-brand="sote">
+        <a class="brand" href="/sote/" data-brand="sote">
           <img class="swatch" src="img/sote/avatar.jpg?v=2" alt="" width="64" height="64">
           <span><b>Sote_m</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
@@ -1598,12 +1598,12 @@
       </div>
       <div data-country-group="Россия">
         <h2 data-i18n="russia">Россия</h2>
-        <a class="brand" href="?art" data-brand="art">
+        <a class="brand" href="/art/" data-brand="art">
           <img class="swatch" src="img/art/avatar.jpg" alt="" width="64" height="64">
           <span><b>Jesus Saves</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
         </a>
-        <a class="brand" href="?amenshop" data-brand="amenshop">
+        <a class="brand" href="/amenshop/" data-brand="amenshop">
           <img class="swatch" src="img/amenshop/avatar.jpg" alt="" width="64" height="64">
           <span><b>AMENSHOP</b></span>
           <span class="go" data-i18n="view">Смотреть</span>
@@ -2105,10 +2105,12 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
 
     function applyStaticTranslations() {
       document.documentElement.lang = currentLanguage;
-      document.title = t("pageTitle");
-      document.querySelector('meta[name="description"]')?.setAttribute("content", t("pageDescription"));
-      document.querySelector('meta[property="og:title"]')?.setAttribute("content", t("pageTitle"));
-      document.querySelector('meta[property="og:description"]')?.setAttribute("content", t("pageDescription"));
+      if (!window.__brandSharePage) {
+        document.title = t("pageTitle");
+        document.querySelector('meta[name="description"]')?.setAttribute("content", t("pageDescription"));
+        document.querySelector('meta[property="og:title"]')?.setAttribute("content", t("pageTitle"));
+        document.querySelector('meta[property="og:description"]')?.setAttribute("content", t("pageDescription"));
+      }
       document.querySelectorAll("[data-i18n]").forEach((element) => { element.textContent = t(element.dataset.i18n); });
       document.querySelectorAll("[data-i18n-aria]").forEach((element) => { element.setAttribute("aria-label", t(element.dataset.i18nAria)); });
       document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => { element.placeholder = t(element.dataset.i18nPlaceholder); });
@@ -4814,7 +4816,11 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
         const path = query.split("&").find((part) => part && !part.includes("="));
         if (path) return decodeURIComponent(path);
       }
-      return location.hash.replace(/^#/, "");
+      const hash = location.hash.replace(/^#/, "");
+      if (hash) return hash;
+      const segment = decodeURIComponent(location.pathname.replace(/\/+$/, "").split("/").pop() || "");
+      if (segment && Object.prototype.hasOwnProperty.call(brands, segment)) return segment;
+      return "";
     }
 
     function readViewState() {
@@ -4981,7 +4987,9 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
         saveViewState();
         return;
       }
-      history.pushState(null, "", next ? location.pathname + "?" + next : location.pathname);
+      const stayOnBrandPage = next && window.__brandSharePage === next;
+      const url = next ? (stayOnBrandPage ? `/${next}/` : `/?${next}`) : "/";
+      history.pushState(null, "", url);
       apply(true);
       saveViewState();
     }

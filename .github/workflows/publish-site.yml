@@ -9,6 +9,7 @@ on:
       - "privacy.html"
       - "delivery.html"
       - "img/**"
+      - "scripts/generate_brand_pages.py"
       - ".github/workflows/publish-site.yml"
   workflow_dispatch:
 
@@ -33,7 +34,11 @@ jobs:
           git fetch origin gh-pages
           git checkout -B gh-pages origin/gh-pages
           git checkout main -- index.html tracking.html privacy.html delivery.html img .nojekyll
+          mkdir -p scripts
+          git show main:scripts/generate_brand_pages.py > scripts/generate_brand_pages.py
+          python3 scripts/generate_brand_pages.py
           git add index.html tracking.html privacy.html delivery.html img .nojekyll
+          git add -f godderob sote art amenshop
           if git diff --cached --quiet; then
             echo "No gh-pages changes"
             exit 0
