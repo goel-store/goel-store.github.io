@@ -4323,6 +4323,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
         document.getElementById("home-crumbs").hidden = !filtered;
         if (filtered) document.getElementById("home-country").textContent = localizedCountry(country);
         renderHomeCollections(filtered ? country : "all");
+        document.title = filtered ? `${localizedCountry(country)} | GO’EL` : t("pageTitle");
         showHome();
       }, animate);
     }
@@ -4411,6 +4412,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
         document.getElementById("crumb-country").textContent = localizedCountry(data.country);
         document.getElementById("crumb-brand").textContent = data.title;
         document.getElementById("title").textContent = data.title;
+        document.title = `${data.title} | GO’EL`;
         const blurb = document.getElementById("blurb");
         blurb.textContent = data.blurb || "";
         blurb.hidden = !data.blurb;
@@ -4667,6 +4669,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
       document.getElementById("catalog-blurb").textContent = label
         ? t("catalogFilteredDescription", { category: label })
         : t("catalogDescription");
+      document.title = label ? `${label} | GO’EL` : `${t("catalogTitle")} | GO’EL`;
     }
 
     function syncCatalogUrlFromFilters() {
@@ -4694,6 +4697,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
     function paintCart(animate) {
       reveal(() => {
         renderCartContents();
+        document.title = `${t("cartTitle")} | GO’EL`;
         home.classList.remove("on");
         brand.classList.remove("on");
         product.classList.remove("on");
@@ -4782,6 +4786,7 @@ Object.assign(translations.en, { confirmTitle: "Review your request", confirmHin
       currentItem = item;
       reveal(() => {
         const itemName = localizedItemName(item.name);
+        document.title = `${itemName} — ${data.title} | GO’EL`;
         const fromNew = new URLSearchParams(location.search).get("from") === "new";
         const standardCrumbs = document.getElementById("product-crumbs-standard");
         const newCrumbs = document.getElementById("product-crumbs-new");
